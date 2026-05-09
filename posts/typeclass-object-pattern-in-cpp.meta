@@ -1,0 +1,7 @@
+.. title: The Typeclass Object Pattern in C++
+.. slug: typeclass-object-pattern-in-cpp
+.. date: 2026-05-09 12:15:00-04:00
+.. tags: C++, typeclass, concept-map, extension-points
+.. link:
+.. description: Variable templates as concept maps — open extension with static dispatch, derived operations, and three lookup modes.
+.. type: text
