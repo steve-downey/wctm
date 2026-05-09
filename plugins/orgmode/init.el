@@ -125,6 +125,20 @@
                 (format "<a href=\"link:%s\">%s</a>"
                         path (or desc path))))))
 
+;; Export orgit-file links as GitHub source browser URLs.
+;; orgit-file:src/smd/fixpoint/fix.hpp becomes a link to the public repo.
+(defvar orgit-file-base-url "https://github.com/steve-downey/trees/blob/main/"
+  "Base URL for exporting orgit-file links.")
+
+(org-link-set-parameters
+ "orgit-file"
+ :export (lambda (path desc backend)
+           (let ((url (concat orgit-file-base-url path)))
+             (cond
+              ((eq 'html backend)
+               (format "<a href=\"%s\"><code>%s</code></a>"
+                       url (or desc path)))))))
+
 ;; Export function used by Nikola.
 (defun nikola-html-export (infile outfile)
   "Export the body only of the input file and write it to
