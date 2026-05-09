@@ -1,0 +1,7 @@
+.. title: Bringing Typeclass Operations into Scope
+.. slug: bringing-typeclass-operations-into-scope
+.. date: 2026-05-09 12:30:00-04:00
+.. tags: C++, typeclass, CPO, niebloid
+.. link:
+.. description: Algorithm objects that inherit from their dispatch target — composing typeclass operations without qualification noise.
+.. type: text

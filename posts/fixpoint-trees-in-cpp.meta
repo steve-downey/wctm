@@ -1,0 +1,8 @@
+.. title: Fixpoint Trees in C++: From Expression Trees to Generic Algorithms
+.. slug: fixpoint-trees-in-cpp
+.. date: 2026-05-09 12:00:00-04:00
+.. tags: C++, recursion-schemes, fixpoint, typeclass
+.. link:
+.. description: Building expression trees with Fix, folding them with fold_fix, unfolding with unfold_fix, and composing with refold.
+.. type: text
+.. has_math: true

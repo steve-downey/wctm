@@ -1,0 +1,7 @@
+.. title: Typeclass Object: A New Extension Point
+.. slug: typeclass-object-a-new-extension-point
+.. date: 2026-05-09 12:45:00-04:00
+.. tags: C++, typeclass, extension-points, concept-map
+.. link:
+.. description: Variable templates as concept maps — what ADL, concepts, CPOs, and tag_invoke each miss, and how the typeclass object fills the gap.
+.. type: text
