@@ -48,6 +48,12 @@ Each post has a paired `.meta` file for metadata (title, slug, date, tags) when 
 
 Teaser delimiter: add `<!-- TEASER_END -->` in Markdown/HTML posts, or the `{{{TEASER_END}}}` org macro in `.org` posts (defined in `init.el` as `#+HTML:<!-- TEASER_END -->`), to split index previews from full content.
 
+### Known class-name collisions
+
+Org-mode's HTML exporter wraps each section in `<div class="outline-N">` (document outline level). Tailwind v4 generates `.outline-N { outline-width: N px }` as a built-in utility and includes it unconditionally (unlike v3 CDN which only emitted classes found in scanned templates). The fix is in `themes/nikola-tailwind-base/assets/css/tailwind-base.css`: org-mode section divs are targeted by their `id="outline-container-*"` pattern and given `outline: none`.
+
+If new Tailwind utilities collide with org-mode or Nikola class names in future, the same pattern applies: add a targeted reset in `tailwind-base.css`.
+
 ### Org-mode plugin
 
 `plugins/orgmode/orgmode.py` implements a Nikola `PageCompiler` that shells out to `emacs --batch` to export `.org` files to HTML. The Emacs init is at `plugins/orgmode/init.el`, which loads `org-mode` and `htmlize` from MELPA (cached in `plugins/orgmode/elpa-<version>/`). Emacs must be installed on the system for `.org` posts to build.
