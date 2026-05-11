@@ -11,7 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 All commands use `uv` for environment management. `make` targets are the primary interface.
 
 ```sh
-make compile          # Build the site (uv run nikola build)
+make compile          # Generate Tailwind CSS, then build the site
+make tailwind-css     # Generate Tailwind CSS only (uv run tailwindcss)
 make test             # Build + check file integrity (default)
 make test-files       # Check generated file integrity only
 make test-local-links # Check local links in output
@@ -60,7 +61,7 @@ Teaser delimiter: add `<!-- TEASER_END -->` in Markdown/HTML posts, or the `{{{T
 
 ### Themes
 
-Active theme: `sdowney-tailwind` (in `themes/sdowney-tailwind/`). The inheritance chain is:
+Active theme: `sdowney-tailwind` (in `themes/sdowney-tailwind/`), using **Tailwind CSS v4** built via `pytailwindcss` (standalone CLI, no Node.js required). The inheritance chain is:
 
 ```
 sdowney-tailwind  →  nikola-tailwind-blog  →  nikola-tailwind-base  →  nikola base
@@ -68,10 +69,12 @@ sdowney-tailwind  →  nikola-tailwind-blog  →  nikola-tailwind-base  →  nik
 
 - `nikola-tailwind-base` — Nikola's Mako base templates rewritten with Tailwind CSS utility classes. `theme.css` is intentionally empty (overrides Nikola's conflicting default stylesheet).
 - `nikola-tailwind-blog` — blog-specific templates (index, post, tags, lists) built on the base.
-- `sdowney-tailwind` — personal overrides. The only template override is `base_helper.tmpl`, which redefines `html_stylesheets()` to load Tailwind CSS via CDN (`https://cdn.tailwindcss.com?plugins=typography`), configure the Tailwind theme (fonts: Source Sans 3, Source Code Pro), and load Font Awesome and Google Fonts.
+- `sdowney-tailwind` — personal overrides. `base_helper.tmpl` redefines `html_stylesheets()` to load the locally-built `tailwind.css`, Font Awesome, and Google Fonts.
+
+**Tailwind build:** `tailwind/input.css` is the source; `make tailwind-css` (or `make compile`) generates `themes/sdowney-tailwind/assets/css/tailwind.css` (gitignored). The binary version is pinned via `TAILWINDCSS_VERSION=v4.2.4` in the Makefile. Font families (`--font-sans`, `--font-mono`) and the typography plugin (`@plugin "@tailwindcss/typography"`) are configured in `tailwind/input.css` via v4 CSS-first `@theme`. The `@source` directives point at `themes/**/*.tmpl` so Tailwind scans templates for class names.
 
 Styling notes:
-- Tailwind is loaded from CDN with the `typography` plugin; post content sits inside `prose prose-lg prose-indigo` classes.
+- Post content sits inside `prose prose-lg max-w-none prose-indigo` classes; the typography plugin provides the prose CSS.
 - Code block layout (org-mode `.org-src-container`, `pre.example`) is handled by `themes/nikola-tailwind-base/assets/css/tailwind-base.css` using CSS custom properties for colors.
 - Dark-mode code colors come from `/assets/css/modus-vivendi-tinted.css` (loaded unconditionally).
 - The JS in `base.tmpl` injects language labels and copy buttons on all code blocks at runtime.

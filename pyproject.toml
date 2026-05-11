@@ -12,5 +12,6 @@ dev = [
   "clang-format==18.1.8",
   "pre-commit>=3.7.1",
   "Nikola[extras]",
-  "google-yamlfmt"
+  "google-yamlfmt",
+  "pytailwindcss>=0.3.0"
 ]

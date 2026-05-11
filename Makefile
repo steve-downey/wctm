@@ -16,6 +16,13 @@ MARKER=.initialized.venv.stamp
 
 PRE_COMMIT := $(UV) run pre-commit
 NIKOLA := $(UV) run nikola
+TAILWIND := $(UV) run tailwindcss
+
+# Pin the Tailwind standalone binary version for reproducible builds.
+export TAILWINDCSS_VERSION := v4.2.4
+
+_tailwind_input  := tailwind/input.css
+_tailwind_output := themes/sdowney-tailwind/assets/css/tailwind.css
 
 _output_path := ./output/
 _cache_path := ./cache/
@@ -33,9 +40,13 @@ default: test
 .PHONY: nikola
 nikola: venv
 
+.PHONY: tailwind-css
+tailwind-css: venv ## Generate Tailwind CSS from templates
+	$(TAILWIND) -i $(_tailwind_input) -o $(_tailwind_output) --minify
+
 .PHONY: compile
 compile:  ## Compile the project
-compile: nikola
+compile: tailwind-css nikola
 	$(NIKOLA) build
 
 .PHONY: test
