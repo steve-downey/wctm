@@ -18,6 +18,15 @@
     --inline-code-bg: #f1f5f9;
 }
 
+/* --- Org-mode / Tailwind class name collision fix ---------------------- *
+ * Org-mode HTML export wraps each section in <div class="outline-N"> and  *
+ * <div class="outline-text-N">. Tailwind v4 generates outline-N as a      *
+ * utility class (outline-width: N px). Target org-mode's divs by their   *
+ * ID pattern to reset without affecting legitimate Tailwind usage.        */
+
+div[id^="outline-container-"] { outline: none; }
+div[id^="text-"]               { outline: none; }
+
 /* --- Org-mode source blocks -------------------------------------------- */
 
 .org-src-container {
