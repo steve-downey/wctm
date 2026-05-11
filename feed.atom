@@ -3,7 +3,7 @@
 <feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom">
   <title>What Comes to Mind</title>
   <id>https://sdowney.org/feed.atom</id>
-  <updated>2025-12-27T19:02:45Z</updated>
+  <updated>2026-05-11T03:27:54Z</updated>
   <author>
     <name>Steve Downey</name>
   </author>
@@ -19,7 +19,7 @@
       <name>Steve Downey</name>
     </author>
     <link rel="alternate" type="text/html" href="https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/"/>
-    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="orgd3f21f0"&gt;
+    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="org5aa0087"&gt;
 &lt;p&gt;
 Making sure vcpkg delivers packages built with your toolchain is not hard, but much of the advice on the internet is flat wrong. You need to specify your toolchain both in your project and in the the vcpkg &lt;code&gt;triplet&lt;/code&gt;. There's an airgap between your project and the dependency in &lt;code&gt;vcpkg install&lt;/code&gt;. The CMake settings can't just flow through.
 &lt;/p&gt;
@@ -27,7 +27,7 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
 &lt;/div&gt;
 
 &lt;p&gt;&lt;a href="https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/"&gt;Read more…&lt;/a&gt; (4 min remaining to read)&lt;/p&gt;&lt;/div&gt;</summary>
-    <content type="html">&lt;div class="abstract" id="orgd3f21f0"&gt;
+    <content type="html">&lt;div class="abstract" id="org5aa0087"&gt;
 &lt;p&gt;
 Making sure vcpkg delivers packages built with your toolchain is not hard, but much of the advice on the internet is flat wrong. You need to specify your toolchain both in your project and in the the vcpkg &lt;code&gt;triplet&lt;/code&gt;. There's an airgap between your project and the dependency in &lt;code&gt;vcpkg install&lt;/code&gt;. The CMake settings can't just flow through.
 &lt;/p&gt;
@@ -35,8 +35,8 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-org3754f4f" class="outline-2"&gt;
-&lt;h2 id="org3754f4f"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Toolchain is more than just the compiler&lt;/h2&gt;
+&lt;div id="outline-container-org5255a7c" class="outline-2"&gt;
+&lt;h2 id="org5255a7c"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Toolchain is more than just the compiler&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 Inside a link context everything needs to use the same definitions for everything or your program breaks. If you are lucky it will fail to link. If you are unlucky it will link and explode at runtime. Or you might have the worst kind of undefined behavior–working the way you expect it to. For now.
@@ -51,8 +51,8 @@ The toolchain should encompass all of the ABI affecting flags, and most flags af
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc0c2baf" class="outline-2"&gt;
-&lt;h2 id="orgc0c2baf"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Using a toolchain with &lt;code&gt;vcpkg&lt;/code&gt; in-project&lt;/h2&gt;
+&lt;div id="outline-container-orga5e09b3" class="outline-2"&gt;
+&lt;h2 id="orga5e09b3"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Using a toolchain with &lt;code&gt;vcpkg&lt;/code&gt; in-project&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 There are several techniques for using vcpkg for dependency management and specifying a toolchain to use for compilation of the artifacts in a project. For an open source project, the problem is generally how to do so without locking everyone into &lt;code&gt;vcpkg&lt;/code&gt;. The current theory for CMake is to provide dependency provider hooks via CMAKE_PROJECT_TOP_LEVEL_INCLUDES, which are a list of files cmake will process before anything else, and in particular before the &lt;code&gt;project&lt;/code&gt; statement. The Beman Project has a primitive dependency provider, &lt;a href="https://github.com/bemanproject/infra/blob/main/cmake/use-fetch-content.cmake"&gt;use-fetch-content.cmake&lt;/a&gt;, that converts &lt;code&gt;find_package&lt;/code&gt; into &lt;code&gt;FetchContent&lt;/code&gt; and downloads and builds from Git URLs. This is an alternative to vendoring dependencies in-tree directly using git submodules or git subtrees.
@@ -70,79 +70,79 @@ For &lt;code&gt;vcpkg&lt;/code&gt;, you can integrate using the same mechanism, 
 The initial configure will look something like:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-shell"&gt;cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=$(VCPKG_ROOT)/scripts/buildsystems/vcpkg.cmake &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
+&lt;pre class="src src-shell"&gt;&lt;code&gt;cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=$(VCPKG_ROOT)/scripts/buildsystems/vcpkg.cmake &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
       -DCMAKE_TOOLCHAIN_FILE=./etc/gcc-16-toolchain.cmake &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
       -B .build -S .
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
 With the gcc-16 toolchain file looking something like:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-cmake"&gt;&lt;span class="org-function-name"&gt;include_guard&lt;/span&gt;(GLOBAL)
+&lt;pre class="src src-cmake"&gt;&lt;code&gt;include_guard(GLOBAL)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_C_COMPILER gcc-16)
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_COMPILER g++-16)
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(GCOV_EXECUTABLE &lt;span class="org-string"&gt;"gcov-16"&lt;/span&gt; CACHE STRING &lt;span class="org-string"&gt;"GCOV executable"&lt;/span&gt; FORCE)
+set(CMAKE_C_COMPILER gcc-16)
+set(CMAKE_CXX_COMPILER g++-16)
+set(GCOV_EXECUTABLE "gcov-16" CACHE STRING "GCOV executable" FORCE)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 26)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS
-    &lt;span class="org-string"&gt;"-Wall -Wextra -std=gnu++26 -Wno-maybe-uninitialized"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS
+    "-Wall -Wextra -std=gnu++26 -Wno-maybe-uninitialized"
     CACHE STRING
-    &lt;span class="org-string"&gt;"CXX_FLAGS"&lt;/span&gt;
+    "CXX_FLAGS"
     FORCE)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_DEBUG
-    &lt;span class="org-string"&gt;"-O0 -fno-inline -g3"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_DEBUG
+    "-O0 -fno-inline -g3"
     CACHE STRING
-    &lt;span class="org-string"&gt;"C++ DEBUG Flags"&lt;/span&gt;
+    "C++ DEBUG Flags"
     FORCE
 )
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_RELEASE
-    &lt;span class="org-string"&gt;"-Ofast -g0 -DNDEBUG"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_RELEASE
+    "-Ofast -g0 -DNDEBUG"
     CACHE STRING
-    &lt;span class="org-string"&gt;"C++ Release Flags"&lt;/span&gt;
+    "C++ Release Flags"
     FORCE
 )
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_RELWITHDEBINFO
-    &lt;span class="org-string"&gt;"-O3 -g -DNDEBUG"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    "-O3 -g -DNDEBUG"
     CACHE STRING
-    &lt;span class="org-string"&gt;"C++ RelWithDebInfo Flags"&lt;/span&gt;
+    "C++ RelWithDebInfo Flags"
     FORCE
 )
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_TSAN
-    &lt;span class="org-string"&gt;"-O3 -g -fsanitize=thread"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_TSAN
+    "-O3 -g -fsanitize=thread"
     CACHE STRING
-    &lt;span class="org-string"&gt;"C++ TSAN Flags"&lt;/span&gt;
+    "C++ TSAN Flags"
     FORCE
 )
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_ASAN
-    &lt;span class="org-string"&gt;"-O3 -g -fsanitize=address,undefined,leak"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_ASAN
+    "-O3 -g -fsanitize=address,undefined,leak"
     CACHE STRING
-    &lt;span class="org-string"&gt;"C++ ASAN Flags"&lt;/span&gt;
-    FORCE
-)
-
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_CXX_FLAGS_GCOV
-    &lt;span class="org-string"&gt;"-O0 -fno-default-inline -fno-inline -g --coverage -fprofile-abs-path"&lt;/span&gt;
-    CACHE STRING
-    &lt;span class="org-string"&gt;"C++ GCOV Flags"&lt;/span&gt;
+    "C++ ASAN Flags"
     FORCE
 )
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_LINKER_FLAGS_GCOV &lt;span class="org-string"&gt;"--coverage"&lt;/span&gt; CACHE STRING &lt;span class="org-string"&gt;"Linker GCOV Flags"&lt;/span&gt; FORCE)
-
-&lt;span class="org-function-name"&gt;get_filename_component&lt;/span&gt;(RPATH &lt;span class="org-string"&gt;"~/.local/lib64"&lt;/span&gt; ABSOLUTE)
-
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(CMAKE_EXE_LINKER_FLAGS
-    &lt;span class="org-string"&gt;"-Wl,-rpath,${&lt;/span&gt;&lt;span class="org-variable-name"&gt;RPATH&lt;/span&gt;&lt;span class="org-string"&gt;}"&lt;/span&gt;
+set(CMAKE_CXX_FLAGS_GCOV
+    "-O0 -fno-default-inline -fno-inline -g --coverage -fprofile-abs-path"
     CACHE STRING
-    &lt;span class="org-string"&gt;"CMAKE_EXE_LINKER_FLAGS"&lt;/span&gt;
+    "C++ GCOV Flags"
     FORCE
 )
-&lt;/pre&gt;
+
+set(CMAKE_LINKER_FLAGS_GCOV "--coverage" CACHE STRING "Linker GCOV Flags" FORCE)
+
+get_filename_component(RPATH "~/.local/lib64" ABSOLUTE)
+
+set(CMAKE_EXE_LINKER_FLAGS
+    "-Wl,-rpath,${RPATH}"
+    CACHE STRING
+    "CMAKE_EXE_LINKER_FLAGS"
+    FORCE
+)
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -158,8 +158,8 @@ Building with the &lt;code&gt;cmake&lt;/code&gt; command line flags above will e
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org03fa23e" class="outline-2"&gt;
-&lt;h2 id="org03fa23e"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Building Dependencies with your Toolchain.&lt;/h2&gt;
+&lt;div id="outline-container-orgbfe975d" class="outline-2"&gt;
+&lt;h2 id="orgbfe975d"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Building Dependencies with your Toolchain.&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 The mechanism &lt;code&gt;vcpkg&lt;/code&gt; provides for injecting a toolchain into a dependency is a custom &lt;code&gt;triple&lt;/code&gt; that provides a VCPKG_CHAINLOAD_TOOLCHAIN_FILE. Because of the intermediate invocation of &lt;code&gt;vcpkg&lt;/code&gt;, setting VCPKG_CHAINLOAD_TOOLCHAIN_FILE in your project does not affect how &lt;code&gt;vcpkg&lt;/code&gt; builds or provides anything.
@@ -173,14 +173,14 @@ We can, however, smuggle the variable we need through the environment.
 The custom &lt;code&gt;triple&lt;/code&gt; I'm using, &lt;code&gt;x64-linux-custom.cmake&lt;/code&gt;,  looks like:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-cmake"&gt;&lt;span class="org-function-name"&gt;set&lt;/span&gt;(VCPKG_TARGET_ARCHITECTURE x64)
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(VCPKG_CRT_LINKAGE dynamic)
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(VCPKG_LIBRARY_LINKAGE static)
+&lt;pre class="src src-cmake"&gt;&lt;code&gt;set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(VCPKG_CMAKE_SYSTEM_NAME Linux)
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 
-&lt;span class="org-function-name"&gt;set&lt;/span&gt;(VCPKG_CHAINLOAD_TOOLCHAIN_FILE &lt;span class="org-string"&gt;"$ENV{PROJECT_VCPKG_TOOLCHAIN}"&lt;/span&gt;)
-&lt;/pre&gt;
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "$ENV{PROJECT_VCPKG_TOOLCHAIN}")
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -191,12 +191,12 @@ And I make sure to export PROJECT_VCPKG_TOOLCHAIN into the environment as part o
 The cmake invocation picks up flags and environment:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-shell"&gt;&lt;span class="org-builtin"&gt;export&lt;/span&gt; &lt;span class="org-variable-name"&gt;PROJECT_VCPKG_TOOLCHAIN&lt;/span&gt;=$(realpath ./etc/gcc-16-toolchain.cmake)
+&lt;pre class="src src-shell"&gt;&lt;code&gt;&lt;span class="org-builtin"&gt;export&lt;/span&gt; &lt;span class="org-variable-name"&gt;PROJECT_VCPKG_TOOLCHAIN&lt;/span&gt;=$(realpath ./etc/gcc-16-toolchain.cmake)
 cmake -DCMAKE_TOOLCHAIN_FILE=$(PROJECT_VCPKG_TOOLCHAIN) &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
       -DVCPKG_OVERLAY_TRIPLETS=$(realpath ./cmake) &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
       -DVCPKG_TARGET_TRIPLET=x64-linux-custom &lt;span class="org-sh-escaped-newline"&gt;\&lt;/span&gt;
       -B .build -S .
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -204,8 +204,8 @@ With this, &lt;code&gt;vcpkg&lt;/code&gt; will use the toolchain I specify to bu
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfc18b50" class="outline-2"&gt;
-&lt;h2 id="orgfc18b50"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Someone is Wrong on the Internet&lt;/h2&gt;
+&lt;div id="outline-container-orgf4260ff" class="outline-2"&gt;
+&lt;h2 id="orgf4260ff"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Someone is Wrong on the Internet&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-4"&gt;
 &lt;p&gt;
 This took far longer to work out than it should because there is much advice that is flat out wrong.
@@ -234,7 +234,7 @@ You must set a custom &lt;code&gt;triple&lt;/code&gt; file that sets VCPKG_CHAIN
       <name>Steve Downey</name>
     </author>
     <link rel="alternate" type="text/html" href="https://sdowney.org/posts/substitution-is-sometimes-a-failure/"/>
-    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="orgda1a411"&gt;
+    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="org539e557"&gt;
 &lt;p&gt;
 Why are optional::transform and optional::and_then not constrained by &lt;code&gt;invocable&lt;/code&gt;?
 &lt;/p&gt;
@@ -242,7 +242,7 @@ Why are optional::transform and optional::and_then not constrained by &lt;code&g
 &lt;/div&gt;
 
 &lt;p&gt;&lt;a href="https://sdowney.org/posts/substitution-is-sometimes-a-failure/"&gt;Read more…&lt;/a&gt; (4 min remaining to read)&lt;/p&gt;&lt;/div&gt;</summary>
-    <content type="html">&lt;div class="abstract" id="orgda1a411"&gt;
+    <content type="html">&lt;div class="abstract" id="org539e557"&gt;
 &lt;p&gt;
 Why are optional::transform and optional::and_then not constrained by &lt;code&gt;invocable&lt;/code&gt;?
 &lt;/p&gt;
@@ -250,8 +250,8 @@ Why are optional::transform and optional::and_then not constrained by &lt;code&g
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-orgfd1f7cb" class="outline-2"&gt;
-&lt;h2 id="orgfd1f7cb"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Optional "Monadic" Interface&lt;/h2&gt;
+&lt;div id="outline-container-org26292a9" class="outline-2"&gt;
+&lt;h2 id="org26292a9"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Optional "Monadic" Interface&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 &lt;a href="http://wg21.link/P0798"&gt;Monadic operations for std::optional&lt;/a&gt;
@@ -281,8 +281,8 @@ They don't work if you don't give them invocables, and rely on &lt;code&gt;invok
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org8c7b2d9" class="outline-2"&gt;
-&lt;h2 id="org8c7b2d9"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; SFINAE is shallow&lt;/h2&gt;
+&lt;div id="outline-container-orgb9f985e" class="outline-2"&gt;
+&lt;h2 id="orgb9f985e"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; SFINAE is shallow&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 The problem is if another template has to be instantiated in order to evaluate the template of interest, and that template has an error, you get an error, not a substitution failure. And, it turns out, lambdas are a common source of the problem and a common case in real use.
@@ -292,13 +292,13 @@ The problem is if another template has to be instantiated in order to evaluate t
 Consider the code:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;span class="org-type"&gt;void&lt;/span&gt; &lt;span class="org-function-name"&gt;f&lt;/span&gt;(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;);
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-type"&gt;void&lt;/span&gt; &lt;span class="org-function-name"&gt;f&lt;/span&gt;(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;);
 
 &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-variable-name"&gt;l&lt;/span&gt; = [](&lt;span class="org-keyword"&gt;auto&lt;/span&gt;&amp;amp; &lt;span class="org-variable-name"&gt;y&lt;/span&gt;) {
     f(y);
     &lt;span class="org-keyword"&gt;return&lt;/span&gt; 42;
 };
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -309,29 +309,29 @@ The two important parts are the &lt;code&gt;auto&amp;amp;&lt;/code&gt; parameter
 We can rewrite it, to make things possibly more obvious:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-type"&gt;Func&lt;/span&gt; {
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-type"&gt;Func&lt;/span&gt; {
     &lt;span class="org-keyword"&gt;template&lt;/span&gt; &amp;lt;&lt;span class="org-keyword"&gt;typename&lt;/span&gt; &lt;span class="org-type"&gt;T&lt;/span&gt;&amp;gt;
     &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-keyword"&gt;operator&lt;/span&gt;&lt;span class="org-function-name"&gt;()&lt;/span&gt;(&lt;span class="org-type"&gt;T&lt;/span&gt;&amp;amp; &lt;span class="org-variable-name"&gt;t&lt;/span&gt;) {
         f(t);
         &lt;span class="org-keyword"&gt;return&lt;/span&gt; 42;
     }
 };
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
 and to slightly spoil things, the problem code is effectively:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;static_assert(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invocable&lt;/span&gt;&amp;lt;Func, &lt;span class="org-type"&gt;int&lt;/span&gt; &lt;span class="org-keyword"&gt;const&lt;/span&gt;&amp;amp;&amp;gt;);
-&lt;/pre&gt;
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invocable&lt;/span&gt;&amp;lt;Func, &lt;span class="org-type"&gt;int&lt;/span&gt; &lt;span class="org-keyword"&gt;const&lt;/span&gt;&amp;amp;&amp;gt;);
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
 which produces:
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&amp;lt;source&amp;gt;: In instantiation of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-constant"&gt;Func&lt;/span&gt;::&lt;span class="org-keyword"&gt;operator&lt;/span&gt;()(&lt;span class="org-type"&gt;T&lt;/span&gt;&amp;amp;) [with T = &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;]&lt;span class="org-warning"&gt;'&lt;/span&gt;:
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&amp;lt;source&amp;gt;: In instantiation of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-constant"&gt;Func&lt;/span&gt;::&lt;span class="org-keyword"&gt;operator&lt;/span&gt;()(&lt;span class="org-type"&gt;T&lt;/span&gt;&amp;amp;) [with T = &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;]&lt;span class="org-warning"&gt;'&lt;/span&gt;:
 type_traits:2565:26:   required by substitution of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Fn&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; ... &lt;span class="org-type"&gt;_Args&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;static&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__result_of_success&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;decltype&lt;/span&gt; (declval&amp;lt;&lt;span class="org-type"&gt;_Fn&lt;/span&gt;&amp;gt;()((&lt;span class="org-type"&gt;declval&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;_Args&lt;/span&gt;&amp;gt;)()...)), &lt;span class="org-constant"&gt;std&lt;/span&gt;::__invoke_other&amp;gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-constant"&gt;__result_of_other_impl&lt;/span&gt;::_S_test(&lt;span class="org-type"&gt;int&lt;/span&gt;) [with _Fn = Func; _Args = {&lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;}]&lt;span class="org-warning"&gt;'&lt;/span&gt;
 type_traits:2576:55:   required from &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__result_of_impl&lt;/span&gt;&amp;lt;&lt;span class="org-constant"&gt;false&lt;/span&gt;, &lt;span class="org-constant"&gt;false&lt;/span&gt;, Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;&lt;span class="org-warning"&gt;'&lt;/span&gt;
 type_traits:3038:12:   recursively required by substitution of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Result&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Ret&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__is_invocable_impl&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;_Result&lt;/span&gt;, &lt;span class="org-type"&gt;_Ret&lt;/span&gt;, &lt;span class="org-constant"&gt;true&lt;/span&gt;, &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__void_t&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;typename&lt;/span&gt; &lt;span class="org-constant"&gt;_CTp&lt;/span&gt;::&lt;span class="org-type"&gt;type&lt;/span&gt;&amp;gt; &amp;gt; [&lt;span class="org-constant"&gt;with&lt;/span&gt; _Result = &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__invoke_result&lt;/span&gt;&amp;lt;Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;; _Ret = &lt;span class="org-type"&gt;void&lt;/span&gt;]&lt;span class="org-warning"&gt;'&lt;/span&gt;
@@ -345,7 +345,7 @@ concepts:336:25:   required from &lt;span class="org-type"&gt;here&lt;/span&gt;
     2 |     &lt;span class="org-type"&gt;void&lt;/span&gt; f(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;);
       |            ^~~~
 Compiler returned: 1
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;
 &lt;a href="https://compiler-explorer.com/z/W1jT6bxrf"&gt;Compiler Explorer&lt;/a&gt;
@@ -368,20 +368,20 @@ The compiler needs to figure out the overload set in order to resolve which one 
 &lt;/p&gt;
 
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &amp;amp;;
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &amp;amp;;
 &lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &lt;span class="org-keyword"&gt;const&lt;/span&gt; &amp;amp;;
 &lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &amp;amp;&amp;amp;;
 &lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &lt;span class="org-keyword"&gt;const&lt;/span&gt; &amp;amp;&amp;amp;;
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;
 with differing computations of the resulting &lt;code&gt;optional&lt;/code&gt; being returned.
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;F, &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;​::​move(*val))&amp;gt;;
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;F, &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;​::​move(*val))&amp;gt;;
 &lt;span class="org-comment-delimiter"&gt;//&lt;/span&gt;&lt;span class="org-comment"&gt;or
 &lt;/span&gt;&lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-type"&gt;remove_cv_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;F, &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(*val)&amp;gt;&amp;gt;;
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -397,8 +397,8 @@ If we constrain &lt;code&gt;transform&lt;/code&gt; we get the same errors as abo
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org5976902" class="outline-2"&gt;
-&lt;h2 id="org5976902"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Constraints, what are they good for&lt;/h2&gt;
+&lt;div id="outline-container-orgfd357ec" class="outline-2"&gt;
+&lt;h2 id="orgfd357ec"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Constraints, what are they good for&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 Not absolutely nothing.
@@ -453,8 +453,8 @@ Constraints that let you control the choice of alternatives are wonderful, and r
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org388d816" class="outline-2"&gt;
-&lt;h2 id="org388d816"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Can we do better?&lt;/h2&gt;
+&lt;div id="outline-container-orgaf4a588" class="outline-2"&gt;
+&lt;h2 id="orgaf4a588"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Can we do better?&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-4"&gt;
 &lt;p&gt;
 There are some notes in &lt;a href="https://wg21.link/P0798"&gt;P0798&lt;/a&gt; that suggest that Deducing This might help, &lt;a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html"&gt;P0847&lt;/a&gt;.
@@ -472,7 +472,7 @@ P0847 has discussion about how deducing this might be applied to optional. There
 With the tools we have today, it looks possible, but still slightly messy. I managed to get my implementation of optional to compile and pass its own tests with.
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt; &amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;
+&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt; &amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;
     &lt;span class="org-keyword"&gt;requires&lt;/span&gt;(
         &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invocable&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;,
                        &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::declval&amp;lt;T&amp;gt;()))&amp;gt;)
@@ -483,10 +483,10 @@ With the tools we have today, it looks possible, but still slightly messy. I man
     &lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;,
                                    &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(
                                        &lt;span class="org-constant"&gt;std&lt;/span&gt;::declval&amp;lt;T&amp;gt;()))&amp;gt;;
-    static_assert(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_array_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
-    static_assert(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;in_place_t&lt;/span&gt;&amp;gt;);
-    static_assert(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;nullopt_t&lt;/span&gt;&amp;gt;);
-    static_assert(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_object_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt; || &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_reference_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
+    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_array_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
+    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;in_place_t&lt;/span&gt;&amp;gt;);
+    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;nullopt_t&lt;/span&gt;&amp;gt;);
+    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_object_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt; || &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_reference_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
     &lt;span class="org-keyword"&gt;if&lt;/span&gt; (self.has_value()) {
         &lt;span class="org-keyword"&gt;return&lt;/span&gt; &lt;span class="org-type"&gt;optional&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;{&lt;span class="org-constant"&gt;detail&lt;/span&gt;::from_function,
                            &lt;span class="org-constant"&gt;std&lt;/span&gt;::forward&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt;(f),
@@ -494,7 +494,7 @@ With the tools we have today, it looks possible, but still slightly messy. I man
     }
     &lt;span class="org-keyword"&gt;return&lt;/span&gt; &lt;span class="org-type"&gt;optional&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;;
 }
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -512,7 +512,7 @@ If there were a &lt;code&gt;std::forward_like_t&lt;/code&gt;, it might be possib
       <name>Steve Downey</name>
     </author>
     <link rel="alternate" type="text/html" href="https://sdowney.org/posts/nikola-blog-infrastructure/"/>
-    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="org334ae85"&gt;
+    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="org26af89d"&gt;
 &lt;p&gt;
 I've migrated from WordPress to a static blog generator–Nikola. This is how it works.
 &lt;/p&gt;
@@ -520,7 +520,7 @@ I've migrated from WordPress to a static blog generator–Nikola. This is how it
 &lt;/div&gt;
 
 &lt;p&gt;&lt;a href="https://sdowney.org/posts/nikola-blog-infrastructure/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</summary>
-    <content type="html">&lt;div class="abstract" id="org334ae85"&gt;
+    <content type="html">&lt;div class="abstract" id="org26af89d"&gt;
 &lt;p&gt;
 I've migrated from WordPress to a static blog generator–Nikola. This is how it works.
 &lt;/p&gt;
@@ -528,8 +528,8 @@ I've migrated from WordPress to a static blog generator–Nikola. This is how it
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-org71ed231" class="outline-2"&gt;
-&lt;h2 id="org71ed231"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Nikola&lt;/h2&gt;
+&lt;div id="outline-container-org180311a" class="outline-2"&gt;
+&lt;h2 id="org180311a"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Nikola&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 Nikola is a static site generator written in python. It's mostly boring, which is a very good thing for software meant for use to be. Its home is &lt;a href="https://getnikola.org"&gt;https://getnikola.org&lt;/a&gt; and the source is on github at &lt;a href="https://github.com/getnikola/nikola"&gt;https://github.com/getnikola/nikola&lt;/a&gt;. It's many years old at this point, but not dead.
@@ -548,27 +548,27 @@ Conversion was straightforward using the tools that Nikola provided and &lt;a hr
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgad64039" class="outline-2"&gt;
-&lt;h2 id="orgad64039"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Orgmode plugin&lt;/h2&gt;
+&lt;div id="outline-container-org6de6760" class="outline-2"&gt;
+&lt;h2 id="org6de6760"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Orgmode plugin&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 Pulling a plugin into my working site was easy
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-zsh"&gt;nikola plugin -i orgmode
-&lt;/pre&gt;
+&lt;pre class="src src-zsh"&gt;&lt;code&gt;nikola plugin -i orgmode
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;
 copied the code from &lt;a href="https://github.com/getnikola/plugins/tree/master/v8/orgmode"&gt;https://github.com/getnikola/plugins/tree/master/v8/orgmode&lt;/a&gt; and I just had to update the main configuration file, &lt;code&gt;conf.py&lt;/code&gt;, to map org files to the orgmode compiler.
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-python"&gt;&lt;span class="org-variable-name"&gt;COMPILERS&lt;/span&gt; &lt;span class="org-operator"&gt;=&lt;/span&gt; {
+&lt;pre class="src src-python"&gt;&lt;code&gt;&lt;span class="org-variable-name"&gt;COMPILERS&lt;/span&gt; &lt;span class="org-operator"&gt;=&lt;/span&gt; {
     &lt;span class="org-string"&gt;"rest"&lt;/span&gt;: [&lt;span class="org-string"&gt;'.txt'&lt;/span&gt;, &lt;span class="org-string"&gt;'.rst'&lt;/span&gt;],
     &lt;span class="org-string"&gt;"markdown"&lt;/span&gt;: [&lt;span class="org-string"&gt;'.md'&lt;/span&gt;, &lt;span class="org-string"&gt;'.mdown'&lt;/span&gt;, &lt;span class="org-string"&gt;'.markdown'&lt;/span&gt;],
     &lt;span class="org-string"&gt;"html"&lt;/span&gt;: [&lt;span class="org-string"&gt;'.html'&lt;/span&gt;, &lt;span class="org-string"&gt;'.htm'&lt;/span&gt;],
     &lt;span class="org-string"&gt;"orgmode"&lt;/span&gt;: [&lt;span class="org-string"&gt;'.org'&lt;/span&gt;],
 }
-&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
@@ -576,8 +576,8 @@ I then updated the source code for the elisp html exporter using code from &lt;a
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfd56a24" class="outline-2"&gt;
-&lt;h2 id="orgfd56a24"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; LaTeX support via KaTeX&lt;/h2&gt;
+&lt;div id="outline-container-orgb2416a7" class="outline-2"&gt;
+&lt;h2 id="orgb2416a7"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; LaTeX support via KaTeX&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 I've configure Nikola to support LaTeX via KaTeX rather than MathJax. It is supposed to be a bit faster. This means &lt;b&gt;inline&lt;/b&gt; math like \(x^2\) or \(1 &amp;lt; 2\) or with breaks like:
@@ -588,10 +588,10 @@ Or in running text where I want to mention \[ \frac{-b \pm \sqrt{b^2 - 4 a c}}{2
 It does mean I don't have access to latex blocks like
 &lt;/p&gt;
 &lt;div class="org-src-container"&gt;
-&lt;pre class="src src-latex"&gt;&lt;span class="org-font-latex-sedate"&gt;&lt;span class="org-keyword"&gt;\begin&lt;/span&gt;&lt;/span&gt;{&lt;span class="org-function-name"&gt;equation&lt;/span&gt;}&lt;span class="org-font-latex-math"&gt;
-  n&lt;/span&gt;&lt;span class="org-font-latex-math"&gt;&lt;span class="org-font-latex-script-char"&gt;_{i+1}&lt;/span&gt;&lt;/span&gt;&lt;span class="org-font-latex-math"&gt; = &lt;/span&gt;&lt;span class="org-font-latex-sedate"&gt;&lt;span class="org-font-latex-math"&gt;\frac&lt;/span&gt;&lt;/span&gt;&lt;span class="org-font-latex-math"&gt;{n&lt;/span&gt;&lt;span class="org-font-latex-math"&gt;&lt;span class="org-font-latex-script-char"&gt;_{i}&lt;/span&gt;&lt;/span&gt;&lt;span class="org-font-latex-math"&gt; (d-i) (e-1)}{(i+1)}
-&lt;/span&gt;&lt;span class="org-font-latex-sedate"&gt;&lt;span class="org-keyword"&gt;\end&lt;/span&gt;&lt;/span&gt;{&lt;span class="org-function-name"&gt;equation&lt;/span&gt;}
-&lt;/pre&gt;
+&lt;pre class="src src-latex"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;\begin&lt;/span&gt;{&lt;span class="org-function-name"&gt;equation&lt;/span&gt;}
+  n_{i+1} = &lt;span class="org-keyword"&gt;\frac&lt;/span&gt;{n_{i} (d-i) (e-1)}{(i+1)}
+&lt;span class="org-keyword"&gt;\end&lt;/span&gt;{&lt;span class="org-function-name"&gt;equation&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
 &lt;p&gt;
