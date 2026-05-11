@@ -3,7 +3,333 @@
  &lt;a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/"&gt;
  &lt;img alt="Creative Commons License BY-NC-SA"
  style="border-width:0; margin-bottom:12px;"
- src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"&gt;&lt;/a&gt;</copyright><lastBuildDate>Mon, 11 May 2026 03:27:53 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Building vcpkg dependencies with project toolchain</title><link>https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="org5aa0087"&gt;
+ src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"&gt;&lt;/a&gt;</copyright><lastBuildDate>Mon, 11 May 2026 03:35:22 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Tailwind, Modus Themes, and the Blog Theming Workflow</title><link>https://sdowney.org/posts/tailwind-theme-workflow/</link><dc:creator>Steve Downey</dc:creator><description>&lt;p&gt;
+I replaced the Foundation 6 theme on this blog with Tailwind CSS.  The
+immediate motivation was a CSS conflict—Foundation's global &lt;code&gt;code&lt;/code&gt; and &lt;code&gt;kbd&lt;/code&gt;
+rules bled into org-mode source blocks—but the deeper reason is that Tailwind
+has the community and documentation that Foundation no longer does.
+&lt;/p&gt;
+
+&lt;p&gt;
+This post documents the workflow: how the theme is structured, how syntax
+highlighting CSS connects Emacs to the browser, and what the current
+configuration choices are.
+&lt;/p&gt;
+
+&lt;!-- TEASER_END --&gt;
+&lt;div id="outline-container-org433cad8" class="outline-2"&gt;
+&lt;h2 id="org433cad8"&gt;The Theme Stack&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org433cad8"&gt;
+&lt;p&gt;
+The blog uses three Nikola themes stacked via the parent chain:
+&lt;/p&gt;
+
+&lt;pre class="example" id="orge6be084"&gt;
+sdowney-tailwind → nikola-tailwind-blog → nikola-tailwind-base → base
+&lt;/pre&gt;
+
+&lt;p&gt;
+&lt;code&gt;nikola-tailwind-base&lt;/code&gt; provides the Tailwind Play CDN loading, a responsive
+navbar, a centered content column wrapped in Tailwind's &lt;code&gt;prose&lt;/code&gt; class, and CSS
+for org-mode source blocks (centering, language labels, copy buttons).  It has
+no opinions about fonts or accent colors.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;code&gt;nikola-tailwind-blog&lt;/code&gt; adds an indigo accent, post/index/tag templates, and the
+visual structure of a blog.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;code&gt;sdowney-tailwind&lt;/code&gt; is just my personal layer: Google Fonts (Source Sans 3, Open
+Sans, Source Code Pro), Font Awesome, and the modus-vivendi syntax highlighting
+CSS.
+&lt;/p&gt;
+
+&lt;p&gt;
+Each tier is a standard Nikola theme directory under &lt;code&gt;themes/&lt;/code&gt;.  Nikola finds
+templates by walking the chain, so I only override what I actually change.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org5b0b0ff" class="outline-2"&gt;
+&lt;h2 id="org5b0b0ff"&gt;How Tailwind Is Loaded&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5b0b0ff"&gt;
+&lt;p&gt;
+The Tailwind Play CDN is a &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; tag that processes utility classes at
+runtime:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="src src-html"&gt;&lt;code&gt;&amp;lt;&lt;span class="org-function-name"&gt;script&lt;/span&gt; &lt;span class="org-variable-name"&gt;src&lt;/span&gt;=&lt;span class="org-string"&gt;"https://cdn.tailwindcss.com?plugins=typography"&lt;/span&gt;&amp;gt;&amp;lt;/&lt;span class="org-function-name"&gt;script&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The Typography plugin provides the &lt;code&gt;prose&lt;/code&gt; class, which styles all content
+elements (headings, paragraphs, lists, blockquotes, code, tables) inside the
+main content area.  For a blog where content comes from org-mode export, this
+is exactly right—I don't control the HTML org produces, and &lt;code&gt;prose&lt;/code&gt; handles
+it gracefully.
+&lt;/p&gt;
+
+&lt;p&gt;
+The Tailwind config is inline in a &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; block, defined in my personal
+&lt;code&gt;base_helper.tmpl&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="src src-javascript"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;var&lt;/span&gt; &lt;span class="org-variable-name"&gt;heading&lt;/span&gt; = [&lt;span class="org-string"&gt;'"Open Sans"'&lt;/span&gt;, &lt;span class="org-string"&gt;'Roboto'&lt;/span&gt;, &lt;span class="org-string"&gt;'Arial'&lt;/span&gt;, &lt;span class="org-string"&gt;'sans-serif'&lt;/span&gt;];
+tailwind.config = {
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: [&lt;span class="org-string"&gt;'"Source Sans 3"'&lt;/span&gt;].concat(heading),
+                heading: heading,
+                mono: [&lt;span class="org-string"&gt;'"Source Code Pro"'&lt;/span&gt;, &lt;span class="org-string"&gt;'Inconsolata'&lt;/span&gt;, &lt;span class="org-string"&gt;'ui-monospace'&lt;/span&gt;, &lt;span class="org-string"&gt;'Courier'&lt;/span&gt;, &lt;span class="org-string"&gt;'monospace'&lt;/span&gt;],
+            },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        &lt;span class="org-string"&gt;'h1, h2, h3, h4, h5, h6'&lt;/span&gt;: {
+                            fontFamily: heading.join(&lt;span class="org-string"&gt;', '&lt;/span&gt;),
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Font stacks are defined once.  The &lt;code&gt;heading&lt;/code&gt; array is reused in three places.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org4bbe7fc" class="outline-2"&gt;
+&lt;h2 id="org4bbe7fc"&gt;Source Block Rendering&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org4bbe7fc"&gt;
+&lt;p&gt;
+Org-mode's HTML exporter produces this structure:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="src src-html"&gt;&lt;code&gt;&amp;lt;&lt;span class="org-function-name"&gt;div&lt;/span&gt; &lt;span class="org-variable-name"&gt;class&lt;/span&gt;=&lt;span class="org-string"&gt;"org-src-container"&lt;/span&gt;&amp;gt;
+  &amp;lt;&lt;span class="org-function-name"&gt;pre&lt;/span&gt; &lt;span class="org-variable-name"&gt;class&lt;/span&gt;=&lt;span class="org-string"&gt;"src src-cpp"&lt;/span&gt;&amp;gt;
+    &amp;lt;&lt;span class="org-function-name"&gt;code&lt;/span&gt;&amp;gt;&amp;lt;&lt;span class="org-function-name"&gt;span&lt;/span&gt; &lt;span class="org-variable-name"&gt;class&lt;/span&gt;=&lt;span class="org-string"&gt;"org-keyword"&lt;/span&gt;&amp;gt;template&amp;lt;/&lt;span class="org-function-name"&gt;span&lt;/span&gt;&amp;gt; ...&amp;lt;/&lt;span class="org-function-name"&gt;code&lt;/span&gt;&amp;gt;
+  &amp;lt;/&lt;span class="org-function-name"&gt;pre&lt;/span&gt;&amp;gt;
+&amp;lt;/&lt;span class="org-function-name"&gt;div&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The &lt;code&gt;src-cpp&lt;/code&gt; class carries the language.  JavaScript in &lt;code&gt;base.tmpl&lt;/code&gt; reads it,
+maps &lt;code&gt;cpp&lt;/code&gt; to "C++", and injects a label in the top-left corner and a copy
+button in the top-right.  Any language works—unknown ones display their raw
+name.
+&lt;/p&gt;
+
+&lt;p&gt;
+The CSS positions the container with &lt;code&gt;position: relative&lt;/code&gt;, &lt;code&gt;margin: auto&lt;/code&gt;,
+&lt;code&gt;width: fit-content&lt;/code&gt;, &lt;code&gt;min-width: 60%&lt;/code&gt;, and gives the &lt;code&gt;pre&lt;/code&gt; a dark background
+(&lt;code&gt;--code-bg&lt;/code&gt;) with padding.  The &lt;code&gt;padding-top: 2.25rem&lt;/code&gt; makes room for the
+label and button.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org7bb3059" class="outline-2"&gt;
+&lt;h2 id="org7bb3059"&gt;Syntax Highlighting: The Modus Connection&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org7bb3059"&gt;
+&lt;p&gt;
+Org-mode's HTML exporter uses &lt;code&gt;htmlize&lt;/code&gt; to apply face colors as CSS classes.
+When &lt;code&gt;org-html-htmlize-output-type&lt;/code&gt; is &lt;code&gt;'css&lt;/code&gt;, it produces &lt;code&gt;&amp;lt;span
+class&lt;/code&gt;"org-keyword"&amp;gt;=, &lt;code&gt;&amp;lt;span class&lt;/code&gt;"org-type"&amp;gt;=, etc.  The corresponding CSS
+must exist in an external stylesheet.
+&lt;/p&gt;
+
+&lt;p&gt;
+Protesilaos Stavrou's &lt;a href="https://protesilaos.com/emacs/modus-themes"&gt;modus-themes&lt;/a&gt; provide a structured palette: an alist of
+&lt;code&gt;(semantic-name . hex-color)&lt;/code&gt; pairs.  Face definitions reference these palette
+names.  &lt;code&gt;font-lock-keyword-face&lt;/code&gt;, for example, maps to &lt;code&gt;magenta-alt-other&lt;/code&gt; in
+modus-vivendi.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;code&gt;secretaire-css.el&lt;/code&gt; bridges Emacs and the browser:
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;Load the target theme (e.g., &lt;code&gt;modus-vivendi-tinted&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Require deferred major modes so their faces exist&lt;/li&gt;
+&lt;li&gt;Read the palette via &lt;code&gt;(modus-themes-current-palette)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;For each face, resolve attributes and reverse-map hex → palette name&lt;/li&gt;
+&lt;li&gt;Emit CSS rules using &lt;code&gt;var(--palette-name)&lt;/code&gt; references&lt;/li&gt;
+&lt;li&gt;Include only referenced palette entries in the &lt;code&gt;:root&lt;/code&gt; block&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+The result:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="src src-css"&gt;&lt;code&gt;&lt;span class="org-css-selector"&gt;:root&lt;/span&gt; {
+    &lt;span class="org-variable-name"&gt;--bg-main&lt;/span&gt;: &lt;span class="custom-3"&gt;#0d0e1c&lt;/span&gt;;
+    &lt;span class="org-variable-name"&gt;--fg-main&lt;/span&gt;: &lt;span class="custom-2"&gt;#ffffff&lt;/span&gt;;
+    &lt;span class="org-variable-name"&gt;--magenta-alt-other&lt;/span&gt;: &lt;span class="custom-1"&gt;#b6a0ff&lt;/span&gt;;
+    &lt;span class="org-variable-name"&gt;--green&lt;/span&gt;: &lt;span class="custom"&gt;#44bc44&lt;/span&gt;;
+    &lt;span class="org-comment-delimiter"&gt;/* &lt;/span&gt;&lt;span class="org-comment"&gt;... only used entries ...&lt;/span&gt;&lt;span class="org-comment-delimiter"&gt; */&lt;/span&gt;
+}
+
+&lt;span class="org-comment-delimiter"&gt;/* &lt;/span&gt;&lt;span class="org-comment"&gt;font-lock-keyword-face: magenta-alt-other&lt;/span&gt;&lt;span class="org-comment-delimiter"&gt; */&lt;/span&gt;
+&lt;span class="org-css-selector"&gt;.org-keyword&lt;/span&gt; {
+    &lt;span class="org-css-property"&gt;color&lt;/span&gt;: var(&lt;span class="org-variable-name"&gt;--magenta-alt-other&lt;/span&gt;);
+    &lt;span class="org-css-property"&gt;font-weight&lt;/span&gt;: bold;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The &lt;code&gt;tailwind-base.css&lt;/code&gt; file in the base tier references these variables:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="src src-css"&gt;&lt;code&gt;&lt;span class="org-css-selector"&gt;:root&lt;/span&gt; {
+    &lt;span class="org-variable-name"&gt;--code-bg&lt;/span&gt;: var(&lt;span class="org-variable-name"&gt;--bg-main&lt;/span&gt;, &lt;span class="custom-1"&gt;#1e1e2e&lt;/span&gt;);
+    &lt;span class="org-variable-name"&gt;--code-fg&lt;/span&gt;: var(&lt;span class="org-variable-name"&gt;--fg-main&lt;/span&gt;, &lt;span class="custom"&gt;#cdd6f4&lt;/span&gt;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Change the modus variant, regenerate, and code block backgrounds follow.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org80e1ae0" class="outline-2"&gt;
+&lt;h2 id="org80e1ae0"&gt;Current Configuration&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org80e1ae0"&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org1222cb9" class="outline-3"&gt;
+&lt;h3 id="org1222cb9"&gt;What's using the Play CDN&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org1222cb9"&gt;
+&lt;p&gt;
+The Tailwind Play CDN generates CSS client-side.  There is no &lt;code&gt;node_modules&lt;/code&gt;,
+no &lt;code&gt;package.json&lt;/code&gt;, no build step.  Page load includes a brief delay while
+Tailwind processes the utility classes.  For a personal blog with moderate
+traffic, this is acceptable.
+&lt;/p&gt;
+
+&lt;p&gt;
+If it becomes a problem, the switch to a pre-built CSS file is
+straightforward: install the Tailwind CLI, run &lt;code&gt;npx tailwindcss -o
+tailwind.css&lt;/code&gt;, replace the &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; with a &lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-orgf7365d6" class="outline-3"&gt;
+&lt;h3 id="orgf7365d6"&gt;Typography plugin via prose&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-orgf7365d6"&gt;
+&lt;p&gt;
+The &lt;code&gt;prose prose-lg prose-indigo&lt;/code&gt; classes on the content &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; provide:
+&lt;/p&gt;
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;Reasonable line lengths and spacing&lt;/li&gt;
+&lt;li&gt;Styled headings, links, lists, blockquotes, tables&lt;/li&gt;
+&lt;li&gt;Code blocks with monospace font&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prose-indigo&lt;/code&gt; for accent-colored links&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+Anything outside &lt;code&gt;prose&lt;/code&gt; (navbar, footer, tag pills) uses &lt;code&gt;not-prose&lt;/code&gt; or
+lives outside the &lt;code&gt;prose&lt;/code&gt; wrapper.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org8c974cf" class="outline-3"&gt;
+&lt;h3 id="org8c974cf"&gt;Fonts&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org8c974cf"&gt;
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;Body: Source Sans 3 (with Open Sans fallback)&lt;/li&gt;
+&lt;li&gt;Headings: Open Sans&lt;/li&gt;
+&lt;li&gt;Code: Source Code Pro&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+All loaded via Google Fonts.  Tailwind's &lt;code&gt;font-sans&lt;/code&gt; and &lt;code&gt;font-mono&lt;/code&gt; utilities
+reference these through the config.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org24453a3" class="outline-3"&gt;
+&lt;h3 id="org24453a3"&gt;Accent color: indigo&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org24453a3"&gt;
+&lt;p&gt;
+Tailwind's &lt;code&gt;indigo&lt;/code&gt; palette provides the accent: &lt;code&gt;bg-indigo-700&lt;/code&gt; for the
+header banner, &lt;code&gt;text-indigo-600&lt;/code&gt; for links, &lt;code&gt;bg-indigo-100 text-indigo-700&lt;/code&gt;
+for tag pills.  Changing to another color is a mechanical search-replace
+across the blog tier templates.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-orgb38f354" class="outline-3"&gt;
+&lt;h3 id="orgb38f354"&gt;Icons: Font Awesome 7.0.1&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-orgb38f354"&gt;
+&lt;p&gt;
+Loaded via CDN in the personal tier.  Navigation links in &lt;code&gt;conf.py&lt;/code&gt; include
+Font Awesome &lt;code&gt;&amp;lt;i&amp;gt;&lt;/code&gt; tags directly in the link text.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org01badc2" class="outline-2"&gt;
+&lt;h2 id="org01badc2"&gt;What I Might Tweak Later&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org01badc2"&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org10520c9" class="outline-3"&gt;
+&lt;h3 id="org10520c9"&gt;Dark mode&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org10520c9"&gt;
+&lt;p&gt;
+The syntax highlighting is already dark (modus-vivendi).  The page chrome is
+light.  A proper dark mode would add &lt;code&gt;dark:&lt;/code&gt; variants to the templates and
+switch the modus CSS to operandi for the light code blocks.  Tailwind makes
+this straightforward with &lt;code&gt;darkMode: 'media'&lt;/code&gt; in the config.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org3d875f7" class="outline-3"&gt;
+&lt;h3 id="org3d875f7"&gt;Production Tailwind&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org3d875f7"&gt;
+&lt;p&gt;
+If page load times bother me, switching to a pre-built CSS file removes the
+Play CDN runtime cost.  The config is already defined inline; moving it to
+&lt;code&gt;tailwind.config.js&lt;/code&gt; is mechanical.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org1f08fd9" class="outline-3"&gt;
+&lt;h3 id="org1f08fd9"&gt;Palette-aware CSS generation&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org1f08fd9"&gt;
+&lt;p&gt;
+&lt;code&gt;secretaire-css&lt;/code&gt; currently falls back to htmlize for the actual face scanning
+when the modus palette API isn't available.  The full palette-aware path (emitting
+&lt;code&gt;var()&lt;/code&gt; references instead of flat hex) works with modus-themes 3.x and 4.x.
+See &lt;code&gt;docs/secretaire-css-design.org&lt;/code&gt; for what the ideal output looks like.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org23308b6" class="outline-3"&gt;
+&lt;h3 id="org23308b6"&gt;Fonts&lt;/h3&gt;
+&lt;div class="outline-text-3" id="text-org23308b6"&gt;
+&lt;p&gt;
+I'm eyeing &lt;a href="https://www.brailleinstitute.org/freefont/"&gt;Atkinson Hyperlegible Next&lt;/a&gt; for body text.  Changing fonts is a
+two-place edit: the Google Fonts &lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; tag and the Tailwind config in
+&lt;code&gt;base_helper.tmpl&lt;/code&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>emacs</category><category>modus-themes</category><category>nikola</category><category>org-mode</category><category>tailwind</category><guid>https://sdowney.org/posts/tailwind-theme-workflow/</guid><pubDate>Sun, 10 May 2026 22:00:00 GMT</pubDate></item><item><title>Building vcpkg dependencies with project toolchain</title><link>https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="org66bc0c2"&gt;
 &lt;p&gt;
 Making sure vcpkg delivers packages built with your toolchain is not hard, but much of the advice on the internet is flat wrong. You need to specify your toolchain both in your project and in the the vcpkg &lt;code&gt;triplet&lt;/code&gt;. There's an airgap between your project and the dependency in &lt;code&gt;vcpkg install&lt;/code&gt;. The CMake settings can't just flow through.
 &lt;/p&gt;
@@ -11,8 +337,8 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-org5255a7c" class="outline-2"&gt;
-&lt;h2 id="org5255a7c"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Toolchain is more than just the compiler&lt;/h2&gt;
+&lt;div id="outline-container-orgbfc5f70" class="outline-2"&gt;
+&lt;h2 id="orgbfc5f70"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Toolchain is more than just the compiler&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 Inside a link context everything needs to use the same definitions for everything or your program breaks. If you are lucky it will fail to link. If you are unlucky it will link and explode at runtime. Or you might have the worst kind of undefined behavior–working the way you expect it to. For now.
@@ -27,8 +353,8 @@ The toolchain should encompass all of the ABI affecting flags, and most flags af
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orga5e09b3" class="outline-2"&gt;
-&lt;h2 id="orga5e09b3"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Using a toolchain with &lt;code&gt;vcpkg&lt;/code&gt; in-project&lt;/h2&gt;
+&lt;div id="outline-container-org1b0e704" class="outline-2"&gt;
+&lt;h2 id="org1b0e704"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Using a toolchain with &lt;code&gt;vcpkg&lt;/code&gt; in-project&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 There are several techniques for using vcpkg for dependency management and specifying a toolchain to use for compilation of the artifacts in a project. For an open source project, the problem is generally how to do so without locking everyone into &lt;code&gt;vcpkg&lt;/code&gt;. The current theory for CMake is to provide dependency provider hooks via CMAKE_PROJECT_TOP_LEVEL_INCLUDES, which are a list of files cmake will process before anything else, and in particular before the &lt;code&gt;project&lt;/code&gt; statement. The Beman Project has a primitive dependency provider, &lt;a href="https://github.com/bemanproject/infra/blob/main/cmake/use-fetch-content.cmake"&gt;use-fetch-content.cmake&lt;/a&gt;, that converts &lt;code&gt;find_package&lt;/code&gt; into &lt;code&gt;FetchContent&lt;/code&gt; and downloads and builds from Git URLs. This is an alternative to vendoring dependencies in-tree directly using git submodules or git subtrees.
@@ -134,8 +460,8 @@ Building with the &lt;code&gt;cmake&lt;/code&gt; command line flags above will e
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgbfe975d" class="outline-2"&gt;
-&lt;h2 id="orgbfe975d"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Building Dependencies with your Toolchain.&lt;/h2&gt;
+&lt;div id="outline-container-org796045c" class="outline-2"&gt;
+&lt;h2 id="org796045c"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Building Dependencies with your Toolchain.&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 The mechanism &lt;code&gt;vcpkg&lt;/code&gt; provides for injecting a toolchain into a dependency is a custom &lt;code&gt;triple&lt;/code&gt; that provides a VCPKG_CHAINLOAD_TOOLCHAIN_FILE. Because of the intermediate invocation of &lt;code&gt;vcpkg&lt;/code&gt;, setting VCPKG_CHAINLOAD_TOOLCHAIN_FILE in your project does not affect how &lt;code&gt;vcpkg&lt;/code&gt; builds or provides anything.
@@ -180,8 +506,8 @@ With this, &lt;code&gt;vcpkg&lt;/code&gt; will use the toolchain I specify to bu
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf4260ff" class="outline-2"&gt;
-&lt;h2 id="orgf4260ff"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Someone is Wrong on the Internet&lt;/h2&gt;
+&lt;div id="outline-container-orge9244cf" class="outline-2"&gt;
+&lt;h2 id="orge9244cf"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Someone is Wrong on the Internet&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-4"&gt;
 &lt;p&gt;
 This took far longer to work out than it should because there is much advice that is flat out wrong.
@@ -199,7 +525,7 @@ Setting VCPKG_CHAINLOAD_TOOLCHAIN_FILE in your project or on the &lt;code&gt;cma
 You must set a custom &lt;code&gt;triple&lt;/code&gt; file that sets VCPKG_CHAINLOAD_TOOLCHAIN_FILE in order to use that CMake toolchain with &lt;code&gt;vcpkg&lt;/code&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><guid>https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/</guid><pubDate>Sat, 27 Dec 2025 17:03:15 GMT</pubDate></item><item><title>Substitution is Sometimes a Failure</title><link>https://sdowney.org/posts/substitution-is-sometimes-a-failure/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="org539e557"&gt;
+&lt;/div&gt;</description><guid>https://sdowney.org/posts/building-vcpkg-dependencies-with-project-toolchain/</guid><pubDate>Sat, 27 Dec 2025 17:03:15 GMT</pubDate></item><item><title>Substitution is Sometimes a Failure</title><link>https://sdowney.org/posts/substitution-is-sometimes-a-failure/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="orga1158c3"&gt;
 &lt;p&gt;
 Why are optional::transform and optional::and_then not constrained by &lt;code&gt;invocable&lt;/code&gt;?
 &lt;/p&gt;
@@ -207,8 +533,8 @@ Why are optional::transform and optional::and_then not constrained by &lt;code&g
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-org26292a9" class="outline-2"&gt;
-&lt;h2 id="org26292a9"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Optional "Monadic" Interface&lt;/h2&gt;
+&lt;div id="outline-container-orge3357ec" class="outline-2"&gt;
+&lt;h2 id="orge3357ec"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Optional "Monadic" Interface&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 &lt;a href="http://wg21.link/P0798"&gt;Monadic operations for std::optional&lt;/a&gt;
@@ -238,8 +564,8 @@ They don't work if you don't give them invocables, and rely on &lt;code&gt;invok
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb9f985e" class="outline-2"&gt;
-&lt;h2 id="orgb9f985e"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; SFINAE is shallow&lt;/h2&gt;
+&lt;div id="outline-container-org5ae0e13" class="outline-2"&gt;
+&lt;h2 id="org5ae0e13"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; SFINAE is shallow&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 The problem is if another template has to be instantiated in order to evaluate the template of interest, and that template has an error, you get an error, not a substitution failure. And, it turns out, lambdas are a common source of the problem and a common case in real use.
@@ -354,8 +680,8 @@ If we constrain &lt;code&gt;transform&lt;/code&gt; we get the same errors as abo
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfd357ec" class="outline-2"&gt;
-&lt;h2 id="orgfd357ec"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Constraints, what are they good for&lt;/h2&gt;
+&lt;div id="outline-container-org12edaab" class="outline-2"&gt;
+&lt;h2 id="org12edaab"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Constraints, what are they good for&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 Not absolutely nothing.
@@ -410,8 +736,8 @@ Constraints that let you control the choice of alternatives are wonderful, and r
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgaf4a588" class="outline-2"&gt;
-&lt;h2 id="orgaf4a588"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Can we do better?&lt;/h2&gt;
+&lt;div id="outline-container-org1036e2e" class="outline-2"&gt;
+&lt;h2 id="org1036e2e"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Can we do better?&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-4"&gt;
 &lt;p&gt;
 There are some notes in &lt;a href="https://wg21.link/P0798"&gt;P0798&lt;/a&gt; that suggest that Deducing This might help, &lt;a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html"&gt;P0847&lt;/a&gt;.
@@ -458,7 +784,7 @@ With the tools we have today, it looks possible, but still slightly messy. I man
 If there were a &lt;code&gt;std::forward_like_t&lt;/code&gt;, it might be possible to reduce some of the noise in computing the value category used for the &lt;code&gt;T&lt;/code&gt;. I also have not thought extensively about if the requires clause is truly needed in light of the &lt;code&gt;invoke_result_&lt;/code&gt; that can now be used in the trailing return type.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><guid>https://sdowney.org/posts/substitution-is-sometimes-a-failure/</guid><pubDate>Fri, 28 Nov 2025 17:06:58 GMT</pubDate></item><item><title>Nikola Blog Infrastructure</title><link>https://sdowney.org/posts/nikola-blog-infrastructure/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="org26af89d"&gt;
+&lt;/div&gt;</description><guid>https://sdowney.org/posts/substitution-is-sometimes-a-failure/</guid><pubDate>Fri, 28 Nov 2025 17:06:58 GMT</pubDate></item><item><title>Nikola Blog Infrastructure</title><link>https://sdowney.org/posts/nikola-blog-infrastructure/</link><dc:creator>Steve Downey</dc:creator><description>&lt;div class="abstract" id="orgfe063e8"&gt;
 &lt;p&gt;
 I've migrated from WordPress to a static blog generator–Nikola. This is how it works.
 &lt;/p&gt;
@@ -466,8 +792,8 @@ I've migrated from WordPress to a static blog generator–Nikola. This is how it
 &lt;/div&gt;
 
 &lt;!-- TEASER_END --&gt;
-&lt;div id="outline-container-org180311a" class="outline-2"&gt;
-&lt;h2 id="org180311a"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Nikola&lt;/h2&gt;
+&lt;div id="outline-container-org709c23a" class="outline-2"&gt;
+&lt;h2 id="org709c23a"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Nikola&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-1"&gt;
 &lt;p&gt;
 Nikola is a static site generator written in python. It's mostly boring, which is a very good thing for software meant for use to be. Its home is &lt;a href="https://getnikola.org"&gt;https://getnikola.org&lt;/a&gt; and the source is on github at &lt;a href="https://github.com/getnikola/nikola"&gt;https://github.com/getnikola/nikola&lt;/a&gt;. It's many years old at this point, but not dead.
@@ -486,8 +812,8 @@ Conversion was straightforward using the tools that Nikola provided and &lt;a hr
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org6de6760" class="outline-2"&gt;
-&lt;h2 id="org6de6760"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Orgmode plugin&lt;/h2&gt;
+&lt;div id="outline-container-org92b4ec3" class="outline-2"&gt;
+&lt;h2 id="org92b4ec3"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; Orgmode plugin&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-2"&gt;
 &lt;p&gt;
 Pulling a plugin into my working site was easy
@@ -514,8 +840,8 @@ I then updated the source code for the elisp html exporter using code from &lt;a
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb2416a7" class="outline-2"&gt;
-&lt;h2 id="orgb2416a7"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; LaTeX support via KaTeX&lt;/h2&gt;
+&lt;div id="outline-container-orgd38040b" class="outline-2"&gt;
+&lt;h2 id="orgd38040b"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; LaTeX support via KaTeX&lt;/h2&gt;
 &lt;div class="outline-text-2" id="text-3"&gt;
 &lt;p&gt;
 I've configure Nikola to support LaTeX via KaTeX rather than MathJax. It is supposed to be a bit faster. This means &lt;b&gt;inline&lt;/b&gt; math like \(x^2\) or \(1 &amp;lt; 2\) or with breaks like:
@@ -3103,174 +3429,4 @@ I have not done a good job at allocating names to the various bits and pieces. P
 
 &lt;p&gt; &lt;a href="https://github.com/steve-downey/what-comes-to-mind/blob/master/send-rec.org"&gt;Source For Blog&lt;/a&gt; &lt;/p&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><guid>https://sdowney.org/posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/</guid><pubDate>Sun, 03 Oct 2021 04:00:00 GMT</pubDate></item><item><title>Standard Vocabulary for Algorithms</title><link>https://sdowney.org/posts/index.php/2021/01/16/standard-vocabulary-for-algorithms/</link><dc:creator>Steve Downey</dc:creator><description>&lt;p&gt;This is feedback after considering &lt;a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2214r0.html"&gt;A Plan for C++23 Ranges&lt;/a&gt;
-
-Disclosure: I voted in favor of this. It does &lt;b&gt;not&lt;/b&gt; suggest work on &lt;a href="https://wg21.link/P1255"&gt;views::maybe [P1255R6]​&lt;/a&gt;. I'm fine with that priority.
-&lt;/p&gt;&lt;div id="outline-container-orga27da53" class="outline-2"&gt;
-&lt;h3 id="orga27da53"&gt;Vocabulary is not just Types between Components&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-orga27da53"&gt;
-
- There's broad agreement that 'vocabulary types' belong in the standard. Domain independent types that can be used between otherwise uncoupled facilities. They each depend on facilities provided by Standard C++ and can thus be developed independently. Each component can rely on the API of a core vocabulary type not changing. This allows facilities to communicate effectively.
-
-A component can have std::string or std::vector&amp;lt;int&amp;gt; in its interface with little concern. The STL parts of the standard library have always relied on concepts for constraining template parameters implicitly, requiring an Iterator of particular category in places, or specializing algorithms based on such. Composition of container types has also been natural. No one is confused by a std::unordered_map&amp;lt;std::string, std::vector&amp;lt;my::person&amp;gt;&amp;gt;.
-
-&lt;!-- TEASER_END --&gt;
-
-The new C++20 range facilities allow composition of algorithms, which means that the names of algorithms will, and must, become part of the vocabulary of C++ programmers. Algorithms, and the names for them, are far broader than the linear containers supported by C++ today. It is a particular problem because C++ has named core algorithms badly, as they were not, until recently, first class entities.
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org1dee97c" class="outline-2"&gt;
-&lt;h3 id="org1dee97c"&gt;Algorithms are now first class entities&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-org1dee97c"&gt;
-
- Functions are a terribly overloaded term in C++. Overloaded is an overloaded term.
-
-With respect to ranges and views, however, it should be clear that the adaptors, transformers, and other entities we apply to ranges and views to produce new ranges, views, and values, are now first class entities in their own right.
-
-The important thing, for programmers, is that moving up the ladder of abstraction should not be conceptually more difficult than dealing with existing libraries of functions. We have algorithms that deal with generic types rather than functions that deal with concrete types, but keeping them in mind should not be fundamentally more difficult.
-
-Naming is therefore critical.
-
-As are chosing the algorithms that are primitive, that is, the ones that compose into others in useful ways.
-
-I have some concerns about providing fused algorithms that a sufficiently smart compiler could optimize. On the other hand, I doubt how imminent sufficiently smart compilers are.
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org116280c" class="outline-2"&gt;
-&lt;h3 id="org116280c"&gt;Why Haskell keeps coming up&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-org116280c"&gt;
-
- Python was the answer to "Why can't I just write pseudo-code?"
-
-I have text books where the authors seriously discussed writing out your algorithm into pseudo code, and then translating it into actual programming language. Programming languages were too high ceremony to discuss what you wanted to do, while normal English was not structured enough. "Scripting" languages gave precise higher level semantics that were implicit in the pseudo code, or it would have been impossible to translate by hand to other computer languages.
-
-Haskell was designed to do that for algorithm research. The primary goal was to be able to give direct executable form to a research paper. This was early replicable research. The paper provided, on its own, the mechanism to test and reproduce the result. Haskell source code can be embedded in LaTeX and given directly to a Haskell compiler. Every interesting algorithms paper for the last 30 years or so has implicitly included the prelude.
-
-Haskell itself is not a terribly complex language. Much of it is specified as sugar where a form is translated into a more primitive expression, as range for loops are in C++. Its power for researchers is in its inherent laziness, that an expression is not evaluated unless it is required, and its purity, that values are immutable. These properties make it straightforward to reason with and about. The core property of lazy evaluation has forced it to be pure, not allowing side-effects. This has forced it to be exemplary, and evolutionary, in supporting value oriented programming.
-
-These factors are why we end up often looking to Haskell.
-
-Value oriented programming has been an emerging style in modern C++. The new Range facilities embody the style. Being able to crib proveably correct facilities from modern programming language research is a benefit.
-
-There was a long period, in which C++ grew up, that academic research lagged behind the pragmatic craft of programming. This has, in retrospect, not been an unqualified success. Parallelism and concurrency were widely implemented without theoretic underpnnings. We are still trying to put C++'s memory model on firm footing. Many constructs regularly used in the past are now understood to be unsound, in explicable ways. Multi-threading should not be an experimental science.
-
-Object orientation is an area which still does not have satisfying theoretic backing. There are various theories that provide many of the same benefits, allowing abstraction and encapsulation. In OO, however, objects have identity and state, which implies that equational reasoning can fail, as two equivalent object may have distinct identity and then different behavior. Temporal calculus formalisms are still open research.
-
-The manifest success of OO{A,D,P} with limited underlying theory has allowed many practitioners to believe that academic research is irrelevant. To the extent of dismissing rigor. Jokes about the "M-word" are emblematic.
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org37a9e88" class="outline-2"&gt;
-&lt;h3 id="org37a9e88"&gt;Sidebar: Monads are boring&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-org37a9e88"&gt;
-
- A monad is a generic type with a few operations, some of which can be expressed in terms of the others, that follow a few fundamental and fairly trivial rules. They allow predictable composition of entities that model monad.
-
-It is not about `then`. Although `then` does tend to fall out.
-
-The interesting thing is that algorithms can be built that take generic types that follow some "Laws", and they will do, something, correctly. For some kinds of generic type, what happens may be surprising, even interesting. The surprises will, however, not break anything. That's the point of the semantic guarantees surrounding the operations.
-
-C++ has philosophically adopted semantics surrounding Concepts. A Concept is entitled to demand behavior and laws in addition to the checkable syntax that can be enforced.
-
-The utility for an algorithm writer is that reasoning can be applied at a much higher level. Even beyond the abstraction that this is a Container, or Range, or View, being able reason about the operations for anything that provides a set of well defined operations means that the algorithm is correct, even if the details when applied to a new kind are obscure.
-
-Iterators provide a way for algorithms to work with many containers. Those same, correct, algorithms should be able to work with things that aren't Iterable, or Containers. It turns out having a named way of converting a Type&amp;lt;Type&amp;lt;Value&amp;gt;&amp;gt; to a Type&amp;lt;Value&amp;gt; opens up many algorithms to broader use. Flattening a vector of vectors into a linear vector is not the only use of a `concat`.
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org6725794" class="outline-2"&gt;
-&lt;h3 id="org6725794"&gt;Fold: In Which I Become Cranky About Names&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-org6725794"&gt;
-
- One of the most primitive and yet powerful algorithms is `fold`. Fold takes a binary operation and interposes it between elements in an iterable data type. It replaces the commas {a, b, c, d, …} with `op`, resulting in {a op b op c op d … }
-
-Except that is slightly ambiguous. Is that (a op (b op (c op (d)))) or ((((a) op b) op c) op d)
-
-Right or left evaluation of the terms.
-
-Folding right is strictly more general, at least in the lambda calculus. Left fold can be implemented as a right fold, but not vice-versa.
-
-However, in C++, the normal implementation of folds is not as general as it might be, because C++ is strict in evaluating function arguments. This means that even though a fold whose operation might not need to evaluate one of its arguments in order to return a value, will still do so, because the argument is evaluated before being passed to the operation. This mean, in particular, that we can't simply undo fold by using a `cons` operation, reconstructing the list. The entire, indeterminate and possibly infinite, list must be evaluated even though all that is necesary is the first element.
-
-Left folding is tail recursive, and so can be converted to a loop. This is why it seems natural in C++.
-&lt;div class="org-src-container"&gt;
-&lt;label class="org-src-name"&gt;&lt;em&gt;&lt;/em&gt;&lt;/label&gt;
-&lt;pre class="src src-C++" id="nil"&gt;&lt;span class="org-type"&gt;T&lt;/span&gt; &lt;span class="org-function-name"&gt;fold_left&lt;/span&gt;(&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;r&lt;/span&gt;, &lt;span class="org-type"&gt;T&lt;/span&gt; &lt;span class="org-variable-name"&gt;init&lt;/span&gt;, &lt;span class="org-type"&gt;BinaryOperation&lt;/span&gt; &lt;span class="org-variable-name"&gt;op&lt;/span&gt;) {
-    &lt;span class="org-type"&gt;range_iterator_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;gt; &lt;span class="org-variable-name"&gt;b&lt;/span&gt; = begin(r);
-    &lt;span class="org-type"&gt;range_sentinel_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;gt; &lt;span class="org-variable-name"&gt;e&lt;/span&gt; = end(r);
-    &lt;span class="org-keyword"&gt;for&lt;/span&gt; (; b != e; ++b) {
-        init = op(&lt;span class="org-constant"&gt;std&lt;/span&gt;::move(init), *b);
-    }
-    &lt;span class="org-keyword"&gt;return&lt;/span&gt; init;
-&lt;/pre&gt;
-&lt;/div&gt;
-Right fold is not generally tail recursive, although for finite sequences in C++, using reverse iterators, foldr is also a loop.
-&lt;div class="org-src-container"&gt;
-&lt;label class="org-src-name"&gt;&lt;em&gt;&lt;/em&gt;&lt;/label&gt;
-&lt;pre class="src src-C++" id="nil"&gt;&lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;fold_right_loop&lt;/span&gt;(&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;r&lt;/span&gt;, &lt;span class="org-type"&gt;T&lt;/span&gt; &lt;span class="org-variable-name"&gt;init&lt;/span&gt;, &lt;span class="org-type"&gt;BinaryOperation&lt;/span&gt; &lt;span class="org-variable-name"&gt;op&lt;/span&gt;) -&amp;gt; &lt;span class="org-type"&gt;result_of&lt;/span&gt;&amp;lt;&amp;gt;{
-    &lt;span class="org-type"&gt;range_iterator_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;gt; &lt;span class="org-variable-name"&gt;b&lt;/span&gt; = begin(r);
-    &lt;span class="org-type"&gt;range_sentinel_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;Range&lt;/span&gt;&amp;gt; &lt;span class="org-variable-name"&gt;e&lt;/span&gt; = end(r);
-    &lt;span class="org-keyword"&gt;for&lt;/span&gt; (; b != e; ++b) {
-        init = op(&lt;span class="org-constant"&gt;std&lt;/span&gt;::move(init), *b);
-    }
-    &lt;span class="org-keyword"&gt;return&lt;/span&gt; init;
-&lt;/pre&gt;
-&lt;/div&gt;
-To make the diagrams below pretty, we assume that foldl over a sequence of T takes a single value of type Z and an op of Z -&amp;gt; T -&amp;gt; Z, while foldr over a sequence of T takes an op of type T -&amp;gt; Z -&amp;gt; Z and a value of type Z. For a left fold, the value is given to the op that takes the first element in the sequence, while for a right fold, it is given to the op that takes the last element in the sequence.
-&lt;div id="org00eb67f" class="figure"&gt;
-
-&lt;img src="http://sdowney.org/wp-content/uploads/2021/01/list.png" alt="list.png"&gt;
-
-&lt;/div&gt;
-&lt;div id="org5f93c72" class="figure"&gt;
-
-&lt;img src="http://sdowney.org/wp-content/uploads/2021/01/left-fold.png" alt="left-fold.png"&gt;
-
-&lt;/div&gt;
-&lt;div class="org-src-container"&gt;
-&lt;label class="org-src-name"&gt;&lt;em&gt;&lt;/em&gt;&lt;/label&gt;
-&lt;pre class="src src-c++" id="nil"&gt;result = op(op(op(op(op(op(op(op(z, a), b), c), d), e), f), g), h);
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id="orge028fbf" class="figure"&gt;
-
-&lt;img src="http://sdowney.org/wp-content/uploads/2021/01/right-fold.png" alt="right-fold.png"&gt;
-
-&lt;/div&gt;
-&lt;div class="org-src-container"&gt;
-&lt;label class="org-src-name"&gt;&lt;em&gt;&lt;/em&gt;&lt;/label&gt;
-&lt;pre class="src src-c++" id="nil"&gt;result = op(a, op(b, op(c, op(d, op(e, op(f, op(g, op(h, z))))))));
-&lt;/pre&gt;
-&lt;/div&gt;
-So, left fold piles up the ops on the left and right fold piles them up on the right. The 'zero' or init value is with the last value for a right fold, and the first on a left fold. In converting to iteration, which is important, left fold is in the natural direction, and right fold is reversed, which means it can't be used that way on some sequences.
-
-So which one should be &lt;b&gt;the&lt;/b&gt; &lt;code&gt;fold&lt;/code&gt;. It's an important question because short names are implicitly privileged. Programmers assume that the short name is the best one, and longer names indicate more specialized usage. This isn't true for C++, but not really on purpose. We did think that `map` was a good choice. The programmers should probably reach for `unordered_map` instead is unfortunate, but at this point unfixable.
-
-Since C++ is strict, it would seem that left fold is the fold you mostly want, so it would be OK to call it &lt;code&gt;fold&lt;/code&gt;.
-
-Haskell, as lazy as it is, has issues with folds on ranges with indeterminate bounds. &lt;code&gt;foldl&lt;/code&gt; vs &lt;code&gt;foldr&lt;/code&gt; vs &lt;code&gt;foldl'&lt;/code&gt; is a constant question. &lt;a href="https://wiki.haskell.org/Foldr_Foldl_Foldl'"&gt;Foldr Foldl Foldl'&lt;/a&gt; Memory consumption of either stack or unevaluated expressions will surprise programmers.
-
-But in the literature, fold is right fold. In the pure lambda calculus, right fold is strictly more expressive. Tail recursion is a subset of primitive recursion, and left is tail recursive while right is not. If we call our left fold, &lt;code&gt;fold&lt;/code&gt;, we will confuse people.
-
-Further, the forward iteration is somewhat balanced by the fact that the normal addition to a sequence is &lt;code&gt;emplace_back&lt;/code&gt; or &lt;code&gt;push_back&lt;/code&gt;, which means that left fold will tend to reverse lists if the operation is accumulation into a sequence, if for example the op were &lt;code&gt;[](auto t){v.emplace_back(t);}&lt;/code&gt;.
-
-More, we have started to introduce lazy features into the language, with coroutines. Although we won't get them soon, the C++ standard library should eventually have good lazy algorithms. It would be unfortunate if we have to teach that you can't use &lt;code&gt;co_fold&lt;/code&gt; in place of &lt;code&gt;fold&lt;/code&gt; because they are opposite, or that &lt;code&gt;co_fold_left&lt;/code&gt; is how you spell the coroutine &lt;code&gt;fold&lt;/code&gt;. [Note co_ prefixes are mildly sarcastic.]
-
-C++ has a long history of setting defaults and realizing later that they are a problem.
-
-I would much prefer we not make a choice about which &lt;code&gt;fold&lt;/code&gt; is the fold, and just spell them as &lt;code&gt;fold_left&lt;/code&gt; and &lt;code&gt;fold_right&lt;/code&gt;.
-
-We should all be able to get behind not calling it &lt;code&gt;accumulate&lt;/code&gt;, even if we must live with &lt;code&gt;transform&lt;/code&gt;.
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org7f754e7" class="outline-2"&gt;
-&lt;h3 id="org7f754e7"&gt;Monoid&lt;/h3&gt;
-&lt;div class="outline-text-2" id="text-org7f754e7"&gt;
-
- Some other time I'll vent about the various &lt;code&gt;fold&lt;/code&gt; operations and how they get extended if your type is a monoid. See Chris Di Bella's work such as &lt;a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1813r0.pdf"&gt;A Concept Design for the Numeric Algorithms&lt;/a&gt;, although this rant suggests that algorithms that operate on different Concepts should have different names. Overloading on concepts with semantic differences can be confusing.
-
-&lt;/div&gt;
-&lt;/div&gt;</description><guid>https://sdowney.org/posts/index.php/2021/01/16/standard-vocabulary-for-algorithms/</guid><pubDate>Sat, 16 Jan 2021 23:22:19 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;</description><guid>https://sdowney.org/posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/</guid><pubDate>Sun, 03 Oct 2021 04:00:00 GMT</pubDate></item></channel></rss>
