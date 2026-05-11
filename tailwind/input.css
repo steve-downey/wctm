@@ -40,44 +40,51 @@
    that every utility class resolves through.
 
    OKLCH colour picker: https://oklch.com
-   (The defaults below are Tailwind v4's built-in values, shown so you
-   can see exactly what you are replacing.)
+   (Defaults shown in comments; active values are the current palette.)
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
 
     /* ── Fonts ─────────────────────────────────────────────────────────── *
-     * Affects: font-sans (body), font-mono (code).                        *
+     * --font-sans  body text (font-sans utility, applied to <body>)        *
+     * --font-mono  code (font-mono utility, applied to <pre>/<code>)       *
+     *                                                                      *
+     * Source Serif 4 + Source Code Pro: same Adobe design family,          *
+     * giving prose and code visual kinship.                                *
      * ──────────────────────────────────────────────────────────────────── */
-    --font-sans: "Source Sans 3", "Open Sans", Roboto, Arial, sans-serif;
+    --font-sans: "Source Serif 4", Georgia, serif;
     --font-mono: "Source Code Pro", Inconsolata, ui-monospace, Courier, monospace;
 
     /* ── Accent colour — "indigo" ──────────────────────────────────────── *
-     * Affects every indigo utility in the templates:                      *
+     * Affects every indigo utility class in the templates:                 *
      *   bg-indigo-700       page header banner background                  *
      *   text-indigo-200     header banner subtitle text                    *
      *   text-indigo-600     sidebar links, tag pill text (×19 uses)        *
      *   text-indigo-700     tag pill text                                  *
      *   text-indigo-800     tag/post link hover                            *
      *   bg-indigo-100       tag pill background                            *
-     *   bg-indigo-200       tag pill hover background                      *
-     *   hover:text-indigo-600 / hover:text-indigo-800 / hover:bg-indigo-200*
+     *   bg-indigo-200       tag pill hover, ::selection background         *
      *   prose-indigo        article link colour (via typography plugin)    *
      *                                                                      *
-     * To rebrand to teal, for example:                                     *
-     *   --color-indigo-100: oklch(93%  .05  195);                          *
-     *   --color-indigo-200: oklch(86%  .09  195);                          *
-     *   --color-indigo-600: oklch(52%  .18  195);                          *
-     *   --color-indigo-700: oklch(46%  .16  195);                          *
-     *   --color-indigo-800: oklch(39%  .13  195);                          *
+     * Forest green — distinctive for a technical blog, complements         *
+     * the cold dark-navy of the modus-vivendi code blocks.                 *
+     * All values verified ≥ 4.5:1 contrast where used as text on white,   *
+     * and ≥ 3:1 where used as large text (header banner).                 *
+     *                                                                      *
+     * To revert to Tailwind's default indigo:                              *
+     *   -100: oklch(93%  .034 272.788)                                     *
+     *   -200: oklch(87%  .065 274.039)                                     *
+     *   -600: oklch(51%  .262 276.966)                                     *
+     *   -700: oklch(45.7%.24  277.023)                                     *
+     *   -800: oklch(39.8%.195 277.366)                                     *
      * ──────────────────────────────────────────────────────────────────── */
-    /* --color-indigo-100: oklch(93% .034 272.788); */
-    /* --color-indigo-200: oklch(87% .065 274.039); */
-    /* --color-indigo-600: oklch(51.1% .262 276.966); */
-    /* --color-indigo-700: oklch(45.7% .24  277.023); */
-    /* --color-indigo-800: oklch(39.8% .195 277.366); */
+    --color-indigo-100: oklch(95%  .03  155);   /* pale sage — tag bg       */
+    --color-indigo-200: oklch(88%  .06  155);   /* light sage — hover, sel  */
+    --color-indigo-600: oklch(42%  .13  158);   /* forest green — links     */
+    --color-indigo-700: oklch(36%  .12  158);   /* deep forest — banner bg  */
+    --color-indigo-800: oklch(30%  .10  158);   /* darkest — link hover     */
 
     /* ── Neutral colour — "gray" ───────────────────────────────────────── *
-     * Affects every gray utility in the templates:                        *
+     * Affects every gray utility class in the templates:                   *
      *   bg-gray-800 / bg-gray-900 / bg-gray-700  navbar and dropdowns     *
      *   bg-gray-600                               navbar dropdown hover    *
      *   bg-gray-50                                post metadata box        *
@@ -86,24 +93,23 @@
      *   text-gray-600 / text-gray-500             muted text, captions     *
      *   text-gray-400 / text-gray-300             timestamps, nav links    *
      *   border-gray-200                           footer rule, meta box    *
-     *   hover:text-gray-300 / hover:bg-gray-600   navbar hover states      *
+     *                                                                      *
+     * Warm stone hue (~85°) instead of Tailwind's cool neutral (~265°).    *
+     * Coheres with the forest green accent without clashing.               *
+     *                                                                      *
+     * To revert to cool gray: copy values from the comment in v0 of this   *
+     * file (oklch L values stay the same, hue 85 → 265).                  *
      * ──────────────────────────────────────────────────────────────────── */
-    /* --color-gray-50:  oklch(98.5% .002 247.839); */
-    /* --color-gray-200: oklch(92.8% .006 264.531); */
-    /* --color-gray-300: oklch(87.2% .010 258.338); */
-    /* --color-gray-400: oklch(70.7% .022 261.325); */
-    /* --color-gray-500: oklch(55.1% .027 264.364); */
-    /* --color-gray-600: oklch(44.6% .030 256.802); */
-    /* --color-gray-700: oklch(37.3% .034 259.733); */
-    /* --color-gray-800: oklch(27.8% .033 256.848); */
-    /* --color-gray-900: oklch(21.0% .034 264.665); */
-
-    /* ── Page background — "white" ─────────────────────────────────────── *
-     * Affects: bg-white (body), focus:bg-white (skip-to-content link).    *
-     * Changing this shifts the page canvas; note text-white (nav links)   *
-     * is unaffected because it references the white token differently.    *
-     * ──────────────────────────────────────────────────────────────────── */
-    /* --color-white: #ffffff; */
+    --color-gray-50:  oklch(98.5% .003  85);
+    --color-gray-100: oklch(96.9% .006  85);
+    --color-gray-200: oklch(92.7% .012  85);
+    --color-gray-300: oklch(87.0% .018  85);
+    --color-gray-400: oklch(70.8% .030  85);
+    --color-gray-500: oklch(55.6% .040  85);
+    --color-gray-600: oklch(44.5% .045  85);
+    --color-gray-700: oklch(37.6% .050  85);
+    --color-gray-800: oklch(27.7% .045  85);
+    --color-gray-900: oklch(21.6% .042  85);
 
 }
 
@@ -112,19 +118,25 @@
 
    Applied to bare HTML elements. Specificity is lower than utility classes,
    so these will not fight any class on the same element. Use this layer for
-   ambient defaults that are not expressed as class names in templates.
+   ambient defaults not expressed as class names in templates.
+
+   Note: to override a utility class (e.g. bg-white on <body>), use
+   custom.css instead — rules outside @layer beat layered rules regardless
+   of specificity.
    ══════════════════════════════════════════════════════════════════════════ */
 @layer base {
 
-    /* Text selection — follows the accent colour token above */
+    /* Activate the optical-size axis on Source Serif 4 so the font
+     * automatically adjusts its letterforms for the computed size. */
+    html {
+        font-optical-sizing: auto;
+        scroll-behavior: smooth;
+    }
+
+    /* Text selection — follows the accent colour tokens above */
     ::selection {
         background-color: var(--color-indigo-200);
         color: var(--color-gray-900);
-    }
-
-    /* Smooth scroll for in-page anchor links (footnotes, headings) */
-    html {
-        scroll-behavior: smooth;
     }
 
     /* Keyboard focus ring — visible and on-brand */
@@ -134,19 +146,9 @@
     }
 
     /* Styled scrollbar on supporting browsers (Chrome, Edge, Safari) */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: var(--color-gray-100, #f3f4f6);
-    }
-    ::-webkit-scrollbar-thumb {
-        background: var(--color-gray-400);
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--color-gray-600);
-    }
+    ::-webkit-scrollbar        { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track  { background: var(--color-gray-100); }
+    ::-webkit-scrollbar-thumb  { background: var(--color-gray-400); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-gray-600); }
 
 }
