@@ -27,8 +27,10 @@ body {
  * code blocks (both org-mode src blocks and markdown fenced blocks).        *
  * ────────────────────────────────────────────────────────────────────────── */
 :root {
-    --code-bg:        #0d0e1c;  /* modus-vivendi-tinted body background      */
-    --code-fg:        #ffffff;
+    /* --bg-main and --fg-main come from the modus CSS :root block (secretaire-css v2).
+     * Fall back to the v1 hardcoded values when that block is absent. */
+    --code-bg:        var(--bg-main, #0d0e1c);
+    --code-fg:        var(--fg-main, #ffffff);
     --inline-code-bg: var(--color-gray-100); /* warm stone chip, not stark white */
 }
 

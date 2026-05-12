@@ -9,7 +9,10 @@
  */
 
 :root {
-    --code-bg: #0d0e1c;   /* fallback; custom.css overrides */
+    /* Structural defaults — overridden by custom.css, which in turn reads
+     * --bg-main / --fg-main from the modus CSS :root block (secretaire-css v2)
+     * with hardcoded fallbacks for v1 compatibility. */
+    --code-bg: #0d0e1c;
     --code-fg: #ffffff;
     --code-radius: 0.5rem;
     --code-padding: 1rem 1.5rem;
