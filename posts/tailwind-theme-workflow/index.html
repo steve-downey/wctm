@@ -5,39 +5,44 @@
 <meta name="description" content="How the blog's Tailwind CSS theme works end-to-end: from Emacs modus-themes palette through secretaire-css to rendered source blocks.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tailwind, Modus Themes, and the Blog Theming Workflow | What Comes to Mind</title>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script><script>
-    (function() {
-        var heading = ['"Open Sans"', 'Roboto', 'Arial', 'sans-serif'];
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Source Sans 3"'].concat(heading),
-                        heading: heading,
-                        mono: ['"Source Code Pro"', 'Inconsolata', 'ui-monospace', 'Courier', 'monospace'],
-                    },
-                    typography: {
-                        DEFAULT: {
-                            css: {
-                                'h1, h2, h3, h4, h5, h6': {
-                                    fontFamily: heading.join(', '),
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        };
+<script>
+    (function () {
+        var s = localStorage.getItem('theme');
+        var dark = s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
     })();
-    </script><link rel="preconnect" href="https://fonts.googleapis.com">
+    </script><link rel="stylesheet" href="../../assets/css/tailwind.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&amp;family=Source+Sans+3:ital,wght@0,200..900;1,200..900&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link href="../../assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="../../assets/css/modus-vivendi-tinted.css">
+<link id="modus-light" rel="stylesheet" href="../../assets/css/modus-vivendi-tinted.css" media="(prefers-color-scheme: light)">
+<link id="modus-dark" rel="stylesheet" href="../../assets/css/modus-operandi-tinted.css" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="../../assets/css/tailwind-base.css">
+<style>
+    :root {
+        --code-bg: #1d2235;
+        --code-fg: #ffffff;
+        --code-label-color: #989898;
+        --copy-btn-color: #8b8fa3;
+        --copy-btn-border: #3a3d52;
+        --copy-btn-hover-color: #d0d4e8;
+        --copy-btn-hover-border: #6b7094;
+    }
+
+    .dark {
+        --code-bg: #efe9dd;
+        --code-fg: #1a1a2e;
+        --code-label-color: #595959;
+        --copy-btn-color: #6b7280;
+        --copy-btn-border: #d1d5db;
+        --copy-btn-hover-color: #374151;
+        --copy-btn-hover-border: #9ca3af;
+    }
+    </style>
 <link href="../../assets/css/custom.css" rel="stylesheet" type="text/css">
-<meta name="theme-color" content="#5670d4">
+<script src="../../assets/js/theme-toggle.js" defer></script><meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="../../feed.atom">
@@ -61,7 +66,7 @@
 <meta name="twitter:creator" content="@sdowney">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
-<body class="bg-white text-gray-900 font-sans">
+<body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-white focus:px-4 focus:py-2 focus:z-50">Skip to main content</a>
     
     
@@ -71,7 +76,7 @@
         <div class="flex items-center justify-between h-14">
             <a href="https://sdowney.org/" title="What Comes to Mind" rel="home" class="text-white text-lg font-semibold hover:text-gray-300 transition-colors">What Comes to Mind</a>
             <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle navigation">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                <svg class="size-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
             <ul class="hidden md:flex items-center space-x-4 text-sm">
 <li><a href="../../archive.html" class="text-gray-300 hover:text-white transition-colors">Archives</a></li>
                     
@@ -116,17 +121,21 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     menu.classList.toggle('hidden');
     menu.classList.toggle('flex');
 });
-</script><div class="bg-indigo-700 text-white py-10 text-center">
-    
+</script><div class="relative text-white py-10 text-center bg-cover bg-center" style="background-image: url('../../assets/images/cropped-blog-header.jpg');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10">
+        
     <h1 class="text-4xl font-bold">Tailwind, Modus Themes, and the Blog Theming Workflow</h1>
     <p class="mt-2 text-indigo-200">
         <time class="published dt-published" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time><span class="mx-2 opacity-50">·</span>
             <span>5 min read</span>
     </p>
 
+        </div>
     </div>
-    <main id="content" class="max-w-prose mx-auto px-4 py-8"><div class="prose prose-lg max-w-none prose-indigo">
-        
+    <main id="content" class="max-w-6xl mx-auto px-4 py-8"><div class="lg:flex lg:gap-10">
+            <div class="prose prose-lg max-w-none prose-indigo dark:prose-invert lg:flex-1 lg:min-w-0">
+            
 <article class="blog-post h-entry"><div class="metadata">
             <meta name="description" itemprop="description" content="How the blog's Tailwind CSS theme works end-to-end: from Emacs modus-themes palette through secretaire-css to rendered source blocks.">
 </div>
@@ -148,14 +157,14 @@ configuration choices are.
 </p>
 
 <!-- TEASER_END -->
-<div id="outline-container-org433cad8" class="outline-2">
-<h2 id="org433cad8">The Theme Stack</h2>
-<div class="outline-text-2" id="text-org433cad8">
+<div id="ox-nikola-outline-container-orgdc89446" class="ox-nikola-outline-2">
+<h2 id="orgdc89446">The Theme Stack</h2>
+<div class="outline-text-2" id="text-orgdc89446">
 <p>
 The blog uses three Nikola themes stacked via the parent chain:
 </p>
 
-<pre class="example" id="orge6be084">
+<pre class="example" id="orgbcf684b">
 sdowney-tailwind → nikola-tailwind-blog → nikola-tailwind-base → base
 </pre>
 
@@ -183,9 +192,9 @@ templates by walking the chain, so I only override what I actually change.
 </p>
 </div>
 </div>
-<div id="outline-container-org5b0b0ff" class="outline-2">
-<h2 id="org5b0b0ff">How Tailwind Is Loaded</h2>
-<div class="outline-text-2" id="text-org5b0b0ff">
+<div id="ox-nikola-outline-container-orga6ac00a" class="ox-nikola-outline-2">
+<h2 id="orga6ac00a">How Tailwind Is Loaded</h2>
+<div class="outline-text-2" id="text-orga6ac00a">
 <p>
 The Tailwind Play CDN is a <code>&lt;script&gt;</code> tag that processes utility classes at
 runtime:
@@ -239,9 +248,9 @@ Font stacks are defined once.  The <code>heading</code> array is reused in three
 </p>
 </div>
 </div>
-<div id="outline-container-org4bbe7fc" class="outline-2">
-<h2 id="org4bbe7fc">Source Block Rendering</h2>
-<div class="outline-text-2" id="text-org4bbe7fc">
+<div id="ox-nikola-outline-container-orgf0e1387" class="ox-nikola-outline-2">
+<h2 id="orgf0e1387">Source Block Rendering</h2>
+<div class="outline-text-2" id="text-orgf0e1387">
 <p>
 Org-mode's HTML exporter produces this structure:
 </p>
@@ -270,9 +279,9 @@ label and button.
 </p>
 </div>
 </div>
-<div id="outline-container-org7bb3059" class="outline-2">
-<h2 id="org7bb3059">Syntax Highlighting: The Modus Connection</h2>
-<div class="outline-text-2" id="text-org7bb3059">
+<div id="ox-nikola-outline-container-orgdd04d1c" class="ox-nikola-outline-2">
+<h2 id="orgdd04d1c">Syntax Highlighting: The Modus Connection</h2>
+<div class="outline-text-2" id="text-orgdd04d1c">
 <p>
 Org-mode's HTML exporter uses <code>htmlize</code> to apply face colors as CSS classes.
 When <code>org-html-htmlize-output-type</code> is <code>'css</code>, it produces <code>&lt;span
@@ -338,13 +347,13 @@ Change the modus variant, regenerate, and code block backgrounds follow.
 </p>
 </div>
 </div>
-<div id="outline-container-org80e1ae0" class="outline-2">
-<h2 id="org80e1ae0">Current Configuration</h2>
-<div class="outline-text-2" id="text-org80e1ae0">
+<div id="ox-nikola-outline-container-orga3384e3" class="ox-nikola-outline-2">
+<h2 id="orga3384e3">Current Configuration</h2>
+<div class="outline-text-2" id="text-orga3384e3">
 </div>
-<div id="outline-container-org1222cb9" class="outline-3">
-<h3 id="org1222cb9">What's using the Play CDN</h3>
-<div class="outline-text-3" id="text-org1222cb9">
+<div id="ox-nikola-outline-container-org6845664" class="ox-nikola-outline-3">
+<h3 id="org6845664">What's using the Play CDN</h3>
+<div class="outline-text-3" id="text-org6845664">
 <p>
 The Tailwind Play CDN generates CSS client-side.  There is no <code>node_modules</code>,
 no <code>package.json</code>, no build step.  Page load includes a brief delay while
@@ -359,9 +368,9 @@ tailwind.css</code>, replace the <code>&lt;script&gt;</code> with a <code>&lt;li
 </p>
 </div>
 </div>
-<div id="outline-container-orgf7365d6" class="outline-3">
-<h3 id="orgf7365d6">Typography plugin via prose</h3>
-<div class="outline-text-3" id="text-orgf7365d6">
+<div id="ox-nikola-outline-container-org21cdcd4" class="ox-nikola-outline-3">
+<h3 id="org21cdcd4">Typography plugin via prose</h3>
+<div class="outline-text-3" id="text-org21cdcd4">
 <p>
 The <code>prose prose-lg prose-indigo</code> classes on the content <code>&lt;div&gt;</code> provide:
 </p>
@@ -378,9 +387,9 @@ lives outside the <code>prose</code> wrapper.
 </p>
 </div>
 </div>
-<div id="outline-container-org8c974cf" class="outline-3">
-<h3 id="org8c974cf">Fonts</h3>
-<div class="outline-text-3" id="text-org8c974cf">
+<div id="ox-nikola-outline-container-orgca508cf" class="ox-nikola-outline-3">
+<h3 id="orgca508cf">Fonts</h3>
+<div class="outline-text-3" id="text-orgca508cf">
 <ul class="org-ul">
 <li>Body: Source Sans 3 (with Open Sans fallback)</li>
 <li>Headings: Open Sans</li>
@@ -392,9 +401,9 @@ reference these through the config.
 </p>
 </div>
 </div>
-<div id="outline-container-org24453a3" class="outline-3">
-<h3 id="org24453a3">Accent color: indigo</h3>
-<div class="outline-text-3" id="text-org24453a3">
+<div id="ox-nikola-outline-container-orgb378303" class="ox-nikola-outline-3">
+<h3 id="orgb378303">Accent color: indigo</h3>
+<div class="outline-text-3" id="text-orgb378303">
 <p>
 Tailwind's <code>indigo</code> palette provides the accent: <code>bg-indigo-700</code> for the
 header banner, <code>text-indigo-600</code> for links, <code>bg-indigo-100 text-indigo-700</code>
@@ -403,9 +412,9 @@ across the blog tier templates.
 </p>
 </div>
 </div>
-<div id="outline-container-orgb38f354" class="outline-3">
-<h3 id="orgb38f354">Icons: Font Awesome 7.0.1</h3>
-<div class="outline-text-3" id="text-orgb38f354">
+<div id="ox-nikola-outline-container-org4933293" class="ox-nikola-outline-3">
+<h3 id="org4933293">Icons: Font Awesome 7.0.1</h3>
+<div class="outline-text-3" id="text-org4933293">
 <p>
 Loaded via CDN in the personal tier.  Navigation links in <code>conf.py</code> include
 Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
@@ -413,13 +422,13 @@ Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
 </div>
 </div>
 </div>
-<div id="outline-container-org01badc2" class="outline-2">
-<h2 id="org01badc2">What I Might Tweak Later</h2>
-<div class="outline-text-2" id="text-org01badc2">
+<div id="ox-nikola-outline-container-org08b0ba1" class="ox-nikola-outline-2">
+<h2 id="org08b0ba1">What I Might Tweak Later</h2>
+<div class="outline-text-2" id="text-org08b0ba1">
 </div>
-<div id="outline-container-org10520c9" class="outline-3">
-<h3 id="org10520c9">Dark mode</h3>
-<div class="outline-text-3" id="text-org10520c9">
+<div id="ox-nikola-outline-container-orgb5e4a1e" class="ox-nikola-outline-3">
+<h3 id="orgb5e4a1e">Dark mode</h3>
+<div class="outline-text-3" id="text-orgb5e4a1e">
 <p>
 The syntax highlighting is already dark (modus-vivendi).  The page chrome is
 light.  A proper dark mode would add <code>dark:</code> variants to the templates and
@@ -428,9 +437,9 @@ this straightforward with <code>darkMode: 'media'</code> in the config.
 </p>
 </div>
 </div>
-<div id="outline-container-org3d875f7" class="outline-3">
-<h3 id="org3d875f7">Production Tailwind</h3>
-<div class="outline-text-3" id="text-org3d875f7">
+<div id="ox-nikola-outline-container-org707b00f" class="ox-nikola-outline-3">
+<h3 id="org707b00f">Production Tailwind</h3>
+<div class="outline-text-3" id="text-org707b00f">
 <p>
 If page load times bother me, switching to a pre-built CSS file removes the
 Play CDN runtime cost.  The config is already defined inline; moving it to
@@ -438,9 +447,9 @@ Play CDN runtime cost.  The config is already defined inline; moving it to
 </p>
 </div>
 </div>
-<div id="outline-container-org1f08fd9" class="outline-3">
-<h3 id="org1f08fd9">Palette-aware CSS generation</h3>
-<div class="outline-text-3" id="text-org1f08fd9">
+<div id="ox-nikola-outline-container-org42d0dce" class="ox-nikola-outline-3">
+<h3 id="org42d0dce">Palette-aware CSS generation</h3>
+<div class="outline-text-3" id="text-org42d0dce">
 <p>
 <code>secretaire-css</code> currently falls back to htmlize for the actual face scanning
 when the modus palette API isn't available.  The full palette-aware path (emitting
@@ -449,9 +458,9 @@ See <code>docs/secretaire-css-design.org</code> for what the ideal output looks 
 </p>
 </div>
 </div>
-<div id="outline-container-org23308b6" class="outline-3">
-<h3 id="org23308b6">Fonts</h3>
-<div class="outline-text-3" id="text-org23308b6">
+<div id="ox-nikola-outline-container-org2699420" class="ox-nikola-outline-3">
+<h3 id="org2699420">Fonts</h3>
+<div class="outline-text-3" id="text-org2699420">
 <p>
 I'm eyeing <a href="https://www.brailleinstitute.org/freefont/">Atkinson Hyperlegible Next</a> for body text.  Changing fonts is a
 two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind config in
@@ -462,15 +471,15 @@ two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind 
 </div>
     </div>
 
-    <div class="not-prose mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <ul class="text-sm text-gray-600 space-y-1">
+    <div class="not-prose mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
 <li>Author: Steve Downey</li>
         </ul>
 </div>
 
     
         <div class="not-prose mt-6 flex flex-wrap items-center gap-2">
-            <span class="text-sm text-gray-600 font-medium">Tags:</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">Tags:</span>
                 <a href="../../categories/emacs/" rel="tag" class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors">emacs</a>
                 <a href="../../categories/modus-themes/" rel="tag" class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors">modus-themes</a>
                 <a href="../../categories/nikola/" rel="tag" class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors">nikola</a>
@@ -500,8 +509,65 @@ delimiters: [
                 );
             </script>
 </div>
-    </main><hr class="max-w-prose mx-auto border-gray-200">
-<div class="max-w-prose mx-auto px-4 py-6">
+            
+<aside class="not-prose mt-10 lg:mt-0 lg:w-64 lg:shrink-0 lg:sticky lg:top-6 lg:self-start space-y-8"><section><button id="theme-toggle" class="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors" aria-label="Toggle dark mode">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            <span>Toggle theme</span>
+        </button>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
+        <ul class="space-y-3">
+<li>
+                <a href="." class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
+</li>
+            <li>
+                <a href="../building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
+                <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
+</li>
+            <li>
+                <a href="../substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
+                <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
+</li>
+            <li>
+                <a href="../nikola-blog-infrastructure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Nikola Blog Infrastructure</a>
+                <time class="text-xs text-gray-400" datetime="2024-12-23T13:15:27-05:00">2024-12-23 13:15</time>
+</li>
+            <li>
+                <a href="../index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Concept Maps using C++23 Library Tech</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-19T11:51:00-04:00">2024-05-19 11:51</time>
+</li>
+            <li>
+                <a href="../index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Slides from C++Now 2023 Async Control Flow</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-18T18:27:00-04:00">2024-05-18 18:27</time>
+</li>
+            <li>
+                <a href="../index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Some Informal Remarks Towards a New Theory of Trait Customization</a>
+                <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
+</li>
+            <li>
+                <a href="../special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
+                <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
+</li>
+            <li>
+                <a href="../index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+            <li>
+                <a href="../index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+        </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
+        <a href="../../archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Tags</h2>
+        <a href="../../categories/" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Browse tags →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Feeds</h2>
+        <ul class="space-y-1">
+<li><a href="../../feed.atom" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Atom</a></li>
+            <li><a href="../../rss.xml" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">RSS</a></li>
+        </ul></section></aside>
+</div>
+    </main><hr class="max-w-6xl mx-auto border-gray-200">
+<div class="max-w-6xl mx-auto px-4 py-6">
         
         <footer id="footer" class="text-center text-sm text-gray-500"><p>Contents © 2026         <a href="mailto:sdowney@sdowney.dev">Steve Downey</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a> - 
  <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">

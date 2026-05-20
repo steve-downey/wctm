@@ -1,4 +1,6 @@
-/* custom.css — User overrides for sdowney-tailwind theme.
- * This file is a user extension point loaded last.
- * Keep rules scoped to classes; avoid bare element selectors.
+/* custom.css — site-level compatibility overrides for What Comes to Mind.
+ *
+ * Theme behavior should live in the active theme and be configured through
+ * THEME_CONFIG. This file stays last-loaded and should therefore remain a
+ * narrow escape hatch for temporary compatibility patches only.
  */

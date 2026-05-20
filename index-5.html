@@ -5,39 +5,44 @@
 <meta name="description" content="Stuff, and more stuff">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What Comes to Mind (old posts, page 5) | What Comes to Mind</title>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script><script>
-    (function() {
-        var heading = ['"Open Sans"', 'Roboto', 'Arial', 'sans-serif'];
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Source Sans 3"'].concat(heading),
-                        heading: heading,
-                        mono: ['"Source Code Pro"', 'Inconsolata', 'ui-monospace', 'Courier', 'monospace'],
-                    },
-                    typography: {
-                        DEFAULT: {
-                            css: {
-                                'h1, h2, h3, h4, h5, h6': {
-                                    fontFamily: heading.join(', '),
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        };
+<script>
+    (function () {
+        var s = localStorage.getItem('theme');
+        var dark = s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
     })();
-    </script><link rel="preconnect" href="https://fonts.googleapis.com">
+    </script><link rel="stylesheet" href="assets/css/tailwind.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&amp;family=Source+Sans+3:ital,wght@0,200..900;1,200..900&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link href="assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="assets/css/modus-vivendi-tinted.css">
+<link id="modus-light" rel="stylesheet" href="assets/css/modus-vivendi-tinted.css" media="(prefers-color-scheme: light)">
+<link id="modus-dark" rel="stylesheet" href="assets/css/modus-operandi-tinted.css" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/css/tailwind-base.css">
+<style>
+    :root {
+        --code-bg: #1d2235;
+        --code-fg: #ffffff;
+        --code-label-color: #989898;
+        --copy-btn-color: #8b8fa3;
+        --copy-btn-border: #3a3d52;
+        --copy-btn-hover-color: #d0d4e8;
+        --copy-btn-hover-border: #6b7094;
+    }
+
+    .dark {
+        --code-bg: #efe9dd;
+        --code-fg: #1a1a2e;
+        --code-label-color: #595959;
+        --copy-btn-color: #6b7280;
+        --copy-btn-border: #d1d5db;
+        --copy-btn-hover-color: #374151;
+        --copy-btn-hover-border: #9ca3af;
+    }
+    </style>
 <link href="assets/css/custom.css" rel="stylesheet" type="text/css">
-<meta name="theme-color" content="#5670d4">
+<script src="assets/js/theme-toggle.js" defer></script><meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="feed.atom">
@@ -46,7 +51,7 @@
 <link rel="next" href="index-4.html" type="text/html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
-<body class="bg-white text-gray-900 font-sans">
+<body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-white focus:px-4 focus:py-2 focus:z-50">Skip to main content</a>
     
     
@@ -56,7 +61,7 @@
         <div class="flex items-center justify-between h-14">
             <a href="https://sdowney.org/" title="What Comes to Mind" rel="home" class="text-white text-lg font-semibold hover:text-gray-300 transition-colors">What Comes to Mind</a>
             <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle navigation">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                <svg class="size-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
             <ul class="hidden md:flex items-center space-x-4 text-sm">
 <li><a href="archive.html" class="text-gray-300 hover:text-white transition-colors">Archives</a></li>
                     
@@ -101,19 +106,23 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     menu.classList.toggle('hidden');
     menu.classList.toggle('flex');
 });
-</script><div class="bg-indigo-700 text-white py-10 text-center">
-    
-        <h1 class="text-4xl font-bold">What Comes to Mind</h1>
-        <p class="mt-2 text-lg text-indigo-200">Stuff, and more stuff</p>
-    
-    </div>
-    <main id="content" class="max-w-prose mx-auto px-4 py-8"><div class="prose prose-lg max-w-none prose-indigo">
+</script><div class="relative text-white py-10 text-center bg-cover bg-center" style="background-image: url('assets/images/cropped-blog-header.jpg');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10">
         
+            <h1 class="text-4xl font-bold text-balance">What Comes to Mind</h1>
+            <p class="mt-2 text-lg text-gray-100">Stuff, and more stuff</p>
+        
+        </div>
+    </div>
+    <main id="content" class="max-w-6xl mx-auto px-4 py-8"><div class="lg:flex lg:gap-10">
+            <div class="prose prose-lg max-w-none prose-indigo dark:prose-invert lg:flex-1 lg:min-w-0">
+            
 
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/03/28/types-and-programming-languages-chapter-4/" class="text-gray-900 hover:text-indigo-600 transition-colors">Types and Programming Languages: Chapter 4</a>
+            <a href="posts/index.php/2006/03/28/types-and-programming-languages-chapter-4/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Types and Programming Languages: Chapter 4</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-03-28T04:31:00-05:00" title="2006-03-28 04:31">2006-03-28 04:31</time></p>
@@ -134,7 +143,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <br><br>That is, if we're eval'ing an if expression, and the first clause is true or false, we can reduce it to either the then clause or the else clause immediately. On the other hand, if it doesn't match those, we can instead evaluate the first term, and return an if expression with the first term evaluated. If the first term doesn't evaluate, then we return nothing. I'm taking advantage of pattern matching in Haskell to select the right function based on the details of the argument supplied. They all take a single argument, but I'm asking to distinguish what constructor was used to create that argument. The '_' character means that I don't are what the type or value of that part of the argument is, match anything.<br><br>This is the way I wrote it at first, at least. I ran this by the haskell-cafe mailling list, and recieved some suggestions that I wasn't taking good advantage of Maybe being a monad, and that it might make more sense to do the sub-eval in a do block. In particular the advice in <a href="http://www.nomaware.com/monads/html/maybemonad.html">Nomaware's All About Monads tutorial</a> is exactly on point. Those Nothings and Justs don't need to be there.<br><br>I'll be reworking the code to adopt those suggestions before going much further.<br><br>To do the full evaluation, we run the eval1 until we can't anymore. That's<br><pre><br>eval t =<br>let t' = eval1 t<br>in case t' of<br>   { Just t'' -&gt; eval t''<br>   ; Nothing -&gt; t<br>   }<br><pre><br><br>Here's all the code so far:<br>ArithParser.hs<br><pre><br><span>module</span> ArithParser ( parseArith<br>                  , parseArithFromFile<br>                  , arithExpr            <br>                  , ParseError<br>                  ) <span>where</span><br><br><span>import</span> Char<br><span>import</span> Monad<br><span>import</span> Arith<br><br><span>-- Parsec<br></span><span>import</span> Text.ParserCombinators.Parsec<br><span>import</span> Text.ParserCombinators.Parsec.Expr<br><span>import</span> <span>qualified</span> Text.ParserCombinators.Parsec.Token <span>as</span> P<br><span>import</span> Text.ParserCombinators.Parsec.Language (haskellStyle)<br><br><br><span>parseArithFromFile</span> <span>::</span> String <span>-&gt;</span> IO (Either ParseError ArithExpr)<br><span>parseArithFromFile</span> fname <span>=</span><br>   parseFromFile arithExpr fname<br><br><span>parseArith</span> sourceName source <span>=</span><br>   parse arithExpr sourceName source<br><br><span>arithExpr</span> <span>::</span> Parser ArithExpr     <br><span>arithExpr</span> <span>=</span><br>       trueExpression<br> falseExpression<br>   &lt;|&gt; ifExpression<br>   &lt;|&gt; zeroExpression<br>   &lt;|&gt; succExpression<br>   &lt;|&gt; predExpression<br>   &lt;|&gt; isZeroExpression<br>   &lt;|&gt; parens arithExpr<br>   &gt; "<span>expression</span>"<br><br><br><span>trueExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>true</span>"<br>     ; return TmTrue<br>     }<br><br><span>falseExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>false</span>"<br>     ; return TmFalse<br>     }<br><br><span>zeroExpression</span> <span>::</span> Parser ArithExpr<br><span>zeroExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>0</span>"<br>     ; return TmZero<br>     }<br><br><span>ifExpression</span> <span>::</span> Parser ArithExpr<br><span>ifExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>if</span>"<br>     ; condition <span>&lt;-</span> arithExpr<br>     ; reserved "<span>then</span>"<br>     ; thenClause <span>&lt;-</span> arithExpr<br>     ; reserved "<span>else</span>"<br>     ; elseClause <span>&lt;-</span> arithExpr<br>     ; return  (TmIfExpr condition thenClause elseClause)<br>     }<br><br><span>succExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>succ</span>"<br>     ; expr <span>&lt;-</span> arithExpr<br>     ; return  (TmSucc expr)<br>     }<br><br><span>predExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>pred</span>"<br>     ; expr <span>&lt;-</span> arithExpr<br>     ; return (TmPred expr)<br>     }<br><br><br><span>isZeroExpression</span> <span>=</span><br><span>do</span>{ reserved "<span>iszero</span>"<br>     ; expr <span>&lt;-</span> arithExpr<br>     ; return  (TmIsZero expr)<br>     }<br><br><br><br><span>-----------------------------------------------------------<br>-- Tokens<br>-- Use qualified import to have token parsers on toplevel<br>-----------------------------------------------------------<br></span><span>tokenParser</span>     <span>=</span> P.makeTokenParser haskellStyle  <br><br><span>parens</span>          <span>=</span> P.parens tokenParser   <br><span>braces</span>          <span>=</span> P.braces tokenParser   <br><span>semiSep1</span>        <span>=</span> P.semiSep1 tokenParser   <br><span>whiteSpace</span>      <span>=</span> P.whiteSpace tokenParser   <br><span>symbol</span>          <span>=</span> P.symbol tokenParser   <br><span>identifier</span>      <span>=</span> P.identifier tokenParser   <br><span>reserved</span>        <span>=</span> P.reserved tokenParser   <br><span>natural</span>         <span>=</span> P.natural tokenParser   <br><span>charLiteral</span>     <span>=</span> P.charLiteral tokenParser   <br><span>stringLiteral</span>   <span>=</span> P.stringLiteral tokenParser   <br></pre><br>Arith.hs<br><pre><br><span>module</span> <span>Arith</span> <span>where</span><br><br><br><br><span>data</span> <span>ArithExpr</span><br><span>=</span> <span>TmTrue</span><br><span>|</span> <span>TmFalse</span><br><span>|</span> <span>TmIfExpr</span> <span>ArithExpr</span> <span>ArithExpr</span> <span>ArithExpr</span><br><span>|</span> <span>TmZero</span><br><span>|</span> <span>TmSucc</span> <span>ArithExpr</span><br><span>|</span> <span>TmPred</span> <span>ArithExpr</span><br><span>|</span> <span>TmIsZero</span> <span>ArithExpr</span><br><span>deriving</span> (<span>Show</span>, <span>Eq</span>)<br><br><span>isNumericalVal</span> <span>::</span> <span>ArithExpr</span> <span>-&gt;</span> <span>Bool</span><br><span>isNumericalVal</span> <span>TmZero</span>     <span>=</span> <span>True</span><br><span>isNumericalVal</span> (<span>TmSucc</span> t) <span>=</span> isNumericalVal t<br><span>isNumericalVal</span> (<span>TmPred</span> t) <span>=</span> isNumericalVal t<br><span>isNumericalVal</span> <span>_</span>          <span>=</span> <span>False</span><br><br><br><br><span>isVal</span> <span>::</span> <span>ArithExpr</span> <span>-&gt;</span> <span>Bool</span><br><span>isVal</span> <span>TmTrue</span> <span>=</span> <span>True</span><br><span>isVal</span> <span>TmFalse</span> <span>=</span> <span>True</span><br><span>isVal</span> t<br><span>|</span> isNumericalVal t <span>=</span> <span>True</span><br><span>|</span> not (isNumericalVal t) <span>=</span> <span>False</span><br><span>isVal</span> <span>_</span> <span>=</span> <span>False</span><br><br><br><br><span>eval1</span> <span>::</span> <span>ArithExpr</span> <span>-&gt;</span> <span>Maybe</span> <span>ArithExpr</span><br><br><span>eval1</span> (<span>TmIfExpr</span> <span>TmTrue</span>  t <span>_</span>) <span>=</span> <span>Just</span> t<br><br><span>eval1</span> (<span>TmIfExpr</span> <span>TmFalse</span> <span>_</span> t) <span>=</span> <span>Just</span> t<br><br><span>eval1</span> (<span>TmIfExpr</span> t1 t2 t3) <span>=</span><br><span>let</span> t1' <span>=</span> eval1 t1<br><span>in</span>  <span>case</span> t1' <span>of</span><br>          { <span>Just</span> t1'' <span>-&gt;</span> <span>Just</span> <span>$</span> <span>TmIfExpr</span> t1'' t2 t3<br>          ; <span>Nothing</span> <span>-&gt;</span> <span>Nothing</span> <span>--Just $ TmIfExpr t1 t2 t3<br></span>            }<br><br><span>eval1</span> (<span>TmSucc</span> t) <span>=</span><br><span>let</span> t' <span>=</span> eval1 t<br><span>in</span>  <span>case</span> t' <span>of</span><br>        { <span>Just</span> t'' <span>-&gt;</span> <span>Just</span> <span>$</span> <span>TmSucc</span> t''<br>        ; <span>Nothing</span> <span>-&gt;</span> <span>Nothing</span> <span>--Just $ TmSucc t<br></span>          }<br><br><span>eval1</span> (<span>TmPred</span> <span>TmZero</span>) <span>=</span> <span>Just</span> <span>TmZero</span><br><br><span>eval1</span> (<span>TmPred</span> (<span>TmSucc</span> t))<br><span>|</span> isNumericalVal t <span>=</span> <span>Just</span> t<br><br><span>eval1</span> (<span>TmPred</span> t) <span>=</span><br><span>let</span> t' <span>=</span> eval1 t<br><span>in</span> <span>case</span> t' <span>of</span><br>       { <span>Just</span> t'' <span>-&gt;</span> <span>Just</span> <span>$</span> <span>TmPred</span> t''<br>       ; <span>Nothing</span> <span>-&gt;</span> <span>Nothing</span> <span>-- Just $ TmPred t<br></span>         }<br><br><span>eval1</span> (<span>TmIsZero</span> <span>TmZero</span>) <span>=</span> <span>Just</span> <span>TmTrue</span><br><br><span>eval1</span> (<span>TmIsZero</span> (<span>TmSucc</span> t))<br><span>|</span> isNumericalVal t <span>=</span> <span>Just</span> <span>TmFalse</span><br><br><span>eval1</span> (<span>TmIsZero</span> t) <span>=</span><br><span>let</span> t' <span>=</span> eval1 t<br><span>in</span> <span>case</span> t' <span>of</span><br>       { <span>Just</span> t'' <span>-&gt;</span> <span>Just</span> <span>$</span> <span>TmIsZero</span> t''<br>       ; <span>Nothing</span> <span>-&gt;</span> <span>Nothing</span> <span>-- Just $ TmIsZero t<br></span>         }<br><br><span>eval1</span> <span>_</span> <span>=</span> <span>Nothing</span><br><br><span>eval</span> t <span>=</span><br><span>let</span> t' <span>=</span> eval1 t<br><span>in</span> <span>case</span> t' <span>of</span><br>       { <span>Just</span> t'' <span>-&gt;</span> eval t'' <span>--if (t /= t'') then eval t'' else t<br></span>         ; <span>Nothing</span> <span>-&gt;</span> t<br>       }<br></pre><br><br><br></pre></pre>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/03/20/solaris-network-install-using-linux-dhcp-server/" class="text-gray-900 hover:text-indigo-600 transition-colors">Solaris network install using Linux DHCP server</a>
+            <a href="posts/index.php/2006/03/20/solaris-network-install-using-linux-dhcp-server/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Solaris network install using Linux DHCP server</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-03-20T20:42:00-05:00" title="2006-03-20 20:42">2006-03-20 20:42</time></p>
@@ -146,7 +155,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <br>The machine I'm installing onto is chimera, which has the MAC address 08:00:20:a2:22:66. It will get the address 10.10.1.132. The install and boot server are both heimdall, which had IP addresses 10.10.1.131 respectively. The 'next-server' tells chimera to netboot from heimdall. I'm calling that out in particular because I wasted about an hour figuring out that I needed that. <br><br>Once all that was done, it was a 'simple' matter of running <span>boot net:dhcp - install</span> from the openboot OK prompt. <br><br>The machine isn't exactly a screamer by today's standards, it has a 333Mhz UltraSparc IIi chip in it, but it does have 512Mb of RAM, which covers a multitude of sins. I think I may start over with a larger HD, since the 7G drive that's in there now doesn't leave much room for experimentation.  I'll probably go ahead and put a DVDRW drive in there too, even though I don't need it now.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/03/11/epsilon-delta-mathematics-and-computer-programming-number-sequence-puzzles-are-arbitrary/" class="text-gray-900 hover:text-indigo-600 transition-colors">Epsilon-Delta: Mathematics and Computer Programming » Number Sequence Puzzles are Arbitrary</a>
+            <a href="posts/index.php/2006/03/11/epsilon-delta-mathematics-and-computer-programming-number-sequence-puzzles-are-arbitrary/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Epsilon-Delta: Mathematics and Computer Programming » Number Sequence Puzzles are Arbitrary</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-03-11T15:53:00-05:00" title="2006-03-11 15:53">2006-03-11 15:53</time></p>
@@ -154,7 +163,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <a href="http://epsilondelta.wordpress.com/2006/03/09/number-sequence-puzzles-are-arbitrary/">Epsilon-Delta: Mathematics and Computer Programming » Number Sequence Puzzles are Arbitrary</a>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/02/21/brew-day/" class="text-gray-900 hover:text-indigo-600 transition-colors">Brew Day!</a>
+            <a href="posts/index.php/2006/02/21/brew-day/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Brew Day!</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-02-21T01:13:00-05:00" title="2006-02-21 01:13">2006-02-21 01:13</time></p>
@@ -187,7 +196,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <span><i><br>Recipe formatting and calculations by <a href="http://hbd.org/recipator">The Beer Recipator</a>.</i></span><br><br>Mashed with a single decoction. Doughed in with three gallons of water to 135 degrees F. Let rest for 15 minutes, then pulled a third of the thick mash and boiled for 15 minutes. Added back, and added hot liquor to reach 158 degrees F, and let rest for about an hour (during a trip to Target with the kids...)<br><br>Sparged with another 4 gallons of liquor and collected 6.5 gallons of sweet wort. Estimated efficiency, 60%. Low. Should probably investigate.<br><br>Added the first hops in while collecting the runoff.<br><br>Boiled for 60 minutes, with two hop additions at 30 minutes and at 5.  Also added 1 tsp of irish moss at 15 minutes.<br><br>Collected 5.5 gallons of 1.052 wort, and pitched 20 grams of Safeale 33 yeast.<br><br>Total time, around 6 1/2 hours. Although I still have some clean up.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/02/13/bill-de-hora-i-think-i-figured-out-the-list-comprehensions-thing/" class="text-gray-900 hover:text-indigo-600 transition-colors">Bill de hÓra: I think I figured out the list comprehensions thing...</a>
+            <a href="posts/index.php/2006/02/13/bill-de-hora-i-think-i-figured-out-the-list-comprehensions-thing/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Bill de hÓra: I think I figured out the list comprehensions thing...</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-02-13T18:37:00-05:00" title="2006-02-13 18:37">2006-02-13 18:37</time></p>
@@ -202,7 +211,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 </blockquote></div>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/02/01/picture-of-me-at-end-of-day/" class="text-gray-900 hover:text-indigo-600 transition-colors">Picture of me at end of day</a>
+            <a href="posts/index.php/2006/02/01/picture-of-me-at-end-of-day/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Picture of me at end of day</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-02-01T00:31:00-05:00" title="2006-02-01 00:31">2006-02-01 00:31</time></p>
@@ -211,7 +220,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <p><br>This is me at the end of the day, playing with Blogger's new mobile posting feature, and my new cell phone camera.</p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/02/01/oktale-novemberfest/" class="text-gray-900 hover:text-indigo-600 transition-colors">OktAle / Novemberfest</a>
+            <a href="posts/index.php/2006/02/01/oktale-novemberfest/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">OktAle / Novemberfest</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-02-01T00:08:00-05:00" title="2006-02-01 00:08">2006-02-01 00:08</time></p>
@@ -219,7 +228,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <a href="http://www.sdowney.org/2005/10/oktale-novemberfest.html">OktAle / Novemberfest</a><br><br>I finished up the keg this week. That was pretty fast, for me. I usually end up with a few stray bottles of a brew hanging on forever. But, since the keg is really all or nothing, I just finished it up. <br><br>The only down side is that I don't have another brewing at the moment. I'll have to get to work on that this weekend. Probably a basic Pale Ale, consisting of whatever they have on hand at my local homebrew store,  <a href="http://www.homebrewshop.com/">Karp's Homebrew Shop</a>.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/01/30/waterfall-2006-international-conference-on-sequential-development/" class="text-gray-900 hover:text-indigo-600 transition-colors">Waterfall 2006 - International Conference on Sequential Development</a>
+            <a href="posts/index.php/2006/01/30/waterfall-2006-international-conference-on-sequential-development/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Waterfall 2006 - International Conference on Sequential Development</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-01-30T16:25:00-05:00" title="2006-01-30 16:25">2006-01-30 16:25</time></p>
@@ -227,7 +236,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <a href="http://www.waterfall2006.com/">Waterfall 2006 - International Conference on Sequential Development</a><br><br>Just what we need. A solid return to the successful development practices of the early 80's. The Waterfall development model, with emphasis on design up front, deliberate handoff between phases, a separate QA team, and producing extensive documentation at all times, is ripe for a comeback.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/01/26/template-metaprogramming-google-search/" class="text-gray-900 hover:text-indigo-600 transition-colors">template metaprogramming - Google Search</a>
+            <a href="posts/index.php/2006/01/26/template-metaprogramming-google-search/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">template metaprogramming - Google Search</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-01-26T05:22:00-05:00" title="2006-01-26 05:22">2006-01-26 05:22</time></p>
@@ -235,7 +244,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <a href="http://www.google.com/search?q=template+metaprogramming">template metaprogramming - Google Search</a><br><br>goddamnit - there ought to be more people who know more about template metaprogramming than I do by now. <br><br>And Todd Veldhuizen was someone I cribbed notes from when I wrote that article. <br><br>The Boost MPL stuff is excellent. Why aren't there another dozen links talking about it?
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2006/01/24/google-mobile-personalized-home/" class="text-gray-900 hover:text-indigo-600 transition-colors">Google Mobile - Personalized Home</a>
+            <a href="posts/index.php/2006/01/24/google-mobile-personalized-home/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Google Mobile - Personalized Home</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2006-01-24T01:08:00-05:00" title="2006-01-24 01:08">2006-01-24 01:08</time></p>
@@ -268,8 +277,65 @@ delimiters: [
                 );
             </script>
 </div>
-    </main><hr class="max-w-prose mx-auto border-gray-200">
-<div class="max-w-prose mx-auto px-4 py-6">
+            
+<aside class="not-prose mt-10 lg:mt-0 lg:w-64 lg:shrink-0 lg:sticky lg:top-6 lg:self-start space-y-8"><section><button id="theme-toggle" class="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors" aria-label="Toggle dark mode">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            <span>Toggle theme</span>
+        </button>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
+        <ul class="space-y-3">
+<li>
+                <a href="posts/tailwind-theme-workflow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
+</li>
+            <li>
+                <a href="posts/building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
+                <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
+</li>
+            <li>
+                <a href="posts/substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
+                <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
+</li>
+            <li>
+                <a href="posts/nikola-blog-infrastructure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Nikola Blog Infrastructure</a>
+                <time class="text-xs text-gray-400" datetime="2024-12-23T13:15:27-05:00">2024-12-23 13:15</time>
+</li>
+            <li>
+                <a href="posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Concept Maps using C++23 Library Tech</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-19T11:51:00-04:00">2024-05-19 11:51</time>
+</li>
+            <li>
+                <a href="posts/index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Slides from C++Now 2023 Async Control Flow</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-18T18:27:00-04:00">2024-05-18 18:27</time>
+</li>
+            <li>
+                <a href="posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Some Informal Remarks Towards a New Theory of Trait Customization</a>
+                <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
+</li>
+            <li>
+                <a href="posts/special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
+                <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
+</li>
+            <li>
+                <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+            <li>
+                <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+        </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
+        <a href="archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Tags</h2>
+        <a href="categories/" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Browse tags →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Feeds</h2>
+        <ul class="space-y-1">
+<li><a href="feed.atom" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Atom</a></li>
+            <li><a href="rss.xml" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">RSS</a></li>
+        </ul></section></aside>
+</div>
+    </main><hr class="max-w-6xl mx-auto border-gray-200">
+<div class="max-w-6xl mx-auto px-4 py-6">
         
         <footer id="footer" class="text-center text-sm text-gray-500"><p>Contents © 2026         <a href="mailto:sdowney@sdowney.dev">Steve Downey</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a> - 
  <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">

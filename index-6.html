@@ -5,39 +5,44 @@
 <meta name="description" content="Stuff, and more stuff">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What Comes to Mind (old posts, page 6) | What Comes to Mind</title>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script><script>
-    (function() {
-        var heading = ['"Open Sans"', 'Roboto', 'Arial', 'sans-serif'];
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Source Sans 3"'].concat(heading),
-                        heading: heading,
-                        mono: ['"Source Code Pro"', 'Inconsolata', 'ui-monospace', 'Courier', 'monospace'],
-                    },
-                    typography: {
-                        DEFAULT: {
-                            css: {
-                                'h1, h2, h3, h4, h5, h6': {
-                                    fontFamily: heading.join(', '),
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        };
+<script>
+    (function () {
+        var s = localStorage.getItem('theme');
+        var dark = s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
     })();
-    </script><link rel="preconnect" href="https://fonts.googleapis.com">
+    </script><link rel="stylesheet" href="assets/css/tailwind.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&amp;family=Source+Sans+3:ital,wght@0,200..900;1,200..900&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link href="assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="assets/css/modus-vivendi-tinted.css">
+<link id="modus-light" rel="stylesheet" href="assets/css/modus-vivendi-tinted.css" media="(prefers-color-scheme: light)">
+<link id="modus-dark" rel="stylesheet" href="assets/css/modus-operandi-tinted.css" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/css/tailwind-base.css">
+<style>
+    :root {
+        --code-bg: #1d2235;
+        --code-fg: #ffffff;
+        --code-label-color: #989898;
+        --copy-btn-color: #8b8fa3;
+        --copy-btn-border: #3a3d52;
+        --copy-btn-hover-color: #d0d4e8;
+        --copy-btn-hover-border: #6b7094;
+    }
+
+    .dark {
+        --code-bg: #efe9dd;
+        --code-fg: #1a1a2e;
+        --code-label-color: #595959;
+        --copy-btn-color: #6b7280;
+        --copy-btn-border: #d1d5db;
+        --copy-btn-hover-color: #374151;
+        --copy-btn-hover-border: #9ca3af;
+    }
+    </style>
 <link href="assets/css/custom.css" rel="stylesheet" type="text/css">
-<meta name="theme-color" content="#5670d4">
+<script src="assets/js/theme-toggle.js" defer></script><meta name="theme-color" content="#5670d4">
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="feed.atom">
@@ -46,7 +51,7 @@
 <link rel="next" href="index-5.html" type="text/html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
-<body class="bg-white text-gray-900 font-sans">
+<body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-white focus:px-4 focus:py-2 focus:z-50">Skip to main content</a>
     
     
@@ -56,7 +61,7 @@
         <div class="flex items-center justify-between h-14">
             <a href="https://sdowney.org/" title="What Comes to Mind" rel="home" class="text-white text-lg font-semibold hover:text-gray-300 transition-colors">What Comes to Mind</a>
             <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle navigation">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                <svg class="size-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
             <ul class="hidden md:flex items-center space-x-4 text-sm">
 <li><a href="archive.html" class="text-gray-300 hover:text-white transition-colors">Archives</a></li>
                     
@@ -101,19 +106,23 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     menu.classList.toggle('hidden');
     menu.classList.toggle('flex');
 });
-</script><div class="bg-indigo-700 text-white py-10 text-center">
-    
-        <h1 class="text-4xl font-bold">What Comes to Mind</h1>
-        <p class="mt-2 text-lg text-indigo-200">Stuff, and more stuff</p>
-    
-    </div>
-    <main id="content" class="max-w-prose mx-auto px-4 py-8"><div class="prose prose-lg max-w-none prose-indigo">
+</script><div class="relative text-white py-10 text-center bg-cover bg-center" style="background-image: url('assets/images/cropped-blog-header.jpg');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10">
         
+            <h1 class="text-4xl font-bold text-balance">What Comes to Mind</h1>
+            <p class="mt-2 text-lg text-gray-100">Stuff, and more stuff</p>
+        
+        </div>
+    </div>
+    <main id="content" class="max-w-6xl mx-auto px-4 py-8"><div class="lg:flex lg:gap-10">
+            <div class="prose prose-lg max-w-none prose-indigo dark:prose-invert lg:flex-1 lg:min-w-0">
+            
 
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2008/02/01/email-check/" class="text-gray-900 hover:text-indigo-600 transition-colors">email check</a>
+            <a href="posts/index.php/2008/02/01/email-check/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">email check</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2008-02-01T03:19:00-05:00" title="2008-02-01 03:19">2008-02-01 03:19</time></p>
@@ -121,7 +130,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <p>(Redirected)</p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/12/18/camping-this-last-weekend-at-west-hills/" class="text-gray-900 hover:text-indigo-600 transition-colors">Camping this last weekend at West Hills</a>
+            <a href="posts/index.php/2007/12/18/camping-this-last-weekend-at-west-hills/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Camping this last weekend at West Hills</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-12-18T04:05:00-05:00" title="2007-12-18 04:05">2007-12-18 04:05</time></p>
@@ -129,7 +138,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <a href="http://www.sdowney.org/uploaded_images/shelter-744028.jpg"><img src="http://www.sdowney.org/uploaded_images/shelter-744009.jpg" alt="" border="0"></a>This is the shelter we stayed in. The high pitched roof helps keep the heat in, and the rain out. And the snow, although that mostly melted.<br><br><br><a href="http://www.sdowney.org/uploaded_images/garbagecan_turkey-709741.jpg"><img src="http://www.sdowney.org/uploaded_images/garbagecan_turkey-709735.jpg" alt="" border="0"></a><br>This was the point of the whole trip. A garbage can cooked turkey to share with friends and family. The can acts as an oven, with the charcoal providing way more than enough heat to cook the bird, which is impaled on a stake, holding it vertically in the middle of the can. The 15 pound bird cooked in just a few hours.<br><br><br><a href="http://www.sdowney.org/uploaded_images/jon_me_1-703021.jpg"><img src="http://www.sdowney.org/uploaded_images/jon_me_1-702999.jpg" alt="" border="0"></a><br>My boy Jonathan (on the left), me on the right, and our friend Joel in between. Yes, that's coffee in the mug. And, yes, it's a stainless steel vacuum mug. With a spill proof top. But not the one I leave at the office.<br><br><a href="http://www.sdowney.org/uploaded_images/mike_by_fire-741419.jpg"><img src="http://www.sdowney.org/uploaded_images/mike_by_fire-741415.jpg" alt="" border="0"></a><br>My other boy, Michael, against the far wall, near the fire. They're warming up after we sent them outside to do some of the cooking. Which was mostly making sure there were enough coals around the trash can.<br>We also made mashed potatoes, sweet potatoes, gravy, peas, corn bread, stuffing, and cherry and apple pies, cooked in dutch ovens. The dutch ovens were in the fireplace opposite the one in this picture, in the far corner of the shelter. Between the two fireplaces, the inside temperature got up into the 80s at one point. We had to open the doors to let out the heat.<br>And the smoke.<br><br>Everyone had a good time, and we came back with the same number of boys we left with.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/11/26/office-1-me-0/" class="text-gray-900 hover:text-indigo-600 transition-colors">Office 1 (me 0)</a>
+            <a href="posts/index.php/2007/11/26/office-1-me-0/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Office 1 (me 0)</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-11-26T16:52:00-05:00" title="2007-11-26 16:52">2007-11-26 16:52</time></p>
@@ -138,7 +147,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <p><a href="http://www.sdowney.org/uploaded_images/Photo_11-719126-719167.jpg"><img src="http://www.sdowney.org/uploaded_images/Photo_11-719126-719162.jpg" alt="" border="0"></a></p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/04/19/i-win/" class="text-gray-900 hover:text-indigo-600 transition-colors">I win</a>
+            <a href="posts/index.php/2007/04/19/i-win/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">I win</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-04-19T07:01:00-04:00" title="2007-04-19 07:01">2007-04-19 07:01</time></p>
@@ -146,7 +155,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <p><a href="http://www.sdowney.org/uploaded_images/Photo_04-755754-756824.jpg"><img src="http://www.sdowney.org/uploaded_images/Photo_04-755754-756457.jpg" width="320"></a></p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/04/18/this-showed-up-in-my-local-bookstore/" class="text-gray-900 hover:text-indigo-600 transition-colors">This showed up in my local bookstore</a>
+            <a href="posts/index.php/2007/04/18/this-showed-up-in-my-local-bookstore/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">This showed up in my local bookstore</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-04-18T01:21:00-04:00" title="2007-04-18 01:21">2007-04-18 01:21</time></p>
@@ -157,7 +166,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <br>Penn Books on the LIRR Level of Penn Station. Small store, but many shelves of SF, particularly if you know to look under the display table across from  the main set of shelves. The staff are outstanding. I got the first recommendation for Vinge's Rainbows (sic) End there. They also have an excellent classics and literature section. As in, when I mentioned that 'March Up Country' was (sort of) based on 'The Anabasis', they knew where it should be shelved, wondered why it wasn't there, and offered to order it. Which might just be good salesmanship, except, after picking up my copy, I was looking in the same section for a copy of the Eddas, which they had, and spotted another copy of the Anabasis.<br><br>Buy books there, if you can.
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/02/19/36/" class="text-gray-900 hover:text-indigo-600 transition-colors">36</a>
+            <a href="posts/index.php/2007/02/19/36/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">36</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-02-19T03:22:00-05:00" title="2007-02-19 03:22">2007-02-19 03:22</time></p>
@@ -175,7 +184,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <br></typename></p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/02/07/what-is-currying-an-aha-moment/" class="text-gray-900 hover:text-indigo-600 transition-colors">What is currying? an aha! moment</a>
+            <a href="posts/index.php/2007/02/07/what-is-currying-an-aha-moment/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">What is currying? an aha! moment</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-02-07T03:19:00-05:00" title="2007-02-07 03:19">2007-02-07 03:19</time></p>
@@ -199,7 +208,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <p><br></p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/02/02/functional-programming-in-c-part-1/" class="text-gray-900 hover:text-indigo-600 transition-colors">Functional Programming in C++ Part 1</a>
+            <a href="posts/index.php/2007/02/02/functional-programming-in-c-part-1/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Functional Programming in C++ Part 1</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-02-02T05:17:00-05:00" title="2007-02-02 05:17">2007-02-02 05:17</time></p>
@@ -275,7 +284,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
 <br><h2></h2>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/01/24/monads-rest-and-c-template-metaprogramming/" class="text-gray-900 hover:text-indigo-600 transition-colors">Monads, REST and C++ Template Metaprogramming</a>
+            <a href="posts/index.php/2007/01/24/monads-rest-and-c-template-metaprogramming/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Monads, REST and C++ Template Metaprogramming</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-01-24T04:08:00-05:00" title="2007-01-24 04:08">2007-01-24 04:08</time></p>
@@ -283,7 +292,7 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <p>OK, with that title, I'm sure to please almost no one. If you want to know how to do REST-ful programming in Haskell, or tie REST to C++, move along, there's nothing to see here. The connection isn't at the implementation level. Which is the whole point.<br>So what do REST,  Monads and (successful)  Template Metaprogramming have in common?<br>Strict maintenance of levels of abstraction, and extremely narrow interfaces between those levels.<br>What does that get you?<br>Extremely (and possibly maximally) reusable abstractions (code).<br>What triggered the realization for me was a paper on Arrows by Hughes, which asked the question 'Why are Monads so reusable when the have such a small interface', although not in those exact words. It dawned on me that they are so reusable exactly because they have such a narrow, but still very well defined, interface. They can do that because Monads are all about abstracting out features. A particular Monad will delagate all the real work down to the type it is being run over. Its real job is constraining the ways the values of the types it is a Monad over can be combined.<br>The analogue I have in mind for C++ MP is the swap() method. In a C++ template, we can assume that we can call swap on two values, that we otherwise know nothing about, and that the two values will be exchanged in a way that does not throw any exceptions, and is the best way of exchanging two values of that type. The abstract notion of swapping two values is delegated to the concrete implementation of the type being templated over.<br>A REST-ful web application exposes PUT, GET, POST, and DELETE on resources named by a URI.  Nominally not much to have a really rich experience. OTOH, Google Map mashups  contradict that.<br>It's not the richness of the interface of the metalevel, it's the richness allowed at level below. The narrow, but well defined, interface, where that interface delegates to a lower level abstraction, is exactly what enables composeability.<br>Monads, being firmly grounded in Functors in Category Theory, take this to an extreme level of rigor. There are laws that must be satisfied for a thing to be called a Monad, and those laws ensure that other Monads can interoperate, and achieve the Principle of Least Surprise.<br>I'm not intending this to be Yet Another Monad Tutorial. So I won't go too deep here. But monad transformers show a degree of generic reusability that is awfully hard to achieve with C++ templates, even though C++ templates have similar expressive power (with a horribly clumsy syntax).<br>Monads are functions (functors) that take types to types, and so correspond to mpl metafunctions. But they preserve the underlying structure on the types they operate over. In particular, composition is preserved. So if I have an function of type a -&gt; M b, and a function b -&gt; c, I get a working a -&gt; M c for free, just by using fmap. In C++ it would be like<br>template<typename b> foo(A)<br>and<br>C bar(B)<br>getting you to<br>template<c> foo(A)  by saying template fmap<foo>(a,b), or even better just fmap(a,b) and letting the compiler figure out types.<br>(where foo is something like<br>template<typename> foo(A a);)<br>That looks so impossible in C++, that most C++ programmers have no intuition about it.<br>But every time you wish that you didn't have to write some type that the compiler already knows, like the iterator or value_type or return_value, particularly when they get really messy, you're looking for what Monads, or at least what Hindley-Milner type inference, provide.</typename></foo></c></typename></p>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2007/01/20/rest-in-peace-robert-anton-wilson/" class="text-gray-900 hover:text-indigo-600 transition-colors">rest in peace robert anton wilson</a>
+            <a href="posts/index.php/2007/01/20/rest-in-peace-robert-anton-wilson/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">rest in peace robert anton wilson</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2007-01-20T05:29:00-05:00" title="2007-01-20 05:29">2007-01-20 05:29</time></p>
@@ -316,8 +325,65 @@ delimiters: [
                 );
             </script>
 </div>
-    </main><hr class="max-w-prose mx-auto border-gray-200">
-<div class="max-w-prose mx-auto px-4 py-6">
+            
+<aside class="not-prose mt-10 lg:mt-0 lg:w-64 lg:shrink-0 lg:sticky lg:top-6 lg:self-start space-y-8"><section><button id="theme-toggle" class="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors" aria-label="Toggle dark mode">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            <span>Toggle theme</span>
+        </button>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
+        <ul class="space-y-3">
+<li>
+                <a href="posts/tailwind-theme-workflow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
+</li>
+            <li>
+                <a href="posts/building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
+                <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
+</li>
+            <li>
+                <a href="posts/substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
+                <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
+</li>
+            <li>
+                <a href="posts/nikola-blog-infrastructure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Nikola Blog Infrastructure</a>
+                <time class="text-xs text-gray-400" datetime="2024-12-23T13:15:27-05:00">2024-12-23 13:15</time>
+</li>
+            <li>
+                <a href="posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Concept Maps using C++23 Library Tech</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-19T11:51:00-04:00">2024-05-19 11:51</time>
+</li>
+            <li>
+                <a href="posts/index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Slides from C++Now 2023 Async Control Flow</a>
+                <time class="text-xs text-gray-400" datetime="2024-05-18T18:27:00-04:00">2024-05-18 18:27</time>
+</li>
+            <li>
+                <a href="posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Some Informal Remarks Towards a New Theory of Trait Customization</a>
+                <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
+</li>
+            <li>
+                <a href="posts/special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
+                <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
+</li>
+            <li>
+                <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+            <li>
+                <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
+                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
+</li>
+        </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
+        <a href="archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Tags</h2>
+        <a href="categories/" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Browse tags →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Feeds</h2>
+        <ul class="space-y-1">
+<li><a href="feed.atom" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Atom</a></li>
+            <li><a href="rss.xml" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">RSS</a></li>
+        </ul></section></aside>
+</div>
+    </main><hr class="max-w-6xl mx-auto border-gray-200">
+<div class="max-w-6xl mx-auto px-4 py-6">
         
         <footer id="footer" class="text-center text-sm text-gray-500"><p>Contents © 2026         <a href="mailto:sdowney@sdowney.dev">Steve Downey</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a> - 
  <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
