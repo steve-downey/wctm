@@ -32,10 +32,14 @@
 * Building an Expression Tree in 20 Lines
 
 I want to build expression trees, evaluate them, and do it without inheritance or virtual functions.
+More specifically, I want to stop re-writing the same recursive walk every time I add a new operation.
+In the ordinary design I would define a recursive tree, then separately reason through ~eval~, ~print~, ~count~, and ~validate~ as distinct recursive functions.
+This post is about separating those concerns so the recursion is written once and the operation-specific logic becomes a small, local piece.
 
 Here is the entire type system for an expression tree.
 The full self-contained example is in [[orgit-file:src/examples/fixpoint_tree_example.cpp][=src/examples/fixpoint_tree_example.cpp=]].
-[[https://godbolt.org][Paste it into Compiler Explorer]] --- it compiles with any C++23 toolchain.
+[[https://godbolt.org][Paste it into Compiler Explorer]] --- as written, it needs a C++26 toolchain because ~Box~ is ~std::indirect~.
+If ~std::indirect~ is not available yet, ~std::shared_ptr~ is a workable substitute for the same pattern, with different ownership and value-semantics tradeoffs.
 
 #+begin_src cpp
 #include <iostream>
@@ -109,6 +113,10 @@ Additions add children that are already integers.
 Multiplications multiply children that are already integers.
 It does not recurse.
 
+That is the key discomfort the rest of the post resolves.
+I know how to write the one-layer business logic.
+What I do not want is to hand-roll the tree walk again for evaluation, then again for printing, then again for validation.
+
 The recursion is supplied separately, by a function called ~fold_fix~.
 First, the pieces.
 
@@ -117,6 +125,10 @@ First, the pieces.
 The Compiler Explorer example above is self-contained but simplified.
 The repository version in [[orgit-file:src/smd/tree/fixpoint_tree.hpp][=src/smd/tree/fixpoint_tree.hpp=]] uses slightly different names (~ExprConst~, ~ExprAdd~, ~ExprMul~) and ~double~ values instead of ~int~.
 From here on I use the repository names.
+
+The contrast to the "obvious" approach matters.
+Normally I would define a directly recursive AST and then write one recursive function per operation.
+Here I am trying to factor the recursion itself into reusable machinery so that each new operation only has to say how one layer combines.
 
 ** The Non-Recursive Functor
 
@@ -168,6 +180,11 @@ using Box = std::indirect<A>;
 
 ~std::indirect~ ([[https://wg21.link/P3019][P3019]], C++26) provides value semantics: copying a ~Box<A>~ deep-copies the wrapped value.
 This is exactly what is wanted here --- trees are values.
+
+If ~std::indirect~ is not available on the toolchain at hand, the same fixed-point construction still works with ~std::shared_ptr~ in the recursive positions.
+That was the older version of this example.
+It preserves the shape of the design --- one layer functor plus fixed point --- but it gives pointer-sharing semantics instead of deep-copying value semantics.
+For this post, ~std::indirect~ is the better fit because the trees are meant to behave like values.
 
 ** Fix: Tying the Recursive Knot
 
@@ -257,6 +274,7 @@ Constants have no recursive positions, so ~f~ is never called --- the value copi
 Add and Mul apply ~f~ to both children.
 
 This is the only place in the system that knows the /shape/ of ~ExprF~.
+Said another way: ~fmap_expr~ is the only function here that knows where the recursive holes are.
 Everything else --- catamorphism, Foldable, Traversable --- is generic over any functor that provides an ~fmap~.
 That separation is deliberate.
 
@@ -293,6 +311,11 @@ Now ~(1 + 2) * 3~ reads naturally:
 auto tree = mul_expr(add_expr(const_expr(1.0), const_expr(2.0)),
                      const_expr(3.0));
 #+end_src
+
+I will keep coming back to this same tree.
+First I will evaluate it.
+Then I will print it, summarize it, validate it, and relabel it.
+The point is to show that the tree stays the same while the amount of bespoke recursion I have to write drops sharply.
 
 * Recursion Schemes: Separating Recursion from Business Logic
 
@@ -436,6 +459,7 @@ The algebra answers /how to combine/.
 The recursion scheme answers /how to recurse/.
 They never tangle.
 That separation is the point.
+This is the first payoff: I changed the operation without re-reasoning about the recursive walk.
 
 ** unfold_fix: Building a Tree from a Seed
 
@@ -511,14 +535,16 @@ Compare with ~fold_fix~: where ~fold_fix~ calls ~unwrap_fix~ to get a layer from
 ~fold_fix~ recurses into ~Fix<F>~ children; ~refold~ recurses into seeds.
 The algebra is the same.
 
-The equivalence is:
+The semantic equivalence is:
 
 #+begin_src
 fold_fix(algebra, fmap, unfold_fix<F>(coalgebra, fmap, seed))
     == refold<Result, F>(algebra, coalgebra, fmap, seed)
 #+end_src
 
-Same answer, no intermediate tree.
+Under the usual assumptions --- a productive coalgebra, a finite structure, and an algebra without side effects that would distinguish evaluation strategy --- both expressions compute the same result.
+They are logically equivalent, not operationally identical.
+~refold~ avoids materializing the intermediate ~Fix<F>~ tree, so allocation, traversal order details, and opportunities for optimization can differ even when the returned value is the same.
 The test suite checks this for every input size.
 
 ** A Note on Names
@@ -539,12 +565,22 @@ The new functions have no jargon aliases.
 * Foldable: One Hook, Many Derived Operations
 
 ~fold_fix~ is powerful, but you have to supply ~fmap~ and think in F-algebras.
+For many problems, that is already enough.
+If all I need is evaluation, pretty-printing, or some other algebra over the tree, I can stop with ~Fix~, ~fmap~, and the recursion schemes.
+The next step is not required for those techniques.
 For the everyday operations --- counting, collecting, testing predicates --- there is a simpler interface.
+This is the same idea again, one layer up: I still want fewer hand-written recursive functions, but now for the common summary operations I do not even want to think in terms of algebras.
+So I add another building block on top.
+Because ~Fix<ExprF>~ happens to fit the typeclass interface cleanly, I can recover more leverage from the same tree definition.
 
 ** The Typeclass Object Pattern
 
 I use a pattern where each concept (Foldable, Applicative, Traversable) has a variable template that maps a type to an object providing all operations for that concept.
 I described this pattern in more detail in [[https://sdowney.org/posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/][Concept Maps Using C++23 Library Tech]] and [[https://sdowney.org/posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/][Some Informal Remarks Towards a New Theory of Trait Customization]].
+
+This pattern composes with the earlier fixpoint machinery; it does not replace it.
+The expression tree was already useful before any ~foldable_typeclass~ or ~traversable_typeclass~ specialization existed.
+The specializations just let generic algorithms recognize the tree and do more with it.
 
 From [[orgit-file:src/smd/typeclass/foldable.hpp][=src/smd/typeclass/foldable.hpp=]]:
 
@@ -582,6 +618,12 @@ struct FixpointTreeFoldableImpl {
     auto fold_map(this auto&& self, F&& f,
                   const Fix<ExprF>& t)
     {
+        using smd::fixpoint::unwrap_fix;
+        using smd::tree::ExprAdd;
+        using smd::tree::ExprConst;
+        using smd::tree::ExprMul;
+        using Expr = smd::tree::Expr;
+
         const auto& layer = unwrap_fix(t);
 
         if (std::holds_alternative<ExprConst<Expr>>(layer)) {
@@ -593,7 +635,7 @@ struct FixpointTreeFoldableImpl {
             auto lhs = self.fold_map(f, *left);
             auto rhs = self.fold_map(f, *right);
             using Result = std::remove_cvref_t<decltype(lhs)>;
-            return monoid_v<Result>.combine(lhs, rhs);
+            return smd::typeclass::monoid_v<Result>.combine(lhs, rhs);
         };
 
         if (std::holds_alternative<ExprAdd<Expr>>(layer)) {
@@ -625,12 +667,12 @@ Tested in [[orgit-file:src/smd/typeclass/examples/blog_fixpoint_examples.cpp][=b
 const auto& foldable = foldable_typeclass<Expr>;
 
 auto tree = mul_expr(add_expr(const_expr(1.0), const_expr(2.0)),
-                     add_expr(const_expr(3.0), const_expr(4.0)));
-foldable.length(tree);    // 4
-foldable.to_vector(tree); // {1.0, 2.0, 3.0, 4.0}
+                     const_expr(3.0));
+foldable.length(tree);    // 3
+foldable.to_vector(tree); // {1.0, 2.0, 3.0}
 
 foldable.fold_left(tree, 0.0,
-    [](double acc, double x) { return acc + x; }); // 10.0
+    [](double acc, double x) { return acc + x; }); // 6.0
 
 foldable.any_of(tree, [](double x) { return x == 3.0; }); // true
 foldable.all_of(tree, [](double x) { return x > 0.0; });  // true
@@ -647,6 +689,7 @@ Each picks the right Monoid for ~fold_map~:
 One hook.
 Ten derived operations.
 That is the trade I want.
+Same tree again, but now I get several everyday operations without writing a fresh recursive descent for any of them.
 
 * Traversable: A Tree Stays a Tree
 
@@ -657,10 +700,46 @@ Sometimes I want to transform values /and keep the tree/.
 Two differently shaped trees can flatten to the same sequence under ~to_vector~, but traversal should preserve the original branching.
 
 That is what Traversable does (Gibbons and Oliveira, 2006).
+This is the last step in the progression.
+Evaluation and ~fold_map~ summarize the tree.
+Traversal lets me keep using the same running example tree while changing only the leaf values and letting the library rebuild the structure correctly.
+Like Foldable, this is extra leverage, not a prerequisite for the recursion-scheme story.
+The earlier ~Fix~ examples work perfectly well without any Traversable instance.
+Adding one means the same tree can now participate in a larger library of structure-preserving transformations.
+In the current repository, the derived helper for flipping ~structure<context<T>>~ into ~context<structure<T>>~ is named ~transpose~, not ~sequence~.
+That avoids colliding with the much more container-shaped meaning of "sequence" in C++.
 
 ** The traverse Implementation
 
 The Traversable instance maps each leaf through a function that returns an Applicative context (like [[https://en.cppreference.com/w/cpp/utility/optional][=std::optional=]]), then rebuilds the tree inside that context (McBride and Paterson, 2008).
+
+Applicative is unfamiliar jargon for many readers, so here is the operational idea.
+A Functor lets me apply a normal function to values /inside/ some context: ~vector<T>~, ~optional<T>~, and similar wrappers.
+An Applicative goes one step further: it lets me use an ordinary multi-argument function with values that are already in that context, without rewriting the function to know anything about the context itself.
+
+If I have a plain function ~f(T, U, V) -> Z~, Applicative lets me combine values as if I had written ~f(vector<T>, vector<U>, vector<V>)~, producing a ~vector<Z>~.
+Likewise, I can logically apply ~const_expr(double) -> Expr~, ~add_expr(Expr, Expr) -> Expr~, or ~mul_expr(Expr, Expr) -> Expr~ to ~optional<double>~ or ~optional<Expr>~ and get an ~optional<Expr>~ back.
+The function stays ordinary.
+The Applicative machinery is what knows how to thread the surrounding context through the computation.
+
+That is why Traversable depends on Applicative.
+Traversal wants to rebuild the same tree shape with ordinary constructors like ~const_expr~, ~add_expr~, and ~mul_expr~, while each recursive step may already live inside some effectful context such as ~optional~ or ~vector~.
+Applicative gives me exactly the tool for that.
+
+This is also a good place to justify the typeclass object machinery.
+For some sequence types there is not just one obvious Applicative.
+With a vector-like sequence I might want zip behavior, where the first elements combine with the first elements and the result stops at the shortest input.
+Or I might want nondeterministic/cartesian-product behavior, where every element on the left combines with every element on the right.
+Both are reasonable.
+They are different semantics for the same underlying container.
+
+That means "the Applicative for vector" is not a single universal fact.
+It is a choice.
+Representing Applicative behavior as an explicit object is what makes that choice controllable.
+The function being traversed still does not know anything about zip versus cartesian product; it just returns plain values in a context.
+The selected Applicative object determines how those contextual results combine.
+
+At the API level, ~traverse~ is the primitive operation and ~transpose~ is the derived convenience for the identity case: a tree or range that already contains contextual values can be flipped to one outer context without writing the identity lambda by hand.
 
 From [[orgit-file:src/smd/tree/fixpoint_tree_traversable.hpp][=src/smd/tree/fixpoint_tree_traversable.hpp=]]:
 
@@ -711,9 +790,18 @@ struct FixpointTreeTraversableImpl {
 At a leaf: apply ~f~ to the value (getting an ~optional<double>~), then ~applicative.invoke~ lifts ~const_expr~ into that context.
 At a branch: recursively traverse both children, then ~applicative.invoke~ applies the builder (~add_expr~ or ~mul_expr~) to the two results.
 
-If any leaf returns ~nullopt~, the whole traversal short-circuits.
+So ~applicative.invoke~ is doing the contextual version of an ordinary function call.
+Instead of calling ~add_expr(left, right)~, it knows how to combine something like ~optional<Expr> left~ and ~optional<Expr> right~ into an ~optional<Expr>~ result.
+The builder itself still only talks about plain ~Expr~ values.
+
+With ~std::optional~, the /result/ is all-or-nothing: if any leaf returns ~nullopt~, the final result is ~nullopt~.
 If every leaf succeeds, you get an ~optional<Expr>~ with the exact same shape.
-No partial results.
+No partial tree is returned.
+
+But this implementation is not operationally fail-fast.
+At a branch it traverses both children first, then combines the two ~optional~ results with ~applicative.invoke~.
+So ~optional~ short-circuits the /combined result/, not the evaluation of sibling subtrees.
+If true early exit matters, that would need a different interface or a specialized implementation rather than this generic Applicative traversal.
 
 ** Validation: All-or-Nothing
 
@@ -747,6 +835,7 @@ assert(!result.has_value());  // no partial tree returned
 #+end_src
 
 Everything validates, or you get nothing.
+That is a statement about the returned value, not about skipping work in sibling branches after the first failure.
 
 ** Relabeling: Same Shape, Different Values
 
