@@ -48,7 +48,7 @@
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="feed.atom">
 <link rel="canonical" href="https://sdowney.org/">
 <link rel="next" href="index-9.html" type="text/html">
-<link rel="prefetch" href="posts/tailwind-theme-workflow/" type="text/html">
+<link rel="prefetch" href="posts/moving-forward-with-legacy-encodings/" type="text/html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
 <body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
@@ -122,6 +122,31 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/moving-forward-with-legacy-encodings/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Moving Forward With Legacy Encodings</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-05-24T13:11:21-04:00" title="2026-05-24 13:11">2026-05-24 13:11</time></p>
+        <div class="mt-3">
+            <div id="ox-nikola-outline-container-org30c7e97" class="ox-nikola-outline-2">
+<h2 id="org30c7e97">
+<span class="section-number-2">1.</span> Abstract</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Reverse-parsing legacy multibyte text encodings — such as Shift_JIS, Big5, or GB18030 — using only local context is an unsolvable problem. Unlike UTF-8, which guarantees \(O(1)\) self-synchronization, legacy encodings have heavily overlapping lead and trail byte ranges. Consequently, even if you begin at a known, valid character boundary, computing the byte-width of the preceding character requires an \(O(N)\) backward scan to the beginning of the string to resolve the parity of the sequence.
+</p>
+
+<p>
+The WHATWG decoding algorithms provide no mitigation, as their forward-looking state machines reset completely at every boundary. Robust reverse iteration through these encodings cannot be solved algorithmically <i>in situ</i>; it requires maintaining an external cache of boundary offsets established during a forward pass.
+</p>
+
+<p>
+What follows is the story of attempting to find a way out, and why the math forces us to fail.
+</p>
+<p class="more"><a href="posts/moving-forward-with-legacy-encodings/">Read more…</a></p>
+</div>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
             <a href="posts/tailwind-theme-workflow/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
@@ -151,7 +176,7 @@ configuration choices are.
             <time class="published dt-published" datetime="2025-12-27T12:03:15-05:00" title="2025-12-27 12:03">2025-12-27 12:03</time></p>
         <div class="mt-3">
             <div>
-<div class="abstract" id="org3aa8294">
+<div class="abstract" id="org67671ba">
 <p>
 Making sure vcpkg delivers packages built with your toolchain is not hard, but much of the advice on the internet is flat wrong. You need to specify your toolchain both in your project and in the the vcpkg <code>triplet</code>. There's an airgap between your project and the dependency in <code>vcpkg install</code>. The CMake settings can't just flow through.
 </p>
@@ -168,7 +193,7 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
             <time class="published dt-published" datetime="2025-11-28T12:06:58-05:00" title="2025-11-28 12:06">2025-11-28 12:06</time></p>
         <div class="mt-3">
             <div>
-<div class="abstract" id="org8d6f569">
+<div class="abstract" id="org541b898">
 <p>
 Why are optional::transform and optional::and_then not constrained by <code>invocable</code>?
 </p>
@@ -185,7 +210,7 @@ Why are optional::transform and optional::and_then not constrained by <code>invo
             <time class="published dt-published" datetime="2024-12-23T13:15:27-05:00" title="2024-12-23 13:15">2024-12-23 13:15</time></p>
         <div class="mt-3">
             <div>
-<div class="abstract" id="orgab5b754">
+<div class="abstract" id="orgbd7bba5">
 <p>
 I've migrated from WordPress to a static blog generator–Nikola. This is how it works.
 </p>
@@ -329,41 +354,6 @@ Syntax isn't really awesome, but not utterly unworkable.
 </div>
 </div>
         </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">std::execution, Sender/Receiver, and the Continuation Monad</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2021-10-03T00:00:00-04:00" title="2021-10-03 00:00">2021-10-03 00:00</time></p>
-        <div class="mt-3">
-            <div>
-<p> Some thoughts on the <a href="https://wg21.link/p2300">std::execution</a> proposal and my understanding of the underlying theory. </p>
-
-<div id="outline-container-org6280fb4" class="outline-2">
-<h3 id="org6280fb4">What's proposed</h3>
-<div class="outline-text-2" id="text-org6280fb4">
-<p> From the paper's <a href="https://brycelelbach.github.io/wg21_p2300_std_execution/std_execution.html#intro">Introduction</a> </p>
-
-<blockquote>
-<p> This paper proposes a self-contained design for a Standard C++ framework for managing asynchronous execution on generic execution contexts. It is based on the ideas in [P0443R14] and its companion papers. </p>
-</blockquote>
-
-<p> Which doesn't tell you much. </p>
-
-<p> It proposes a framework where the principle abstractions are Senders, Receivers, and Schedulers. </p>
-
-<dl class="org-dl">
-<dt>Sender</dt>
-<dd>A composable unit of work.</dd>
-<dt>Receiver</dt>
-<dd>Delimits work, handling completion, exceptions, or cancellation.</dd>
-<dt>Schedulers</dt>
-<dd>Arranges for the context work is done in.</dd>
-</dl>
-<p class="more"><a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/">Read more…</a></p>
-</div>
-</div>
-</div>
-        </div>
     </article>
 </div>
 
@@ -396,6 +386,10 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="posts/moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
+</li>
+            <li>
                 <a href="posts/tailwind-theme-workflow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
 </li>
@@ -429,10 +423,6 @@ delimiters: [
 </li>
             <li>
                 <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
-                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
-</li>
-            <li>
-                <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
                 <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>

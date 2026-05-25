@@ -50,6 +50,7 @@
 <meta name="description" content="How the blog's Tailwind CSS theme works end-to-end: from Emacs modus-themes palette through secretaire-css to rendered source blocks.">
 <meta name="author" content="Steve Downey">
 <link rel="prev" href="../building-vcpkg-dependencies-with-project-toolchain/" title="Building vcpkg dependencies with project toolchain" type="text/html">
+<link rel="next" href="../moving-forward-with-legacy-encodings/" title="Moving Forward With Legacy Encodings" type="text/html">
 <meta property="og:site_name" content="What Comes to Mind">
 <meta property="og:title" content="Tailwind, Modus Themes, and the Blog Theming Workflow">
 <meta property="og:url" content="https://sdowney.org/posts/tailwind-theme-workflow/">
@@ -157,14 +158,14 @@ configuration choices are.
 </p>
 
 <!-- TEASER_END -->
-<div id="ox-nikola-outline-container-orgdc89446" class="ox-nikola-outline-2">
-<h2 id="orgdc89446">The Theme Stack</h2>
-<div class="outline-text-2" id="text-orgdc89446">
+<div id="ox-nikola-outline-container-org0507254" class="ox-nikola-outline-2">
+<h2 id="org0507254">The Theme Stack</h2>
+<div class="outline-text-2" id="text-org0507254">
 <p>
 The blog uses three Nikola themes stacked via the parent chain:
 </p>
 
-<pre class="example" id="orgbcf684b">
+<pre class="example" id="orgb7aeb20">
 sdowney-tailwind → nikola-tailwind-blog → nikola-tailwind-base → base
 </pre>
 
@@ -192,9 +193,9 @@ templates by walking the chain, so I only override what I actually change.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orga6ac00a" class="ox-nikola-outline-2">
-<h2 id="orga6ac00a">How Tailwind Is Loaded</h2>
-<div class="outline-text-2" id="text-orga6ac00a">
+<div id="ox-nikola-outline-container-orgded041f" class="ox-nikola-outline-2">
+<h2 id="orgded041f">How Tailwind Is Loaded</h2>
+<div class="outline-text-2" id="text-orgded041f">
 <p>
 The Tailwind Play CDN is a <code>&lt;script&gt;</code> tag that processes utility classes at
 runtime:
@@ -248,9 +249,9 @@ Font stacks are defined once.  The <code>heading</code> array is reused in three
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgf0e1387" class="ox-nikola-outline-2">
-<h2 id="orgf0e1387">Source Block Rendering</h2>
-<div class="outline-text-2" id="text-orgf0e1387">
+<div id="ox-nikola-outline-container-org7060629" class="ox-nikola-outline-2">
+<h2 id="org7060629">Source Block Rendering</h2>
+<div class="outline-text-2" id="text-org7060629">
 <p>
 Org-mode's HTML exporter produces this structure:
 </p>
@@ -279,9 +280,9 @@ label and button.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgdd04d1c" class="ox-nikola-outline-2">
-<h2 id="orgdd04d1c">Syntax Highlighting: The Modus Connection</h2>
-<div class="outline-text-2" id="text-orgdd04d1c">
+<div id="ox-nikola-outline-container-org5848779" class="ox-nikola-outline-2">
+<h2 id="org5848779">Syntax Highlighting: The Modus Connection</h2>
+<div class="outline-text-2" id="text-org5848779">
 <p>
 Org-mode's HTML exporter uses <code>htmlize</code> to apply face colors as CSS classes.
 When <code>org-html-htmlize-output-type</code> is <code>'css</code>, it produces <code>&lt;span
@@ -347,13 +348,13 @@ Change the modus variant, regenerate, and code block backgrounds follow.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orga3384e3" class="ox-nikola-outline-2">
-<h2 id="orga3384e3">Current Configuration</h2>
-<div class="outline-text-2" id="text-orga3384e3">
+<div id="ox-nikola-outline-container-orgdc0e9fb" class="ox-nikola-outline-2">
+<h2 id="orgdc0e9fb">Current Configuration</h2>
+<div class="outline-text-2" id="text-orgdc0e9fb">
 </div>
-<div id="ox-nikola-outline-container-org6845664" class="ox-nikola-outline-3">
-<h3 id="org6845664">What's using the Play CDN</h3>
-<div class="outline-text-3" id="text-org6845664">
+<div id="ox-nikola-outline-container-org9b581c3" class="ox-nikola-outline-3">
+<h3 id="org9b581c3">What's using the Play CDN</h3>
+<div class="outline-text-3" id="text-org9b581c3">
 <p>
 The Tailwind Play CDN generates CSS client-side.  There is no <code>node_modules</code>,
 no <code>package.json</code>, no build step.  Page load includes a brief delay while
@@ -368,9 +369,9 @@ tailwind.css</code>, replace the <code>&lt;script&gt;</code> with a <code>&lt;li
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org21cdcd4" class="ox-nikola-outline-3">
-<h3 id="org21cdcd4">Typography plugin via prose</h3>
-<div class="outline-text-3" id="text-org21cdcd4">
+<div id="ox-nikola-outline-container-org26bd984" class="ox-nikola-outline-3">
+<h3 id="org26bd984">Typography plugin via prose</h3>
+<div class="outline-text-3" id="text-org26bd984">
 <p>
 The <code>prose prose-lg prose-indigo</code> classes on the content <code>&lt;div&gt;</code> provide:
 </p>
@@ -387,9 +388,9 @@ lives outside the <code>prose</code> wrapper.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgca508cf" class="ox-nikola-outline-3">
-<h3 id="orgca508cf">Fonts</h3>
-<div class="outline-text-3" id="text-orgca508cf">
+<div id="ox-nikola-outline-container-org0aba500" class="ox-nikola-outline-3">
+<h3 id="org0aba500">Fonts</h3>
+<div class="outline-text-3" id="text-org0aba500">
 <ul class="org-ul">
 <li>Body: Source Sans 3 (with Open Sans fallback)</li>
 <li>Headings: Open Sans</li>
@@ -401,9 +402,9 @@ reference these through the config.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgb378303" class="ox-nikola-outline-3">
-<h3 id="orgb378303">Accent color: indigo</h3>
-<div class="outline-text-3" id="text-orgb378303">
+<div id="ox-nikola-outline-container-org441cacd" class="ox-nikola-outline-3">
+<h3 id="org441cacd">Accent color: indigo</h3>
+<div class="outline-text-3" id="text-org441cacd">
 <p>
 Tailwind's <code>indigo</code> palette provides the accent: <code>bg-indigo-700</code> for the
 header banner, <code>text-indigo-600</code> for links, <code>bg-indigo-100 text-indigo-700</code>
@@ -412,9 +413,9 @@ across the blog tier templates.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org4933293" class="ox-nikola-outline-3">
-<h3 id="org4933293">Icons: Font Awesome 7.0.1</h3>
-<div class="outline-text-3" id="text-org4933293">
+<div id="ox-nikola-outline-container-orgc339690" class="ox-nikola-outline-3">
+<h3 id="orgc339690">Icons: Font Awesome 7.0.1</h3>
+<div class="outline-text-3" id="text-orgc339690">
 <p>
 Loaded via CDN in the personal tier.  Navigation links in <code>conf.py</code> include
 Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
@@ -422,13 +423,13 @@ Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
 </div>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org08b0ba1" class="ox-nikola-outline-2">
-<h2 id="org08b0ba1">What I Might Tweak Later</h2>
-<div class="outline-text-2" id="text-org08b0ba1">
+<div id="ox-nikola-outline-container-org42d0e52" class="ox-nikola-outline-2">
+<h2 id="org42d0e52">What I Might Tweak Later</h2>
+<div class="outline-text-2" id="text-org42d0e52">
 </div>
-<div id="ox-nikola-outline-container-orgb5e4a1e" class="ox-nikola-outline-3">
-<h3 id="orgb5e4a1e">Dark mode</h3>
-<div class="outline-text-3" id="text-orgb5e4a1e">
+<div id="ox-nikola-outline-container-org547d22b" class="ox-nikola-outline-3">
+<h3 id="org547d22b">Dark mode</h3>
+<div class="outline-text-3" id="text-org547d22b">
 <p>
 The syntax highlighting is already dark (modus-vivendi).  The page chrome is
 light.  A proper dark mode would add <code>dark:</code> variants to the templates and
@@ -437,9 +438,9 @@ this straightforward with <code>darkMode: 'media'</code> in the config.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org707b00f" class="ox-nikola-outline-3">
-<h3 id="org707b00f">Production Tailwind</h3>
-<div class="outline-text-3" id="text-org707b00f">
+<div id="ox-nikola-outline-container-orgec17a2f" class="ox-nikola-outline-3">
+<h3 id="orgec17a2f">Production Tailwind</h3>
+<div class="outline-text-3" id="text-orgec17a2f">
 <p>
 If page load times bother me, switching to a pre-built CSS file removes the
 Play CDN runtime cost.  The config is already defined inline; moving it to
@@ -447,9 +448,9 @@ Play CDN runtime cost.  The config is already defined inline; moving it to
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org42d0dce" class="ox-nikola-outline-3">
-<h3 id="org42d0dce">Palette-aware CSS generation</h3>
-<div class="outline-text-3" id="text-org42d0dce">
+<div id="ox-nikola-outline-container-org8462072" class="ox-nikola-outline-3">
+<h3 id="org8462072">Palette-aware CSS generation</h3>
+<div class="outline-text-3" id="text-org8462072">
 <p>
 <code>secretaire-css</code> currently falls back to htmlize for the actual face scanning
 when the modus palette API isn't available.  The full palette-aware path (emitting
@@ -458,9 +459,9 @@ See <code>docs/secretaire-css-design.org</code> for what the ideal output looks 
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org2699420" class="ox-nikola-outline-3">
-<h3 id="org2699420">Fonts</h3>
-<div class="outline-text-3" id="text-org2699420">
+<div id="ox-nikola-outline-container-orgd7724b2" class="ox-nikola-outline-3">
+<h3 id="orgd7724b2">Fonts</h3>
+<div class="outline-text-3" id="text-orgd7724b2">
 <p>
 I'm eyeing <a href="https://www.brailleinstitute.org/freefont/">Atkinson Hyperlegible Next</a> for body text.  Changing fonts is a
 two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind config in
@@ -491,7 +492,9 @@ two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind 
         <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../building-vcpkg-dependencies-with-project-toolchain/" rel="prev" class="text-indigo-600 hover:underline" title="Building vcpkg dependencies with project toolchain">
                 « <span class="hidden sm:inline">Previous post</span>
             </a>
-            <span></span>
+            <a href="../moving-forward-with-legacy-encodings/" rel="next" class="text-indigo-600 hover:underline" title="Moving Forward With Legacy Encodings">
+                <span class="hidden sm:inline">Next post</span> »
+            </a>
         </nav></article><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script><script>
                 renderMathInElement(document.body,
                     {
@@ -517,6 +520,10 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="../moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
+</li>
+            <li>
                 <a href="." class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
 </li>
@@ -550,10 +557,6 @@ delimiters: [
 </li>
             <li>
                 <a href="../index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
-                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
-</li>
-            <li>
-                <a href="../index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
                 <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>

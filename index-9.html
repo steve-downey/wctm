@@ -122,6 +122,41 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">std::execution, Sender/Receiver, and the Continuation Monad</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2021-10-03T00:00:00-04:00" title="2021-10-03 00:00">2021-10-03 00:00</time></p>
+        <div class="mt-3">
+            <div>
+<p> Some thoughts on the <a href="https://wg21.link/p2300">std::execution</a> proposal and my understanding of the underlying theory. </p>
+
+<div id="outline-container-org6280fb4" class="outline-2">
+<h3 id="org6280fb4">What's proposed</h3>
+<div class="outline-text-2" id="text-org6280fb4">
+<p> From the paper's <a href="https://brycelelbach.github.io/wg21_p2300_std_execution/std_execution.html#intro">Introduction</a> </p>
+
+<blockquote>
+<p> This paper proposes a self-contained design for a Standard C++ framework for managing asynchronous execution on generic execution contexts. It is based on the ideas in [P0443R14] and its companion papers. </p>
+</blockquote>
+
+<p> Which doesn't tell you much. </p>
+
+<p> It proposes a framework where the principle abstractions are Senders, Receivers, and Schedulers. </p>
+
+<dl class="org-dl">
+<dt>Sender</dt>
+<dd>A composable unit of work.</dd>
+<dt>Receiver</dt>
+<dd>Delimits work, handling completion, exceptions, or cancellation.</dd>
+<dt>Schedulers</dt>
+<dd>Arranges for the context work is done in.</dd>
+</dl>
+<p class="more"><a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/">Read more…</a></p>
+</div>
+</div>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
             <a href="posts/index.php/2021/01/16/standard-vocabulary-for-algorithms/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Standard Vocabulary for Algorithms</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
@@ -969,6 +1004,10 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="posts/moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
+</li>
+            <li>
                 <a href="posts/tailwind-theme-workflow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
 </li>
@@ -1002,10 +1041,6 @@ delimiters: [
 </li>
             <li>
                 <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
-                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
-</li>
-            <li>
-                <a href="posts/index.php/2021/10/03/stdexecution-sender-receiver-and-the-continuation-monad/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">std::execution, Sender/Receiver, and the Continuation Monad</a>
                 <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>

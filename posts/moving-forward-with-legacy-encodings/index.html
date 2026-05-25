@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Special Blocks and Emacs Org-mode Export | What Comes to Mind</title>
+<title>Moving Forward With Legacy Encodings | What Comes to Mind</title>
 <script>
     (function () {
         var s = localStorage.getItem('theme');
@@ -45,29 +45,18 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="../../feed.atom">
-<link rel="canonical" href="https://sdowney.org/posts/special-blocks-and-emacs-org-mode-export/">
+<link rel="canonical" href="https://sdowney.org/posts/moving-forward-with-legacy-encodings/">
 <meta name="author" content="Steve Downey">
-<link rel="prev" href="../index.php/2021/10/03/a-local-cmake-workflow-with-docker/" title="A local CMake workflow with Docker" type="text/html">
-<link rel="next" href="../index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" title="Some Informal Remarks Towards a New Theory of Trait Customization" type="text/html">
+<link rel="prev" href="../tailwind-theme-workflow/" title="Tailwind, Modus Themes, and the Blog Theming Workflow" type="text/html">
 <meta property="og:site_name" content="What Comes to Mind">
-<meta property="og:title" content="Special Blocks and Emacs Org-mode Export">
-<meta property="og:url" content="https://sdowney.org/posts/special-blocks-and-emacs-org-mode-export/">
-<meta property="og:description" content="Table of Contents
+<meta property="og:title" content="Moving Forward With Legacy Encodings">
+<meta property="og:url" content="https://sdowney.org/posts/moving-forward-with-legacy-encodings/">
+<meta property="og:description" content="1. Abstract
 
 
-1. Delete blocks and text
-2. Insert blocks and text
-3. Comparison Table
-
-
-
-
-Document number:
-Date:  2021-12-03
-Author: Steve Downey &lt;sdowney2@bloomberg.net&gt;, &lt;sdowney@gmail.com&gt;
-Au">
+Reverse-parsing legacy multibyte text encodings — such as Shift_JIS, Big5, or GB18030 — using only local context is an unsolvable problem. Unlike UTF-8, which guarantees \(O(1)\) self-sy">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2021-12-03T00:00:00-05:00">
+<meta property="article:published_time" content="2026-05-24T13:11:21-04:00">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@sdowney.org">
 <meta name="twitter:creator" content="@sdowney">
@@ -132,10 +121,10 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
         <div class="absolute inset-0 bg-black/40"></div>
         <div class="relative z-10">
         
-    <h1 class="text-4xl font-bold">Special Blocks and Emacs Org-mode Export</h1>
+    <h1 class="text-4xl font-bold">Moving Forward With Legacy Encodings</h1>
     <p class="mt-2 text-indigo-200">
-        <time class="published dt-published" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time><span class="mx-2 opacity-50">·</span>
-            <span>1 min read</span>
+        <time class="published dt-published" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time><span class="mx-2 opacity-50">·</span>
+            <span>6 min read</span>
     </p>
 
         </div>
@@ -144,84 +133,275 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
             <div class="prose prose-lg max-w-none prose-indigo dark:prose-invert lg:flex-1 lg:min-w-0">
             
 <article class="blog-post h-entry"><div class="e-content entry-content">
-        <nav id="table-of-contents" role="doc-toc"><h3>Table of Contents</h3>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#orgf2bc23f">1. Delete blocks and text</a></li>
-<li><a href="#org76721e5">2. Insert blocks and text</a></li>
-<li><a href="#org3c7f3fc">3. Comparison Table</a></li>
-</ul>
-</div>
-</nav><ul class="org-ul">
-<li>Document number:</li>
-<li>Date:  2021-12-03</li>
-<li>Author: Steve Downey &lt;sdowney2@bloomberg.net&gt;, &lt;sdowney@gmail.com&gt;</li>
-<li>Audience: WG21 Emacs Authors</li>
-</ul>
-<div class="ABSTRACT" id="org257c800">
-<p> Abstract: Making emacs org-mode more usable for writing WG21 papers. </p>
-
-</div>
-
-<!-- TEASER_END -->
-
-
-
-
-<div id="outline-container-orgf2bc23f" class="outline-2">
-<h3 id="orgf2bc23f">
-<span class="section-number-2">1.</span> Delete blocks and text</h3>
+        <div id="ox-nikola-outline-container-org30c7e97" class="ox-nikola-outline-2">
+<h2 id="org30c7e97">
+<span class="section-number-2">1.</span> Abstract</h2>
 <div class="outline-text-2" id="text-1">
-{\color{red}\bfseries
-<p> Remove this terrible old stuff. </p>
+<p>
+Reverse-parsing legacy multibyte text encodings — such as Shift_JIS, Big5, or GB18030 — using only local context is an unsolvable problem. Unlike UTF-8, which guarantees \(O(1)\) self-synchronization, legacy encodings have heavily overlapping lead and trail byte ranges. Consequently, even if you begin at a known, valid character boundary, computing the byte-width of the preceding character requires an \(O(N)\) backward scan to the beginning of the string to resolve the parity of the sequence.
+</p>
 
-}
-<p> And the bad <del style="color: red;">word</del> from this sentence. </p>
+<p>
+The WHATWG decoding algorithms provide no mitigation, as their forward-looking state machines reset completely at every boundary. Robust reverse iteration through these encodings cannot be solved algorithmically <i>in situ</i>; it requires maintaining an external cache of boundary offsets established during a forward pass.
+</p>
+
+<p>
+What follows is the story of attempting to find a way out, and why the math forces us to fail.
+</p>
+<!-- TEASER_END -->
 </div>
 </div>
-
-<div id="outline-container-org76721e5" class="outline-2">
-<h3 id="org76721e5">
-<span class="section-number-2">2.</span> Insert blocks and text</h3>
+<div id="ox-nikola-outline-container-org2415051" class="ox-nikola-outline-2">
+<h2 id="org2415051">
+<span class="section-number-2">2.</span> The Story of Failing to Find a Way Out</h2>
 <div class="outline-text-2" id="text-2">
-<ins style="color: green;">
-<p> Add this wonderful new text </p>
+</div>
+<div id="ox-nikola-outline-container-org68827b2" class="ox-nikola-outline-3">
+<h3 id="org68827b2">
+<span class="section-number-3">2.1.</span> Act I: The Overlapping Abyss</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+If you are dropped into the middle of an arbitrary point in a string using a WHATWG legacy multibyte encoding, you cannot find the beginning of a character just by reading backward.
+</p>
 
-</ins>
-<p> And put this cool <ins style="color: green;">word</ins> in. </p>
+<p>
+This happens because legacy encodings lack <i>self-synchronization</i>. Let \(L\) be the set of valid lead bytes and \(T\) be the set of valid trail bytes. In UTF-8, these sets are strictly disjoint (\(L \cap T = \emptyset\)). In legacy encodings, the sets intersect aggressively. In Shift_JIS, the byte <code>0x81</code> is valid as <i>both</i> a lead byte and a trail byte.
+</p>
+</div>
+<div id="ox-nikola-outline-container-orgfad37b2" class="ox-nikola-outline-4">
+<h4 id="orgfad37b2">
+<span class="section-number-4">2.1.1.</span> The Specific Example</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Imagine you are handed a data buffer and dropped at index 3:
+</p>
+
+<pre class="example" id="orgc8dd40e">
+Buffer: [0x81, 0x81, 0x81, 0x81, 0x81]
+Index:    0     1     2     3     4
+</pre>
+
+<p>
+If you look locally at index 3 (which is <code>0x81</code>), is it the start of a character or the second half of one? You cannot know without scanning backward to the true beginning of the string:
+</p>
+
+<ul class="org-ul">
+<li>
+<b>If the string actually started at index 1:</b> The parsing goes <code>[0x81 0x81]</code> (Char 1) and <code>[0x81 0x81]</code> (Char 2). Your byte at index 3 is a <b>lead byte</b>.</li>
+<li>
+<b>If the string actually started at index 0:</b> The parsing goes <code>[0x81 0x81]</code> (Char 1), <code>[0x81 0x81]</code> (Char 2), leaving index 4 orphaned. Your byte at index 3 is a <b>trail byte</b>.</li>
+</ul>
+<p>
+Every single byte relies entirely on the even/odd parity established by the byte preceding it. If the string is malformed or sliced, the ambiguity is even worse, as dropped trail bytes leave no algorithmic breadcrumbs going backward.
+</p>
 </div>
 </div>
+</div>
+<div id="ox-nikola-outline-container-org54572d3" class="ox-nikola-outline-3">
+<h3 id="org54572d3">
+<span class="section-number-3">2.2.</span> Act II: The Illusion of the Anchor</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Suppose your position is not random. You just parsed forward from the beginning of the string, so you know for an absolute fact you are sitting exactly at a valid character boundary.
+</p>
 
+<p>
+You still cannot reliably step backward. Knowing the <i>end</i> of the previous character does not tell you its <i>length</i>.
+</p>
+</div>
+<div id="ox-nikola-outline-container-org232260f" class="ox-nikola-outline-4">
+<h4 id="org232260f">
+<span class="section-number-4">2.2.1.</span> The Specific Example</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+Imagine looking backward from your known, forward-parsed cursor and seeing this sequence in Shift_JIS:
+</p>
 
-<div id="outline-container-org3c7f3fc" class="outline-2">
-<h3 id="org3c7f3fc">
-<span class="section-number-2">3.</span> Comparison Table</h3>
+<pre class="example" id="org356fc47">
+... 0x81 0x81 0x81 0x40 | &lt;CURSOR&gt;
+</pre>
+
+<p>
+We know <code>0x40</code> is ASCII <code>@</code> (a valid 1-byte character) AND a valid trail byte. We know <code>0x81</code> is a lead byte AND a trail byte. Where does the character <i>before</i> your cursor begin?
+</p>
+
+<ul class="org-ul">
+<li>
+<b>Scenario A (Odd number of preceding ~0x81~s):</b> The sequence from the start of the string was <code>[0x81 0x81]</code> (U+3001 Ideographic Comma) followed by <code>[0x81 0x40]</code> (U+3000 Ideographic Space).
+\(\rightarrow\) <i>Result:</i> The character before your cursor is <b>2 bytes long</b>, and you just parsed a Japanese space.</li>
+<li>
+<b>Scenario B (Even number of preceding ~0x81~s):</b> The sequence from the start of the string was <code>[0x81 0x81]</code> (U+3001), <code>[0x81 0x81]</code> (U+3001), followed by a standalone <code>[0x40]</code> (U+0040 '@').
+\(\rightarrow\) <i>Result:</i> The character before your cursor is <b>1 byte long</b>, and you just parsed an English '@' symbol.</li>
+</ul>
+<p>
+Even though you are sitting at a known boundary, you are forced into the exact same backward dependency chain to resolve the parity of the preceding bytes just to know if you should step back 1 byte or 2 bytes.
+</p>
+</div>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org82888a5" class="ox-nikola-outline-3">
+<h3 id="org82888a5">
+<span class="section-number-3">2.3.</span> Act III: State Machine Amnesia</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Finally, you might think to capture the exact WHATWG parser state at your cursor position, rather than just the pointer.
+</p>
+
+<p>
+This is the final dead end. Having the parser state provides absolutely zero historical context because the WHATWG state machine suffers from "amnesia" at character boundaries. Decoders operate as forward-looking Mealy machines. When you reach a valid character boundary, the decoder finishes emitting the Unicode scalar value and immediately resets its internal state to the <i>Default</i> state (waiting for a new ASCII character or a new multibyte lead byte).
+</p>
+</div>
+<div id="ox-nikola-outline-container-org0019037" class="ox-nikola-outline-4">
+<h4 id="org0019037">
+<span class="section-number-4">2.3.1.</span> The Specific Example</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<p>
+Let's track the exact parser state for the end of the two scenarios from Act II to see why it fails to help us read backwards.
+</p>
+
+<ul class="org-ul">
+<li>
+<b>Trace A (The preceding character was '@'):</b>
+<ol class="org-ol">
+<li>Parser reads <code>0x81</code> \(\rightarrow\) State changes to: <i>Shift_JIS lead</i>
+</li>
+<li>Parser reads <code>0x81</code> (Emits U+3001) \(\rightarrow\) State resets to: <i>Default</i>
+</li>
+<li>Parser reads <code>0x40</code> (Emits U+0040) \(\rightarrow\) State resets to: <b>Default</b>
+</li>
+</ol>
+</li>
+
+<li>
+<b>Trace B (The preceding character was Ideographic Space):</b>
+<ol class="org-ol">
+<li>Parser reads <code>0x81</code> \(\rightarrow\) State changes to: <i>Shift_JIS lead</i>
+</li>
+<li>Parser reads <code>0x40</code> (Emits U+3000) \(\rightarrow\) State resets to: <b>Default</b>
+</li>
+</ol>
+</li>
+</ul>
+<p>
+In both traces, you are left at the exact same byte position, looking at the exact same bytes behind you, and your parser state is completely identical: <b>Default</b>. The parser state only tells you what to do with the <i>next</i> byte you encounter.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org5ad39a9" class="ox-nikola-outline-2">
+<h2 id="org5ad39a9">
+<span class="section-number-2">3.</span> Formal Definitions</h2>
 <div class="outline-text-2" id="text-3">
-<table>
-<thead><tr class="header">
-<th><div style="text-align:center"><strong>Old Busted</strong></div></th>
-<th><div style="text-align:center"><strong>New Hotness</strong></div></th>
+</div>
+<div id="ox-nikola-outline-container-org717bea1" class="ox-nikola-outline-3">
+<h3 id="org717bea1">
+<span class="section-number-3">3.1.</span> Self-Synchronizing Code</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+A code is self-synchronizing if, given an arbitrary point in a bit stream, the decoder can determine the boundaries of the next encoded sequence within a bounded number of bits (\(O(1)\) scan). UTF-8 achieves this via distinct prefix bit-patterns (e.g., <code>110xxxxx</code> for a 2-byte lead, <code>10xxxxxx</code> for a trail).
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org8d0bef1" class="ox-nikola-outline-3">
+<h3 id="org8d0bef1">
+<span class="section-number-3">3.2.</span> Decoder State Amnesia</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+The property of WHATWG decoders where the internal state matrix transitions to the origin state upon the emission of any complete scalar value. Because the state maps purely to <i>pending</i> bytes, no history of <i>completed</i> byte widths is preserved.
+</p>
+</div>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org7ae8861" class="ox-nikola-outline-2">
+<h2 id="org7ae8861">
+<span class="section-number-2">4.</span> Tables and Proofs (For the Unbelieving)</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+If you still suspect there might be a clever bitwise trick to differentiate a lead byte from a trail byte in Shift_JIS, observe the exact byte ranges defined by the standard.
+</p>
+
+<p>
+The overlap is not a minor edge case; it is systemic. Every single valid lead byte is also a valid trail byte.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="org-left">
+<col class="org-left">
+</colgroup>
+<thead><tr>
+<th scope="col" class="org-left">Byte Type</th>
+<th scope="col" class="org-left">Allowed Hexadecimal Ranges</th>
 </tr></thead>
-<tbody><tr class="odd">
-<td>
-<div class="org-src-container">
-<label class="org-src-name"><em></em></label>
-<pre class="src src-C++" id="nil"><span class="org-type">int</span> <span class="org-variable-name">a</span> = 3 + 2 + 1;
-</pre>
-</div>
-
+<tbody>
+<tr>
+<td class="org-left"><b>Lead</b></td>
+<td class="org-left">
+<code>[0x81, 0x9F]</code> \(\cup\) <code>[0xE0, 0xFC]</code>
 </td>
-<td>
-<div class="org-src-container">
-<label class="org-src-name"><em></em></label>
-<pre class="src src-C++" id="nil"><span class="org-type">int</span> <span class="org-variable-name">a</span> = cool_sum({1, 2, 3});
-</pre>
-</div>
-
+</tr>
+<tr>
+<td class="org-left"><b>Trail</b></td>
+<td class="org-left">
+<code>[0x40, 0x7E]</code> \(\cup\) <code>[0x80, 0xFC]</code>
 </td>
-
-</tr></tbody>
+</tr>
+</tbody>
 </table>
+<p>
+If we compute the intersection (\(Lead \cap Trail\)), we find that the <i>entirety</i> of the lead byte range is subsumed by the trail byte range.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="org-left">
+<col class="org-left">
+<col class="org-left">
+</colgroup>
+<thead><tr>
+<th scope="col" class="org-left">Condition</th>
+<th scope="col" class="org-left">Hexadecimal Range</th>
+<th scope="col" class="org-left">Consequence for Reverse Parsing</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="org-left">\(B \in L \land B \notin T\)</td>
+<td class="org-left">\(\emptyset\)</td>
+<td class="org-left">No byte unambiguously marks the start of a multibyte character.</td>
+</tr>
+<tr>
+<td class="org-left">\(B \in T \land B \notin L\)</td>
+<td class="org-left">
+<code>[0x40, 0x7E]</code> \(\cup\) <code>0x80</code>
+</td>
+<td class="org-left">Can be an ASCII character <i>or</i> a trail byte.</td>
+</tr>
+<tr>
+<td class="org-left">\(B \in (L \cap T)\)</td>
+<td class="org-left">
+<code>[0x81, 0x9F]</code> \(\cup\) <code>[0xE0, 0xFC]</code>
+</td>
+<td class="org-left">Utter ambiguity. Requires \(O(N)\) lookbehind.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org8613be8" class="ox-nikola-outline-2">
+<h2 id="org8613be8">
+<span class="section-number-2">5.</span> References</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>
+<b>WHATWG Encoding Standard, Section 4 (Decoders):</b> Explicitly defines the forward-looking architecture of legacy decoders and the mandatory <i>Shift_JIS lead</i> to <i>Default</i> state transitions. <a href="https://encoding.spec.whatwg.org/#decoders">Link</a>
+</li>
+<li>
+<b>WHATWG Encoding Standard, Section 13 (Shift_JIS):</b> Outlines the index pointer maps showing the overlapping lead and trail ranges. <a href="https://encoding.spec.whatwg.org/#shift_jis">Link</a>
+</li>
+<li>
+<b>The Unicode Standard, Version 15.0, Section 2.5 (Encoding Forms):</b> Discusses the architectural necessity of non-overlapping (self-synchronizing) code unit boundaries, contrasting UTF-8 with legacy designs. <a href="https://www.unicode.org/versions/Unicode15.0.0/ch02.pdf">Link</a>Write your post here.</li>
+</ul>
 </div>
 </div>
     </div>
@@ -235,12 +415,10 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     
 
     
-        <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../index.php/2021/10/03/a-local-cmake-workflow-with-docker/" rel="prev" class="text-indigo-600 hover:underline" title="A local CMake workflow with Docker">
+        <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../tailwind-theme-workflow/" rel="prev" class="text-indigo-600 hover:underline" title="Tailwind, Modus Themes, and the Blog Theming Workflow">
                 « <span class="hidden sm:inline">Previous post</span>
             </a>
-            <a href="../index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" rel="next" class="text-indigo-600 hover:underline" title="Some Informal Remarks Towards a New Theory of Trait Customization">
-                <span class="hidden sm:inline">Next post</span> »
-            </a>
+            <span></span>
         </nav></article><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script><script>
                 renderMathInElement(document.body,
                     {
@@ -266,7 +444,7 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
-                <a href="../moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
+                <a href="." class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
 </li>
             <li>
@@ -298,7 +476,7 @@ delimiters: [
                 <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
 </li>
             <li>
-                <a href="." class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
+                <a href="../special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
                 <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
 </li>
             <li>
