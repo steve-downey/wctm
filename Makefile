@@ -35,7 +35,7 @@ nikola: venv
 
 .PHONY: compile
 compile:  ## Compile the project
-compile: nikola
+compile: nikola $(TAILWIND_OUTPUT)
 	$(NIKOLA) build
 
 .PHONY: test
@@ -65,7 +65,7 @@ test-local-links: nikola-check
 .PHONY: github-deploy
 github-deploy: ## Deploy to github ghpages
 github-deploy: compile test
-	$(NIKOLA) github-deploy
+	$(NIKOLA) github_deploy
 
 .PHONY: prod-deploy
 prod-deploy: ## Deploy TO sdowney.org hosted at panix
@@ -79,6 +79,8 @@ clean:  ## Clean the build artifacts
 realclean: ## Delete all produced artifacts
 	rm -rf $(_output_path)
 	rm -rf $(_cache_path)
+	rm -rf .tools
+	rm -f $(TAILWIND_OUTPUT)
 
 .PHONY: env
 env:
@@ -123,6 +125,56 @@ dev-shell: ## Shell with the venv activated
 bash zsh: venv
 bash zsh: ## Run bash or zsh with the venv activated
 	$(ACTIVATE) $@
+
+TAILWIND_THEME ?= 4
+
+ifeq ($(TAILWIND_THEME),3)
+TAILWIND_VERSION := 3.4.17
+TAILWIND_INPUT := themes/nikola-tailwind3-base/tailwind.input.css
+TAILWIND_EXTRA := --config themes/nikola-tailwind3-base/tailwind.config.js
+TAILWIND_OUTPUT := themes/nikola-tailwind3-base/assets/css/tailwind.css
+else
+TAILWIND_VERSION := 4.3.0
+TAILWIND_INPUT := themes/nikola-tailwind4-base/tailwind.input.css
+TAILWIND_EXTRA :=
+TAILWIND_OUTPUT := themes/nikola-tailwind4-base/assets/css/tailwind.css
+endif
+
+TAILWIND := .tools/tailwindcss-$(TAILWIND_VERSION)
+TAILWIND_URL := https://github.com/tailwindlabs/tailwindcss/releases/download/v$(TAILWIND_VERSION)/tailwindcss-linux-x64
+
+_tmpl_files := $(shell find themes -name '*.tmpl' 2>/dev/null)
+
+$(TAILWIND):
+	mkdir -p .tools
+	curl -sL $(TAILWIND_URL) -o $@
+	chmod +x $@
+
+.PHONY: build-css
+build-css: $(TAILWIND_OUTPUT)  ## Build Tailwind CSS from source
+
+$(TAILWIND_OUTPUT): $(TAILWIND) $(TAILWIND_INPUT) $(_tmpl_files)
+	$(TAILWIND) $(TAILWIND_EXTRA) -i $(TAILWIND_INPUT) -o $@ --minify
+
+MODUS_CSS_DIR := themes/sdowney-tailwind/assets/css
+
+.PHONY: strip-modus-css
+strip-modus-css: ## Clean modus CSS files (legacy fallback; prefer M-x secretaire-css-export)
+	@for f in $(MODUS_CSS_DIR)/modus-*.css; do \
+		[ -f "$$f" ] || continue; \
+		changed=0; \
+		if grep -q '<style\|<!--\|-->\|</style>' "$$f"; then \
+			echo "Stripping HTML wrappers from $$f"; \
+			sed -i '/^<style/d; /^[[:space:]]*<!--[[:space:]]*$$/d; /^[[:space:]]*-->[[:space:]]*$$/d; /^<\/style>/d' "$$f"; \
+			changed=1; \
+		fi; \
+		if grep -qP '^\s*(?:/\*\s*)?(?:body|a(?::hover)?)\s*\{' "$$f"; then \
+			echo "Stripping base element rules from $$f"; \
+			$(PYEXEC) plugins/orgmode/strip_base_rules.py "$$f"; \
+			changed=1; \
+		fi; \
+		if [ "$$changed" = "0" ]; then echo "$$f: already clean"; fi; \
+	done
 
 .PHONY: lint
 lint: venv
