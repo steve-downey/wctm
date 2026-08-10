@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrap Your static_assert | What Comes to Mind</title>
+<script>
+    (function () {
+        var s = localStorage.getItem('theme');
+        var dark = s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+    })();
+    </script><link rel="stylesheet" href="../../assets/css/tailwind.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&amp;family=Source+Sans+3:ital,wght@0,200..900;1,200..900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link href="../../assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link id="modus-light" rel="stylesheet" href="../../assets/css/modus-vivendi-tinted.css" media="(prefers-color-scheme: light)">
+<link id="modus-dark" rel="stylesheet" href="../../assets/css/modus-operandi-tinted.css" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="../../assets/css/tailwind-base.css">
+<style>
+    :root {
+        --code-bg: #1d2235;
+        --code-fg: #ffffff;
+        --code-label-color: #989898;
+        --copy-btn-color: #8b8fa3;
+        --copy-btn-border: #3a3d52;
+        --copy-btn-hover-color: #d0d4e8;
+        --copy-btn-hover-border: #6b7094;
+    }
+
+    .dark {
+        --code-bg: #efe9dd;
+        --code-fg: #1a1a2e;
+        --code-label-color: #595959;
+        --copy-btn-color: #6b7280;
+        --copy-btn-border: #d1d5db;
+        --copy-btn-hover-color: #374151;
+        --copy-btn-hover-border: #9ca3af;
+    }
+    </style>
+<link href="../../assets/css/custom.css" rel="stylesheet" type="text/css">
+<script src="../../assets/js/theme-toggle.js" defer></script><meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="../../feed.atom">
+<link rel="canonical" href="https://sdowney.org/posts/scrap-your-static_assert/">
+<meta name="author" content="Steve Downey">
+<link rel="prev" href="../infix-backtick-operator/" title="An Infix Backtick Operator for C++" type="text/html">
+<meta property="og:site_name" content="What Comes to Mind">
+<meta property="og:title" content="Scrap Your static_assert">
+<meta property="og:url" content="https://sdowney.org/posts/scrap-your-static_assert/">
+<meta property="og:description" content="The obvious way to test a compile-time fact is static_assert. It's right
+there, it needs no framework, and for a fact that has to hold it's the right
+tool. As a test, though, it has one bad property: ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-08-10T18:12:21-04:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@sdowney.org">
+<meta name="twitter:creator" content="@sdowney">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+</head>
+<body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
+    <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-white focus:px-4 focus:py-2 focus:z-50">Skip to main content</a>
+    
+    
+
+    
+<nav class="bg-gray-800"><div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center justify-between h-14">
+            <a href="https://sdowney.org/" title="What Comes to Mind" rel="home" class="text-white text-lg font-semibold hover:text-gray-300 transition-colors">What Comes to Mind</a>
+            <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle navigation">
+                <svg class="size-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+            <ul class="hidden md:flex items-center space-x-4 text-sm">
+<li><a href="../../archive.html" class="text-gray-300 hover:text-white transition-colors">Archives</a></li>
+                    
+                    <li><a href="../../categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
+                    
+                    <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
+                    
+                    <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
+                    
+                    <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
+                    
+                    <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
+                    
+                    <li><a href="../../feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
+                    
+                    <li><a href="../../rss.xml" class="text-gray-300 hover:text-white transition-colors">RSS <i class="fa-solid fa-rss"></i></a></li>
+            
+            
+            </ul>
+</div>
+        <ul id="nav-mobile" class="hidden md:hidden flex-col space-y-2 pb-4 text-sm">
+<li><a href="../../archive.html" class="text-gray-300 hover:text-white transition-colors">Archives</a></li>
+                
+                <li><a href="../../categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
+                
+                <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
+                
+                <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
+                
+                <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
+                
+                <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
+                
+                <li><a href="../../feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
+                
+                <li><a href="../../rss.xml" class="text-gray-300 hover:text-white transition-colors">RSS <i class="fa-solid fa-rss"></i></a></li>
+        </ul>
+</div>
+</nav><script>
+document.getElementById('nav-toggle').addEventListener('click', function() {
+    var menu = document.getElementById('nav-mobile');
+    menu.classList.toggle('hidden');
+    menu.classList.toggle('flex');
+});
+</script><div class="relative text-white py-10 text-center bg-cover bg-center" style="background-image: url('../../assets/images/cropped-blog-header.jpg');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10">
+        
+    <h1 class="text-4xl font-bold">Scrap Your static_assert</h1>
+    <p class="mt-2 text-indigo-200">
+        <time class="published dt-published" datetime="2026-08-10T18:12:21-04:00">2026-08-10 18:12</time><span class="mx-2 opacity-50">·</span>
+            <span>4 min read</span>
+    </p>
+
+        </div>
+    </div>
+    <main id="content" class="max-w-6xl mx-auto px-4 py-8"><div class="lg:flex lg:gap-10">
+            <div class="prose prose-lg max-w-none prose-indigo dark:prose-invert lg:flex-1 lg:min-w-0">
+            
+<article class="blog-post h-entry"><div class="e-content entry-content">
+        <p>
+The obvious way to test a compile-time fact is <code>static_assert</code>. It's right
+there, it needs no framework, and for a fact that has to hold it's the right
+tool. As a <i>test</i>, though, it has one bad property: a wrong answer is a
+translation failure. The build stops at the first one, you get a compiler
+diagnostic instead of a test result, and every other test in the file goes
+unrun. The xUnit report is empty. You learn that something is wrong, once, and
+nothing about the rest.
+</p>
+
+<p>
+There's a second, smaller problem. Even when you write the check as a runtime
+<code>CHECK</code> so that it gets reported, a bare trait doesn't report anything you can
+use:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++"><code>CHECK(<span class="org-constant">std</span>::<span class="org-type">is_same_v</span>&lt;<span class="org-keyword">decltype</span>(*e), <span class="org-type">int</span>&amp;&gt;);  <span class="org-comment-delimiter">// </span><span class="org-comment">FAILED: CHECK( false )</span>
+</code></pre>
+</div>
+
+<p>
+The expansion is the word <code>false</code>. You already knew the two types differed; the
+framework won't tell you what either of them was.
+</p>
+
+<p>
+Converting the <code>expected</code> tests off <code>static_assert</code> came down to two
+header-only components that fix these two problems. Neither is clever.
+(The title owes Lämmel and Peyton Jones; the debt stops at the title.)
+</p>
+<div id="ox-nikola-outline-container-org92dba2e" class="ox-nikola-outline-2">
+<h2 id="org92dba2e">Type identity as a value</h2>
+<div class="outline-text-2" id="text-org92dba2e">
+<p>
+The fix for the second problem is to compare type <i>identities</i> that carry their
+spelling for diagnostics, instead of comparing a bool. See
+<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/type_name.hpp">type_name.hpp</a>. The
+comparison is still <code>std::is_same_v</code>, so the verdict is exact and a false pass
+isn't possible:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code><span class="org-keyword">template</span> &lt;<span class="org-keyword">class</span> <span class="org-type">T</span>, <span class="org-keyword">class</span> <span class="org-type">U</span>&gt;
+<span class="org-keyword">constexpr</span> <span class="org-type">bool</span> <span class="org-constant">beman</span>::<span class="org-constant">expected</span>::<span class="org-constant">testing</span>::<span class="org-keyword">operator</span>==(<span class="org-type">type_name_t</span>&lt;<span class="org-type">T</span>&gt;, <span class="org-type">type_name_t</span>&lt;<span class="org-type">U</span>&gt;) {
+    <span class="org-keyword">return</span> <span class="org-constant">std</span>::<span class="org-type">is_same_v</span>&lt;<span class="org-type">T</span>, <span class="org-type">U</span>&gt;;
+}
+</code></pre>
+</div>
+
+<p>
+The spelling is consulted only after a comparison has already failed and the
+framework needs to explain it. So a failing check explains itself:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text"><code>FAILED: CHECK( type_name&lt;decltype(*e)&gt;() == type_name&lt;int&amp;&gt;() )
+with expansion: const int&amp; == int&amp;
+</code></pre>
+</div>
+
+<p>
+And the tests read like the trait they replaced:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code>TEST_CASE(<span class="org-string">"expected: operator* ref-qualification return types"</span>, <span class="org-string">"[ExpectedTest]"</span>) {
+    <span class="org-keyword">using</span> <span class="org-type">expected_t</span> = <span class="org-constant">expt</span>::<span class="org-type">expected</span>&lt;<span class="org-type">int</span>, <span class="org-type">int</span>&gt;;
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-type">expected_t</span>&amp;&gt;())&gt;() == type_name&lt;<span class="org-type">int</span>&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-keyword">const</span> <span class="org-type">expected_t</span>&amp;&gt;())&gt;() == type_name&lt;<span class="org-keyword">const</span> <span class="org-type">int</span>&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-type">expected_t</span>&amp;&amp;&gt;())&gt;() == type_name&lt;<span class="org-type">int</span>&amp;&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-keyword">const</span> <span class="org-type">expected_t</span>&amp;&amp;&gt;())&gt;() == type_name&lt;<span class="org-keyword">const</span> <span class="org-type">int</span>&amp;&amp;&gt;());
+}
+</code></pre>
+</div>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org484d3e0" class="ox-nikola-outline-2">
+<h2 id="org484d3e0">Reporting a compile-time value at runtime</h2>
+<div class="outline-text-2" id="text-org484d3e0">
+<p>
+The fix for the first problem is to split the two questions a constexpr test
+actually asks. "Can this be constant-evaluated at all?" is a property of the
+code; it stays a hard translation failure, which is correct, because that's a
+fact that has to hold. "Does it produce the right answer?" is a property of a
+value, and there's no reason a wrong value should stop the build.
+</p>
+
+<p>
+<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/constant_eval.hpp">constant_eval.hpp</a>
+is <code>consteval</code>, so a call to it is evaluated during translation. If the probe
+body isn't usable in a constant expression the program is ill-formed, and the
+first question is answered by the call itself, with no <code>static_assert</code> needed.
+The result then behaves as an ordinary prvalue, free to be handed to <code>CHECK</code>.
+The whole thing is a one-line wrapper:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code><span class="org-keyword">template</span> &lt;<span class="org-keyword">class</span> <span class="org-type">Probe</span>&gt;
+<span class="org-keyword">consteval</span> <span class="org-keyword">auto</span> <span class="org-constant">beman</span>::<span class="org-constant">expected</span>::<span class="org-constant">testing</span>::<span class="org-function-name">constant_eval</span>(<span class="org-type">Probe</span> <span class="org-variable-name">probe</span>) {
+    <span class="org-keyword">return</span> probe();
+}
+</code></pre>
+</div>
+
+<p>
+A probe is a plain lambda that reduces what it observes to a literal aggregate:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code>TEST_CASE(<span class="org-string">"expected: constexpr default construction"</span>, <span class="org-string">"[ExpectedTest]"</span>) {
+    <span class="org-keyword">constexpr</span> <span class="org-keyword">auto</span> <span class="org-variable-name">probe</span> = [] {
+        <span class="org-keyword">constexpr</span> <span class="org-constant">expt</span>::<span class="org-type">expected</span>&lt;<span class="org-type">int</span>, <span class="org-type">int</span>&gt; <span class="org-variable-name">e</span>;
+        <span class="org-keyword">return</span> int_state{e.has_value(), *e};
+    };
+    CHECK(constant_eval(probe) == int_state{<span class="org-constant">true</span>, 0});
+    CHECK(probe() == int_state{<span class="org-constant">true</span>, 0});
+}
+</code></pre>
+</div>
+
+<p>
+Because the probe is a plain lambda and not a <code>consteval</code> one, the same body
+runs in both evaluation modes. Constant evaluation and ordinary evaluation can
+take different paths through a union-based type like <code>expected</code>, so running both
+earns its second line:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++"><code>CHECK(<span class="org-type">constant_eval</span>(<span class="org-variable-name">probe</span>) == expect);  <span class="org-comment-delimiter">// </span><span class="org-comment">constant evaluation
+</span>CHECK(probe() == expect);               <span class="org-comment-delimiter">// </span><span class="org-comment">ordinary evaluation</span>
+</code></pre>
+</div>
+
+<p>
+Give the returned aggregate an <code>operator&lt;&lt;</code>. Without one, Catch2 prints <code>{?} ==
+{?}</code> and you're back where <code>static_assert</code> left you.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org2a17747" class="ox-nikola-outline-2">
+<h2 id="org2a17747">What it buys</h2>
+<div class="outline-text-2" id="text-org2a17747">
+<p>
+Two things. The reporting is better: a mismatch names both types, or prints both
+states, instead of expanding to <code>false</code> or stopping at a diagnostic before it
+can say anything. And a wrong answer is no longer a compile failure that blocks
+everything behind it. The suite builds, runs, and reports every case; a broken
+trait shows up as one red line among the green, with the rest of the run intact.
+</p>
+
+<p>
+None of this abolishes <code>static_assert</code>. The genuinely ill-formed cases stay
+ill-formed, checked in their own negative-compilation files. What moved to
+runtime is only the part that was a test wearing an assertion's clothes.
+</p>
+</div>
+</div>
+    </div>
+
+    <div class="not-prose mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+<li>Author: Steve Downey</li>
+        </ul>
+</div>
+
+    
+
+    
+        <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../infix-backtick-operator/" rel="prev" class="text-indigo-600 hover:underline" title="An Infix Backtick Operator for C++">
+                « <span class="hidden sm:inline">Previous post</span>
+            </a>
+            <span></span>
+        </nav></article><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script><script>
+                renderMathInElement(document.body,
+                    {
+                        
+delimiters: [
+    {left: "$$", right: "$$", display: true},
+    {left: "\\[", right: "\\]", display: true},
+    {left: "\\begin{equation*}", right: "\\end{equation*}", display: true},
+    {left: "$latex ", right: "$", display: false},
+    {left: "$", right: "$", display: false},
+    {left: "\\(", right: "\\)", display: false}
+]
+
+                    }
+                );
+            </script>
+</div>
+            
+<aside class="not-prose mt-10 lg:mt-0 lg:w-64 lg:shrink-0 lg:sticky lg:top-6 lg:self-start space-y-8"><section><button id="theme-toggle" class="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors" aria-label="Toggle dark mode">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            <span>Toggle theme</span>
+        </button>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
+        <ul class="space-y-3">
+<li>
+                <a href="." class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Scrap Your static_assert</a>
+                <time class="text-xs text-gray-400" datetime="2026-08-10T18:12:21-04:00">2026-08-10 18:12</time>
+</li>
+            <li>
+                <a href="../infix-backtick-operator/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">An Infix Backtick Operator for C++</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-29T08:00:00-04:00">2026-06-29 08:00</time>
+</li>
+            <li>
+                <a href="../migrating-wg21-subtree/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Refreshing a Stale Git Subtree</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-28T23:37:51-04:00">2026-06-28 23:37</time>
+</li>
+            <li>
+                <a href="../moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
+</li>
+            <li>
+                <a href="../tailwind-theme-workflow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Tailwind, Modus Themes, and the Blog Theming Workflow</a>
+                <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
+</li>
+            <li>
+                <a href="../surround-with-uuid/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Surround With UUID</a>
+                <time class="text-xs text-gray-400" datetime="2026-04-09T17:41:26-04:00">2026-04-09 17:41</time>
+</li>
+            <li>
+                <a href="../why-standard-organizations/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Why Standard Organizations</a>
+                <time class="text-xs text-gray-400" datetime="2026-03-07T10:21:36-05:00">2026-03-07 10:21</time>
+</li>
+            <li>
+                <a href="../the-sender-sub-language/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">The Sender Sub-Language</a>
+                <time class="text-xs text-gray-400" datetime="2026-02-28T18:40:21-05:00">2026-02-28 18:40</time>
+</li>
+            <li>
+                <a href="../building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
+                <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
+</li>
+            <li>
+                <a href="../substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
+                <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
+</li>
+        </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
+        <a href="../../archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Tags</h2>
+        <a href="../../categories/" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Browse tags →</a>
+    </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Feeds</h2>
+        <ul class="space-y-1">
+<li><a href="../../feed.atom" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">Atom</a></li>
+            <li><a href="../../rss.xml" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">RSS</a></li>
+        </ul></section></aside>
+</div>
+    </main><hr class="max-w-6xl mx-auto border-gray-200">
+<div class="max-w-6xl mx-auto px-4 py-6">
+        
+        <footer id="footer" class="text-center text-sm text-gray-500"><p>Contents © 2026         <a href="mailto:sdowney@sdowney.dev">Steve Downey</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a> - 
+ <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+ <img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"></a></p>
+            
+        </footer>
+</div>
+    
+            <script src="../../assets/js/baguetteBox.min.js"></script><script src="../../assets/js/luxon.min.js"></script><script src="../../assets/js/fancydates.min.js"></script><!-- fancy dates --><script>
+    luxon.Settings.defaultLocale = "en";
+    fancydates(2, {"preset": false, "format": "yyyy-MM-dd HH:mm"});
+    </script><!-- end fancy dates --><script>
+    baguetteBox.run('main#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script><script>
+    (function() {
+        var langNames = {
+            'cpp': 'C++', 'c++': 'C++', 'C++': 'C++', 'C+': 'C++',
+            'haskell': 'Haskell', 'Haskell': 'Haskell',
+            'python': 'Python', 'rust': 'Rust', 'cmake': 'CMake',
+            'bash': 'Bash', 'sh': 'Shell', 'shell': 'Shell', 'zsh': 'Zsh',
+            'makefile': 'Makefile', 'latex': 'LaTeX', 'asm': 'Assembly',
+            'nil': '', 'emacs-lisp': 'Emacs Lisp', 'elisp': 'Emacs Lisp',
+            'javascript': 'JavaScript', 'js': 'JavaScript',
+            'typescript': 'TypeScript', 'ts': 'TypeScript',
+            'html': 'HTML', 'css': 'CSS', 'json': 'JSON', 'yaml': 'YAML',
+            'sql': 'SQL', 'ruby': 'Ruby', 'perl': 'Perl',
+            'java': 'Java', 'go': 'Go', 'swift': 'Swift',
+            'org': 'Org', 'xml': 'XML', 'toml': 'TOML'
+        };
+        function getLang(pre) {
+            var classes = pre.className.split(/\s+/);
+            for (var i = 0; i < classes.length; i++) {
+                if (classes[i].indexOf('src-') === 0) return classes[i].substring(4);
+            }
+            return '';
+        }
+        function addControls(container, pre, lang) {
+            var displayName = langNames[lang] || lang;
+            if (displayName) {
+                var label = document.createElement('span');
+                label.className = 'code-lang-label';
+                label.textContent = displayName;
+                container.appendChild(label);
+            }
+            var btn = document.createElement('button');
+            btn.className = 'code-copy-btn';
+            btn.textContent = 'Copy';
+            btn.setAttribute('aria-label', 'Copy code to clipboard');
+            btn.addEventListener('click', function() {
+                var code = pre.querySelector('code');
+                var text = (code || pre).textContent;
+                navigator.clipboard.writeText(text).then(function() {
+                    btn.textContent = 'Copied!';
+                    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+                });
+            });
+            container.appendChild(btn);
+        }
+        document.querySelectorAll('.org-src-container').forEach(function(container) {
+            var pre = container.querySelector('pre.src');
+            if (pre) addControls(container, pre, getLang(pre));
+        });
+        document.querySelectorAll('pre.example').forEach(function(pre) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'example-container';
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            addControls(wrapper, pre, '');
+        });
+    })();
+    </script><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-VGV27RDN3E"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VGV27RDN3E');
+</script>
+</body>
+</html>

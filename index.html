@@ -47,8 +47,8 @@
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="feed.atom">
 <link rel="canonical" href="https://sdowney.org/">
-<link rel="next" href="index-9.html" type="text/html">
-<link rel="prefetch" href="posts/moving-forward-with-legacy-encodings/" type="text/html">
+<link rel="next" href="index-10.html" type="text/html">
+<link rel="prefetch" href="posts/scrap-your-static_assert/" type="text/html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
 <body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
@@ -67,13 +67,13 @@
                     
                     <li><a href="categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
                     
-                    <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors"><i class="fa fa-envelope"></i></a></li>
+                    <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
                     
                     <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
                     
                     <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
                     
-                    <li><a href="https://bsky.app/profile/sdowney.bsky.social" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-square-bluesky"></i></a></li>
+                    <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
                     
                     <li><a href="feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
                     
@@ -87,13 +87,13 @@
                 
                 <li><a href="categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
                 
-                <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
                 
                 <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
                 
                 <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
                 
-                <li><a href="https://bsky.app/profile/sdowney.bsky.social" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-square-bluesky"></i></a></li>
+                <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
                 
                 <li><a href="feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
                 
@@ -122,13 +122,215 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/scrap-your-static_assert/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Scrap Your static_assert</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-08-10T18:12:21-04:00" title="2026-08-10 18:12">2026-08-10 18:12</time></p>
+        <div class="mt-3">
+            <p>
+The obvious way to test a compile-time fact is <code>static_assert</code>. It's right
+there, it needs no framework, and for a fact that has to hold it's the right
+tool. As a <i>test</i>, though, it has one bad property: a wrong answer is a
+translation failure. The build stops at the first one, you get a compiler
+diagnostic instead of a test result, and every other test in the file goes
+unrun. The xUnit report is empty. You learn that something is wrong, once, and
+nothing about the rest.
+</p>
+
+<p>
+There's a second, smaller problem. Even when you write the check as a runtime
+<code>CHECK</code> so that it gets reported, a bare trait doesn't report anything you can
+use:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++"><code>CHECK(<span class="org-constant">std</span>::<span class="org-type">is_same_v</span>&lt;<span class="org-keyword">decltype</span>(*e), <span class="org-type">int</span>&amp;&gt;);  <span class="org-comment-delimiter">// </span><span class="org-comment">FAILED: CHECK( false )</span>
+</code></pre>
+</div>
+
+<p>
+The expansion is the word <code>false</code>. You already knew the two types differed; the
+framework won't tell you what either of them was.
+</p>
+
+<p>
+Converting the <code>expected</code> tests off <code>static_assert</code> came down to two
+header-only components that fix these two problems. Neither is clever.
+(The title owes Lämmel and Peyton Jones; the debt stops at the title.)
+</p>
+<div id="ox-nikola-outline-container-org92dba2e" class="ox-nikola-outline-2">
+<h2 id="org92dba2e">Type identity as a value</h2>
+<div class="outline-text-2" id="text-org92dba2e">
+<p>
+The fix for the second problem is to compare type <i>identities</i> that carry their
+spelling for diagnostics, instead of comparing a bool. See
+<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/type_name.hpp">type_name.hpp</a>. The
+comparison is still <code>std::is_same_v</code>, so the verdict is exact and a false pass
+isn't possible:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code><span class="org-keyword">template</span> &lt;<span class="org-keyword">class</span> <span class="org-type">T</span>, <span class="org-keyword">class</span> <span class="org-type">U</span>&gt;
+<span class="org-keyword">constexpr</span> <span class="org-type">bool</span> <span class="org-constant">beman</span>::<span class="org-constant">expected</span>::<span class="org-constant">testing</span>::<span class="org-keyword">operator</span>==(<span class="org-type">type_name_t</span>&lt;<span class="org-type">T</span>&gt;, <span class="org-type">type_name_t</span>&lt;<span class="org-type">U</span>&gt;) {
+    <span class="org-keyword">return</span> <span class="org-constant">std</span>::<span class="org-type">is_same_v</span>&lt;<span class="org-type">T</span>, <span class="org-type">U</span>&gt;;
+}
+</code></pre>
+</div>
+
+<p>
+The spelling is consulted only after a comparison has already failed and the
+framework needs to explain it. So a failing check explains itself:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text"><code>FAILED: CHECK( type_name&lt;decltype(*e)&gt;() == type_name&lt;int&amp;&gt;() )
+with expansion: const int&amp; == int&amp;
+</code></pre>
+</div>
+
+<p>
+And the tests read like the trait they replaced:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code>TEST_CASE(<span class="org-string">"expected: operator* ref-qualification return types"</span>, <span class="org-string">"[ExpectedTest]"</span>) {
+    <span class="org-keyword">using</span> <span class="org-type">expected_t</span> = <span class="org-constant">expt</span>::<span class="org-type">expected</span>&lt;<span class="org-type">int</span>, <span class="org-type">int</span>&gt;;
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-type">expected_t</span>&amp;&gt;())&gt;() == type_name&lt;<span class="org-type">int</span>&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-keyword">const</span> <span class="org-type">expected_t</span>&amp;&gt;())&gt;() == type_name&lt;<span class="org-keyword">const</span> <span class="org-type">int</span>&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-type">expected_t</span>&amp;&amp;&gt;())&gt;() == type_name&lt;<span class="org-type">int</span>&amp;&amp;&gt;());
+    CHECK(type_name&lt;<span class="org-keyword">decltype</span>(*<span class="org-constant">std</span>::declval&lt;<span class="org-keyword">const</span> <span class="org-type">expected_t</span>&amp;&amp;&gt;())&gt;() == type_name&lt;<span class="org-keyword">const</span> <span class="org-type">int</span>&amp;&amp;&gt;());
+}
+</code></pre>
+</div>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org484d3e0" class="ox-nikola-outline-2">
+<h2 id="org484d3e0">Reporting a compile-time value at runtime</h2>
+<div class="outline-text-2" id="text-org484d3e0">
+<p>
+The fix for the first problem is to split the two questions a constexpr test
+actually asks. "Can this be constant-evaluated at all?" is a property of the
+code; it stays a hard translation failure, which is correct, because that's a
+fact that has to hold. "Does it produce the right answer?" is a property of a
+value, and there's no reason a wrong value should stop the build.
+</p>
+
+<p>
+<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/constant_eval.hpp">constant_eval.hpp</a>
+is <code>consteval</code>, so a call to it is evaluated during translation. If the probe
+body isn't usable in a constant expression the program is ill-formed, and the
+first question is answered by the call itself, with no <code>static_assert</code> needed.
+The result then behaves as an ordinary prvalue, free to be handed to <code>CHECK</code>.
+The whole thing is a one-line wrapper:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code><span class="org-keyword">template</span> &lt;<span class="org-keyword">class</span> <span class="org-type">Probe</span>&gt;
+<span class="org-keyword">consteval</span> <span class="org-keyword">auto</span> <span class="org-constant">beman</span>::<span class="org-constant">expected</span>::<span class="org-constant">testing</span>::<span class="org-function-name">constant_eval</span>(<span class="org-type">Probe</span> <span class="org-variable-name">probe</span>) {
+    <span class="org-keyword">return</span> probe();
+}
+</code></pre>
+</div>
+
+<p>
+A probe is a plain lambda that reduces what it observes to a literal aggregate:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><code>TEST_CASE(<span class="org-string">"expected: constexpr default construction"</span>, <span class="org-string">"[ExpectedTest]"</span>) {
+    <span class="org-keyword">constexpr</span> <span class="org-keyword">auto</span> <span class="org-variable-name">probe</span> = [] {
+        <span class="org-keyword">constexpr</span> <span class="org-constant">expt</span>::<span class="org-type">expected</span>&lt;<span class="org-type">int</span>, <span class="org-type">int</span>&gt; <span class="org-variable-name">e</span>;
+        <span class="org-keyword">return</span> int_state{e.has_value(), *e};
+    };
+    CHECK(constant_eval(probe) == int_state{<span class="org-constant">true</span>, 0});
+    CHECK(probe() == int_state{<span class="org-constant">true</span>, 0});
+}
+</code></pre>
+</div>
+
+<p>
+Because the probe is a plain lambda and not a <code>consteval</code> one, the same body
+runs in both evaluation modes. Constant evaluation and ordinary evaluation can
+take different paths through a union-based type like <code>expected</code>, so running both
+earns its second line:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++"><code>CHECK(<span class="org-type">constant_eval</span>(<span class="org-variable-name">probe</span>) == expect);  <span class="org-comment-delimiter">// </span><span class="org-comment">constant evaluation
+</span>CHECK(probe() == expect);               <span class="org-comment-delimiter">// </span><span class="org-comment">ordinary evaluation</span>
+</code></pre>
+</div>
+
+<p>
+Give the returned aggregate an <code>operator&lt;&lt;</code>. Without one, Catch2 prints <code>{?} ==
+{?}</code> and you're back where <code>static_assert</code> left you.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-org2a17747" class="ox-nikola-outline-2">
+<h2 id="org2a17747">What it buys</h2>
+<div class="outline-text-2" id="text-org2a17747">
+<p>
+Two things. The reporting is better: a mismatch names both types, or prints both
+states, instead of expanding to <code>false</code> or stopping at a diagnostic before it
+can say anything. And a wrong answer is no longer a compile failure that blocks
+everything behind it. The suite builds, runs, and reports every case; a broken
+trait shows up as one red line among the green, with the rest of the run intact.
+</p>
+
+<p>
+None of this abolishes <code>static_assert</code>. The genuinely ill-formed cases stay
+ill-formed, checked in their own negative-compilation files. What moved to
+runtime is only the part that was a test wearing an assertion's clothes.
+</p>
+</div>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/infix-backtick-operator/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">An Infix Backtick Operator for C++</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-06-29T08:00:00-04:00" title="2026-06-29 08:00">2026-06-29 08:00</time></p>
+        <div class="mt-3">
+            <div>
+<div class="abstract" id="org53dbe68">
+<p>
+I am working on a proposal to let any callable be written between two backticks
+as an infix binary operator: <code>x `f` y</code> means exactly <code>f(x, y)</code>. It is borrowed
+from Haskell, it desugars to an ordinary call, and I have it working in both
+Clang and GCC. This post is the announcement and the design tour.
+</p>
+
+</div>
+
+<p class="more"><a href="posts/infix-backtick-operator/">Read more…</a></p>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/migrating-wg21-subtree/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Refreshing a Stale Git Subtree</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-06-28T23:37:51-04:00" title="2026-06-28 23:37">2026-06-28 23:37</time></p>
+        <div class="mt-3">
+            <div>
+<div class="abstract" id="org179ce7e">
+<p>
+I write my WG21 papers with <a href="https://github.com/mpark/wg21">MPark/WG21</a>, a Pandoc-based framework I vendor into the paper repo as a git subtree. The framework had a major overhaul–the build system split apart, and Pandoc jumped from 2.18 to 3.9–and my copy was 98 commits behind. Worse, the subtree had drifted in two directions at once: real local patches for a TLS-intercepting corporate network, and a pile of pointless autoformatter churn from my own pre-commit hooks. This is how I dragged it back to a verbatim copy of upstream, moved to the new <code>flat.mk</code> include, and pushed every local change back <i>out</i> of the subtree so the next update is a one-liner.
+</p>
+
+</div>
+
+<p class="more"><a href="posts/migrating-wg21-subtree/">Read more…</a></p>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
             <a href="posts/moving-forward-with-legacy-encodings/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Moving Forward With Legacy Encodings</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2026-05-24T13:11:21-04:00" title="2026-05-24 13:11">2026-05-24 13:11</time></p>
         <div class="mt-3">
-            <div id="ox-nikola-outline-container-org30c7e97" class="ox-nikola-outline-2">
-<h2 id="org30c7e97">
+            <div id="ox-nikola-outline-container-org6b5507c" class="ox-nikola-outline-2">
+<h2 id="org6b5507c">
 <span class="section-number-2">1.</span> Abstract</h2>
 <div class="outline-text-2" id="text-1">
 <p>
@@ -170,13 +372,72 @@ configuration choices are.
 </div>
         </div>
     </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/surround-with-uuid/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Surround With UUID</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-04-09T17:41:26-04:00" title="2026-04-09 17:41">2026-04-09 17:41</time></p>
+        <div class="mt-3">
+            <div class="abstract" id="org9855594">
+<p>
+The question of why C++ is standardized through ISO comes up fairly often. This is what I came up with as an explanation the last time I tried to answer that.
+</p>
+
+<p>
+It's a radically oversimplified too long elevator pitch.
+</p>
+
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/why-standard-organizations/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Why Standard Organizations</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-03-07T10:21:36-05:00" title="2026-03-07 10:21">2026-03-07 10:21</time></p>
+        <div class="mt-3">
+            <div>
+<div class="abstract" id="orgd15c3e3">
+<p>
+The question of why C++ is standardized through ISO comes up fairly often. This is what I came up with as an explanation the last time I tried to answer that.
+</p>
+
+<p>
+It's a radically oversimplified too long elevator pitch.
+</p>
+
+</div>
+
+<p class="more"><a href="posts/why-standard-organizations/">Read more…</a></p>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/the-sender-sub-language/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">The Sender Sub-Language</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-02-28T18:40:21-05:00" title="2026-02-28 18:40">2026-02-28 18:40</time></p>
+        <div class="mt-3">
+            <div>
+<div class="abstract" id="org50fe9f5">
+<p>
+The paper <a href="http://wg21.link/P4014R0">The Sender Sub-Language</a> by Vinnie Falco &lt;vinnie.falco@gmail.com&gt; and Mungo Gill &lt;mungo.gill@me.com&gt; makes extensive use of my work at <a href="https://github.com/steve-downey/sender-examples">https://github.com/steve-downey/sender-examples</a>.  The code is also the basis for my talk at C++Now 2023, <a href="https://youtu.be/xXncLUD-4bA?si=tFXFFYLUxia9WW-c">Using the C++ Sender/Receiver Framework: Implement Control Flow for Async Processing</a>. They present the code accurately and fairly, and I am very happy they found it useful in describing and understanding the capabilities of Senders in the framework. There is no higher praise than someone finding your work useful to build upon.
+</p>
+
+<p>
+Nonetheless, we come to different overall conclusions about the Sender/Receiver framework.
+</p>
+
+</div>
+
+<p class="more"><a href="posts/the-sender-sub-language/">Read more…</a></p>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
             <a href="posts/building-vcpkg-dependencies-with-project-toolchain/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Building vcpkg dependencies with project toolchain</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
             <time class="published dt-published" datetime="2025-12-27T12:03:15-05:00" title="2025-12-27 12:03">2025-12-27 12:03</time></p>
         <div class="mt-3">
             <div>
-<div class="abstract" id="org67671ba">
+<div class="abstract" id="orgef1b1f3">
 <p>
 Making sure vcpkg delivers packages built with your toolchain is not hard, but much of the advice on the internet is flat wrong. You need to specify your toolchain both in your project and in the the vcpkg <code>triplet</code>. There's an airgap between your project and the dependency in <code>vcpkg install</code>. The CMake settings can't just flow through.
 </p>
@@ -193,7 +454,7 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
             <time class="published dt-published" datetime="2025-11-28T12:06:58-05:00" title="2025-11-28 12:06">2025-11-28 12:06</time></p>
         <div class="mt-3">
             <div>
-<div class="abstract" id="org541b898">
+<div class="abstract" id="org586a167">
 <p>
 Why are optional::transform and optional::and_then not constrained by <code>invocable</code>?
 </p>
@@ -203,162 +464,11 @@ Why are optional::transform and optional::and_then not constrained by <code>invo
 <p class="more"><a href="posts/substitution-is-sometimes-a-failure/">Read more…</a></p>
 </div>
         </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/nikola-blog-infrastructure/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Nikola Blog Infrastructure</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2024-12-23T13:15:27-05:00" title="2024-12-23 13:15">2024-12-23 13:15</time></p>
-        <div class="mt-3">
-            <div>
-<div class="abstract" id="orgbd7bba5">
-<p>
-I've migrated from WordPress to a static blog generator–Nikola. This is how it works.
-</p>
-
-</div>
-
-<p class="more"><a href="posts/nikola-blog-infrastructure/">Read more…</a></p>
-</div>
-        </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Concept Maps using C++23 Library Tech</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2024-05-19T11:51:00-04:00" title="2024-05-19 11:51">2024-05-19 11:51</time></p>
-        <div class="mt-3">
-            <div id="outline-container-orga2bfebe" class="outline-2">
-<h3 id="orga2bfebe">Abstract</h3>
-<div class="outline-text-2" id="text-orga2bfebe">
-<p> C++0x Concepts had a feature <code>Concept Maps</code> that allowed a set of functions, types, and template definitions to be associated with a concept and the map to be specialized for types that meet the concept. </p>
-
-<p> This allowed open extension of a concept. </p>
-
-<p class="more"><a href="posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/">Read more…</a></p>
-</div>
-</div>
-        </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Slides from C++Now 2023 Async Control Flow</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2024-05-18T18:27:00-04:00" title="2024-05-18 18:27">2024-05-18 18:27</time></p>
-        <div class="mt-3">
-            <div>
-<div id="outline-container-org8b3a3c0" class="outline-2">
-<h3 id="org8b3a3c0">Using Sender/Receiver for Async Control Flow</h3>
-<div class="outline-text-2" id="text-org8b3a3c0">
-<p> Steve Downey </p>
-
-<p> These are the slides, slightly rerendered, from my presentation at C++Now 2023. </p>
-</div>
-</div>
-<div id="outline-container-orga88bc52" class="outline-2">
-<h3 id="orga88bc52">Abstract</h3>
-<div class="outline-text-2" id="text-orga88bc52">
-<p> How can P2300 Senders be composed using sender adapters and sender factories to provide arbitrary program control flow? </p>
-
-<ul class="org-ul">
-<li>How do I use these things?</li>
-</ul>
-<ul class="org-ul">
-<li>Where can I steal from?</li>
-</ul>
-<p class="more"><a href="posts/index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/">Read more…</a></p>
-</div>
-</div>
-</div>
-        </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Some Informal Remarks Towards a New Theory of Trait Customization</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2023-12-24T00:00:00-05:00" title="2023-12-24 00:00">2023-12-24 00:00</time></p>
-        <div class="mt-3">
-            <div>
-<div id="outline-container-org0a7dcc5" class="outline-2">
-<h3 id="org0a7dcc5">A Possible Technique</h3>
-<div class="outline-text-2" id="text-org0a7dcc5">
-<div class="org-src-container">
-<label class="org-src-name"><em></em></label>
-<pre class="src src-c++" id="nil"><span class="org-keyword">constexpr</span> <span class="org-type">bool</span> <span class="org-function-name">g</span>(<span class="org-type">int</span> <span class="org-variable-name">lhs</span>, <span class="org-type">int</span> <span class="org-variable-name">rhs</span>) {
-    <span class="org-keyword">auto</span>&amp; <span class="org-variable-name">op</span> = <span class="org-type">partial_eq</span>&lt;<span class="org-type">int</span>&gt;;
-    <span class="org-keyword">return</span> op.ne(lhs, rhs);
-}
-</pre>
-</div>
-<a href="https://godbolt.org/z/Ge43cWfn8">Compiler Explorer with Supporting Code</a>
-
-A trait is defined as a template variable that implements the required operations. Implementation of those operations is possible via a variety of techniques, but existence is concept checkable. It might prove useful to explicitly opt in to a sufficiently generic trait.
-
-The technique satisfies the openness requirement, that the trait can be created independently of the type that models the trait. There can still only be one definition, but this enables opting std:: types into new traits, for example.
-
-It also doesn't universally grab an operation name. The trait variable is namespaceable.
-
-Syntax isn't really awesome, but not utterly unworkable.
-
-</div>
-</div>
-
-<p class="more"><a href="posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/">Read more…</a></p>
-</div>
-        </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/special-blocks-and-emacs-org-mode-export/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Special Blocks and Emacs Org-mode Export</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2021-12-03T00:00:00-05:00" title="2021-12-03 00:00">2021-12-03 00:00</time></p>
-        <div class="mt-3">
-            <div>
-<nav id="table-of-contents" role="doc-toc"><h3>Table of Contents</h3>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="posts/special-blocks-and-emacs-org-mode-export/#orgf2bc23f">1. Delete blocks and text</a></li>
-<li><a href="posts/special-blocks-and-emacs-org-mode-export/#org76721e5">2. Insert blocks and text</a></li>
-<li><a href="posts/special-blocks-and-emacs-org-mode-export/#org3c7f3fc">3. Comparison Table</a></li>
-</ul>
-</div>
-</nav><ul class="org-ul">
-<li>Document number:</li>
-<li>Date:  2021-12-03</li>
-<li>Author: Steve Downey &lt;sdowney2@bloomberg.net&gt;, &lt;sdowney@gmail.com&gt;</li>
-<li>Audience: WG21 Emacs Authors</li>
-</ul>
-<div class="ABSTRACT" id="org257c800">
-<p> Abstract: Making emacs org-mode more usable for writing WG21 papers. </p>
-
-</div>
-
-<p class="more"><a href="posts/special-blocks-and-emacs-org-mode-export/">Read more…</a></p>
-</div>
-        </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">A local CMake workflow with Docker</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2021-10-03T00:00:00-04:00" title="2021-10-03 00:00">2021-10-03 00:00</time></p>
-        <div class="mt-3">
-            <div>
-<p> l#+BLOG: sdowney </p>
-
-<p> An outline of a template that provides an automated workflow driving a CMake project in a docker container. </p>
-
-<p> This post must be read in concert with <a href="https://github.com/steve-downey/scratch">https://github.com/steve-downey/scratch</a> of which it is part. </p>
-
-<div id="outline-container-orge73d9dc" class="outline-2">
-<h3 id="orge73d9dc">Routine process should be automated</h3>
-<div class="outline-text-2" id="text-orge73d9dc">
-<p> Building a project that uses cmake runs through a predictable lifecycle that you should be able to pick up where you left off without remembering, and for which you should be able to state your goal, not the step you are on. <code>make</code> is designed for this, and can drive the processs. </p>
-</div>
-
-<p class="more"><a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/">Read more…</a></p>
-</div>
-</div>
-        </div>
     </article>
 </div>
 
         <nav class="not-prose mt-10 flex justify-between items-center" aria-label="Pagination"><span></span>
-            <a href="index-9.html" rel="next" class="text-indigo-600 hover:underline">
+            <a href="index-10.html" rel="next" class="text-indigo-600 hover:underline">
                 Older posts »
             </a>
         </nav><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script><script>
@@ -386,6 +496,18 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="posts/scrap-your-static_assert/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Scrap Your static_assert</a>
+                <time class="text-xs text-gray-400" datetime="2026-08-10T18:12:21-04:00">2026-08-10 18:12</time>
+</li>
+            <li>
+                <a href="posts/infix-backtick-operator/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">An Infix Backtick Operator for C++</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-29T08:00:00-04:00">2026-06-29 08:00</time>
+</li>
+            <li>
+                <a href="posts/migrating-wg21-subtree/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Refreshing a Stale Git Subtree</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-28T23:37:51-04:00">2026-06-28 23:37</time>
+</li>
+            <li>
                 <a href="posts/moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
 </li>
@@ -394,36 +516,24 @@ delimiters: [
                 <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
 </li>
             <li>
+                <a href="posts/surround-with-uuid/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Surround With UUID</a>
+                <time class="text-xs text-gray-400" datetime="2026-04-09T17:41:26-04:00">2026-04-09 17:41</time>
+</li>
+            <li>
+                <a href="posts/why-standard-organizations/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Why Standard Organizations</a>
+                <time class="text-xs text-gray-400" datetime="2026-03-07T10:21:36-05:00">2026-03-07 10:21</time>
+</li>
+            <li>
+                <a href="posts/the-sender-sub-language/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">The Sender Sub-Language</a>
+                <time class="text-xs text-gray-400" datetime="2026-02-28T18:40:21-05:00">2026-02-28 18:40</time>
+</li>
+            <li>
                 <a href="posts/building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
                 <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
 </li>
             <li>
                 <a href="posts/substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
                 <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
-</li>
-            <li>
-                <a href="posts/nikola-blog-infrastructure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Nikola Blog Infrastructure</a>
-                <time class="text-xs text-gray-400" datetime="2024-12-23T13:15:27-05:00">2024-12-23 13:15</time>
-</li>
-            <li>
-                <a href="posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Concept Maps using C++23 Library Tech</a>
-                <time class="text-xs text-gray-400" datetime="2024-05-19T11:51:00-04:00">2024-05-19 11:51</time>
-</li>
-            <li>
-                <a href="posts/index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Slides from C++Now 2023 Async Control Flow</a>
-                <time class="text-xs text-gray-400" datetime="2024-05-18T18:27:00-04:00">2024-05-18 18:27</time>
-</li>
-            <li>
-                <a href="posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Some Informal Remarks Towards a New Theory of Trait Customization</a>
-                <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
-</li>
-            <li>
-                <a href="posts/special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
-                <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
-</li>
-            <li>
-                <a href="posts/index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
-                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
         <a href="archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>

@@ -49,7 +49,7 @@
 <link rel="canonical" href="https://sdowney.org/posts/tailwind-theme-workflow/">
 <meta name="description" content="How the blog's Tailwind CSS theme works end-to-end: from Emacs modus-themes palette through secretaire-css to rendered source blocks.">
 <meta name="author" content="Steve Downey">
-<link rel="prev" href="../building-vcpkg-dependencies-with-project-toolchain/" title="Building vcpkg dependencies with project toolchain" type="text/html">
+<link rel="prev" href="../surround-with-uuid/" title="Surround With UUID" type="text/html">
 <link rel="next" href="../moving-forward-with-legacy-encodings/" title="Moving Forward With Legacy Encodings" type="text/html">
 <meta property="og:site_name" content="What Comes to Mind">
 <meta property="og:title" content="Tailwind, Modus Themes, and the Blog Theming Workflow">
@@ -83,13 +83,13 @@
                     
                     <li><a href="../../categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
                     
-                    <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors"><i class="fa fa-envelope"></i></a></li>
+                    <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
                     
                     <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
                     
                     <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
                     
-                    <li><a href="https://bsky.app/profile/sdowney.bsky.social" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-square-bluesky"></i></a></li>
+                    <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
                     
                     <li><a href="../../feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
                     
@@ -103,13 +103,13 @@
                 
                 <li><a href="../../categories/index.html" class="text-gray-300 hover:text-white transition-colors">Tags</a></li>
                 
-                <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="mailto:sdowney@sdowney.dev" class="text-gray-300 hover:text-white transition-colors">Email <i class="fa fa-envelope"></i></a></li>
                 
                 <li><a href="https://github.com/steve-downey" class="text-gray-300 hover:text-white transition-colors">GitHub <i class="fa-brands fa-square-github"></i></a></li>
                 
                 <li><a href="https://mastodon.social/@Sdowney" class="text-gray-300 hover:text-white transition-colors">Mastodon <i class="fa-brands fa-mastodon"></i></a></li>
                 
-                <li><a href="https://bsky.app/profile/sdowney.bsky.social" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-square-bluesky"></i></a></li>
+                <li><a href="https://bsky.app/profile/sdowney.org" class="text-gray-300 hover:text-white transition-colors">Bluesky <i class="fa-brands fa-bluesky"></i></a></li>
                 
                 <li><a href="../../feed.atom" class="text-gray-300 hover:text-white transition-colors">ATOM <i class="fa-solid fa-atom"></i></a></li>
                 
@@ -158,14 +158,14 @@ configuration choices are.
 </p>
 
 <!-- TEASER_END -->
-<div id="ox-nikola-outline-container-org0507254" class="ox-nikola-outline-2">
-<h2 id="org0507254">The Theme Stack</h2>
-<div class="outline-text-2" id="text-org0507254">
+<div id="ox-nikola-outline-container-orgaeda8c7" class="ox-nikola-outline-2">
+<h2 id="orgaeda8c7">The Theme Stack</h2>
+<div class="outline-text-2" id="text-orgaeda8c7">
 <p>
 The blog uses three Nikola themes stacked via the parent chain:
 </p>
 
-<pre class="example" id="orgb7aeb20">
+<pre class="example" id="org267f2e7">
 sdowney-tailwind → nikola-tailwind-blog → nikola-tailwind-base → base
 </pre>
 
@@ -193,9 +193,9 @@ templates by walking the chain, so I only override what I actually change.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgded041f" class="ox-nikola-outline-2">
-<h2 id="orgded041f">How Tailwind Is Loaded</h2>
-<div class="outline-text-2" id="text-orgded041f">
+<div id="ox-nikola-outline-container-org3c2175d" class="ox-nikola-outline-2">
+<h2 id="org3c2175d">How Tailwind Is Loaded</h2>
+<div class="outline-text-2" id="text-org3c2175d">
 <p>
 The Tailwind Play CDN is a <code>&lt;script&gt;</code> tag that processes utility classes at
 runtime:
@@ -249,9 +249,9 @@ Font stacks are defined once.  The <code>heading</code> array is reused in three
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org7060629" class="ox-nikola-outline-2">
-<h2 id="org7060629">Source Block Rendering</h2>
-<div class="outline-text-2" id="text-org7060629">
+<div id="ox-nikola-outline-container-org172a24c" class="ox-nikola-outline-2">
+<h2 id="org172a24c">Source Block Rendering</h2>
+<div class="outline-text-2" id="text-org172a24c">
 <p>
 Org-mode's HTML exporter produces this structure:
 </p>
@@ -280,9 +280,9 @@ label and button.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org5848779" class="ox-nikola-outline-2">
-<h2 id="org5848779">Syntax Highlighting: The Modus Connection</h2>
-<div class="outline-text-2" id="text-org5848779">
+<div id="ox-nikola-outline-container-org4a7e618" class="ox-nikola-outline-2">
+<h2 id="org4a7e618">Syntax Highlighting: The Modus Connection</h2>
+<div class="outline-text-2" id="text-org4a7e618">
 <p>
 Org-mode's HTML exporter uses <code>htmlize</code> to apply face colors as CSS classes.
 When <code>org-html-htmlize-output-type</code> is <code>'css</code>, it produces <code>&lt;span
@@ -348,13 +348,13 @@ Change the modus variant, regenerate, and code block backgrounds follow.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgdc0e9fb" class="ox-nikola-outline-2">
-<h2 id="orgdc0e9fb">Current Configuration</h2>
-<div class="outline-text-2" id="text-orgdc0e9fb">
+<div id="ox-nikola-outline-container-org4f086dd" class="ox-nikola-outline-2">
+<h2 id="org4f086dd">Current Configuration</h2>
+<div class="outline-text-2" id="text-org4f086dd">
 </div>
-<div id="ox-nikola-outline-container-org9b581c3" class="ox-nikola-outline-3">
-<h3 id="org9b581c3">What's using the Play CDN</h3>
-<div class="outline-text-3" id="text-org9b581c3">
+<div id="ox-nikola-outline-container-orgc2f2b1c" class="ox-nikola-outline-3">
+<h3 id="orgc2f2b1c">What's using the Play CDN</h3>
+<div class="outline-text-3" id="text-orgc2f2b1c">
 <p>
 The Tailwind Play CDN generates CSS client-side.  There is no <code>node_modules</code>,
 no <code>package.json</code>, no build step.  Page load includes a brief delay while
@@ -369,9 +369,9 @@ tailwind.css</code>, replace the <code>&lt;script&gt;</code> with a <code>&lt;li
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org26bd984" class="ox-nikola-outline-3">
-<h3 id="org26bd984">Typography plugin via prose</h3>
-<div class="outline-text-3" id="text-org26bd984">
+<div id="ox-nikola-outline-container-orge96156d" class="ox-nikola-outline-3">
+<h3 id="orge96156d">Typography plugin via prose</h3>
+<div class="outline-text-3" id="text-orge96156d">
 <p>
 The <code>prose prose-lg prose-indigo</code> classes on the content <code>&lt;div&gt;</code> provide:
 </p>
@@ -388,9 +388,9 @@ lives outside the <code>prose</code> wrapper.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org0aba500" class="ox-nikola-outline-3">
-<h3 id="org0aba500">Fonts</h3>
-<div class="outline-text-3" id="text-org0aba500">
+<div id="ox-nikola-outline-container-org187144d" class="ox-nikola-outline-3">
+<h3 id="org187144d">Fonts</h3>
+<div class="outline-text-3" id="text-org187144d">
 <ul class="org-ul">
 <li>Body: Source Sans 3 (with Open Sans fallback)</li>
 <li>Headings: Open Sans</li>
@@ -402,9 +402,9 @@ reference these through the config.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org441cacd" class="ox-nikola-outline-3">
-<h3 id="org441cacd">Accent color: indigo</h3>
-<div class="outline-text-3" id="text-org441cacd">
+<div id="ox-nikola-outline-container-orgc127051" class="ox-nikola-outline-3">
+<h3 id="orgc127051">Accent color: indigo</h3>
+<div class="outline-text-3" id="text-orgc127051">
 <p>
 Tailwind's <code>indigo</code> palette provides the accent: <code>bg-indigo-700</code> for the
 header banner, <code>text-indigo-600</code> for links, <code>bg-indigo-100 text-indigo-700</code>
@@ -413,9 +413,9 @@ across the blog tier templates.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgc339690" class="ox-nikola-outline-3">
-<h3 id="orgc339690">Icons: Font Awesome 7.0.1</h3>
-<div class="outline-text-3" id="text-orgc339690">
+<div id="ox-nikola-outline-container-org82418f9" class="ox-nikola-outline-3">
+<h3 id="org82418f9">Icons: Font Awesome 7.0.1</h3>
+<div class="outline-text-3" id="text-org82418f9">
 <p>
 Loaded via CDN in the personal tier.  Navigation links in <code>conf.py</code> include
 Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
@@ -423,13 +423,13 @@ Font Awesome <code>&lt;i&gt;</code> tags directly in the link text.
 </div>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org42d0e52" class="ox-nikola-outline-2">
-<h2 id="org42d0e52">What I Might Tweak Later</h2>
-<div class="outline-text-2" id="text-org42d0e52">
+<div id="ox-nikola-outline-container-org9315bec" class="ox-nikola-outline-2">
+<h2 id="org9315bec">What I Might Tweak Later</h2>
+<div class="outline-text-2" id="text-org9315bec">
 </div>
-<div id="ox-nikola-outline-container-org547d22b" class="ox-nikola-outline-3">
-<h3 id="org547d22b">Dark mode</h3>
-<div class="outline-text-3" id="text-org547d22b">
+<div id="ox-nikola-outline-container-org9101ac7" class="ox-nikola-outline-3">
+<h3 id="org9101ac7">Dark mode</h3>
+<div class="outline-text-3" id="text-org9101ac7">
 <p>
 The syntax highlighting is already dark (modus-vivendi).  The page chrome is
 light.  A proper dark mode would add <code>dark:</code> variants to the templates and
@@ -438,9 +438,9 @@ this straightforward with <code>darkMode: 'media'</code> in the config.
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgec17a2f" class="ox-nikola-outline-3">
-<h3 id="orgec17a2f">Production Tailwind</h3>
-<div class="outline-text-3" id="text-orgec17a2f">
+<div id="ox-nikola-outline-container-orgc199a85" class="ox-nikola-outline-3">
+<h3 id="orgc199a85">Production Tailwind</h3>
+<div class="outline-text-3" id="text-orgc199a85">
 <p>
 If page load times bother me, switching to a pre-built CSS file removes the
 Play CDN runtime cost.  The config is already defined inline; moving it to
@@ -448,9 +448,9 @@ Play CDN runtime cost.  The config is already defined inline; moving it to
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org8462072" class="ox-nikola-outline-3">
-<h3 id="org8462072">Palette-aware CSS generation</h3>
-<div class="outline-text-3" id="text-org8462072">
+<div id="ox-nikola-outline-container-org25c3897" class="ox-nikola-outline-3">
+<h3 id="org25c3897">Palette-aware CSS generation</h3>
+<div class="outline-text-3" id="text-org25c3897">
 <p>
 <code>secretaire-css</code> currently falls back to htmlize for the actual face scanning
 when the modus palette API isn't available.  The full palette-aware path (emitting
@@ -459,9 +459,9 @@ See <code>docs/secretaire-css-design.org</code> for what the ideal output looks 
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-orgd7724b2" class="ox-nikola-outline-3">
-<h3 id="orgd7724b2">Fonts</h3>
-<div class="outline-text-3" id="text-orgd7724b2">
+<div id="ox-nikola-outline-container-org458684b" class="ox-nikola-outline-3">
+<h3 id="org458684b">Fonts</h3>
+<div class="outline-text-3" id="text-org458684b">
 <p>
 I'm eyeing <a href="https://www.brailleinstitute.org/freefont/">Atkinson Hyperlegible Next</a> for body text.  Changing fonts is a
 two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind config in
@@ -489,7 +489,7 @@ two-place edit: the Google Fonts <code>&lt;link&gt;</code> tag and the Tailwind 
         </div>
 
     
-        <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../building-vcpkg-dependencies-with-project-toolchain/" rel="prev" class="text-indigo-600 hover:underline" title="Building vcpkg dependencies with project toolchain">
+        <nav class="not-prose mt-8 flex justify-between items-center" aria-label="Post navigation"><a href="../surround-with-uuid/" rel="prev" class="text-indigo-600 hover:underline" title="Surround With UUID">
                 « <span class="hidden sm:inline">Previous post</span>
             </a>
             <a href="../moving-forward-with-legacy-encodings/" rel="next" class="text-indigo-600 hover:underline" title="Moving Forward With Legacy Encodings">
@@ -520,6 +520,18 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="../scrap-your-static_assert/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Scrap Your static_assert</a>
+                <time class="text-xs text-gray-400" datetime="2026-08-10T18:12:21-04:00">2026-08-10 18:12</time>
+</li>
+            <li>
+                <a href="../infix-backtick-operator/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">An Infix Backtick Operator for C++</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-29T08:00:00-04:00">2026-06-29 08:00</time>
+</li>
+            <li>
+                <a href="../migrating-wg21-subtree/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Refreshing a Stale Git Subtree</a>
+                <time class="text-xs text-gray-400" datetime="2026-06-28T23:37:51-04:00">2026-06-28 23:37</time>
+</li>
+            <li>
                 <a href="../moving-forward-with-legacy-encodings/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Moving Forward With Legacy Encodings</a>
                 <time class="text-xs text-gray-400" datetime="2026-05-24T13:11:21-04:00">2026-05-24 13:11</time>
 </li>
@@ -528,36 +540,24 @@ delimiters: [
                 <time class="text-xs text-gray-400" datetime="2026-05-10T18:00:00-04:00">2026-05-10 18:00</time>
 </li>
             <li>
+                <a href="../surround-with-uuid/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Surround With UUID</a>
+                <time class="text-xs text-gray-400" datetime="2026-04-09T17:41:26-04:00">2026-04-09 17:41</time>
+</li>
+            <li>
+                <a href="../why-standard-organizations/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Why Standard Organizations</a>
+                <time class="text-xs text-gray-400" datetime="2026-03-07T10:21:36-05:00">2026-03-07 10:21</time>
+</li>
+            <li>
+                <a href="../the-sender-sub-language/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">The Sender Sub-Language</a>
+                <time class="text-xs text-gray-400" datetime="2026-02-28T18:40:21-05:00">2026-02-28 18:40</time>
+</li>
+            <li>
                 <a href="../building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
                 <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
 </li>
             <li>
                 <a href="../substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
                 <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
-</li>
-            <li>
-                <a href="../nikola-blog-infrastructure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Nikola Blog Infrastructure</a>
-                <time class="text-xs text-gray-400" datetime="2024-12-23T13:15:27-05:00">2024-12-23 13:15</time>
-</li>
-            <li>
-                <a href="../index.php/2024/05/19/concept-maps-using-c23-library-tech/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Concept Maps using C++23 Library Tech</a>
-                <time class="text-xs text-gray-400" datetime="2024-05-19T11:51:00-04:00">2024-05-19 11:51</time>
-</li>
-            <li>
-                <a href="../index.php/2024/05/18/slides-from-cnow-2023-async-control-flow/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Slides from C++Now 2023 Async Control Flow</a>
-                <time class="text-xs text-gray-400" datetime="2024-05-18T18:27:00-04:00">2024-05-18 18:27</time>
-</li>
-            <li>
-                <a href="../index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Some Informal Remarks Towards a New Theory of Trait Customization</a>
-                <time class="text-xs text-gray-400" datetime="2023-12-24T00:00:00-05:00">2023-12-24 00:00</time>
-</li>
-            <li>
-                <a href="../special-blocks-and-emacs-org-mode-export/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Special Blocks and Emacs Org-mode Export</a>
-                <time class="text-xs text-gray-400" datetime="2021-12-03T00:00:00-05:00">2021-12-03 00:00</time>
-</li>
-            <li>
-                <a href="../index.php/2021/10/03/a-local-cmake-workflow-with-docker/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">A local CMake workflow with Docker</a>
-                <time class="text-xs text-gray-400" datetime="2021-10-03T00:00:00-04:00">2021-10-03 00:00</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
         <a href="../../archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
