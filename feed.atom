@@ -3,13 +3,197 @@
 <feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom">
   <title>What Comes to Mind</title>
   <id>https://sdowney.org/feed.atom</id>
-  <updated>2026-08-10T23:34:21Z</updated>
+  <updated>2026-09-22T22:05:21Z</updated>
   <author>
     <name>Steve Downey</name>
   </author>
   <link rel="self" type="application/atom+xml" href="https://sdowney.org/feed.atom"/>
   <link rel="alternate" type="text/html" href="https://sdowney.org/"/>
   <generator uri="https://getnikola.com/">Nikola</generator>
+  <entry>
+    <title>✌Existing Practice✌</title>
+    <id>https://sdowney.org/posts/existing-practice/</id>
+    <updated>2026-09-22T17:36:56-04:00</updated>
+    <published>2026-09-22T17:36:56-04:00</published>
+    <author>
+      <name>Steve Downey</name>
+    </author>
+    <link rel="alternate" type="text/html" href="https://sdowney.org/posts/existing-practice/"/>
+    <summary type="html">&lt;p&gt;
+"Standardize existing practice" was barely true of the first C++ standard, and it is the wrong rule now. It was already being stretched in 1998. The ARM was existing practice. Templates as specified in the ARM were not what got standardized; the STL had two years of use at HP and a handful of early adopters before it was voted in; namespaces, exceptions as shipped, and iostreams with locales were designed in committee and implemented afterward. The result was a standard that no compiler implemented for years. We call it a success because C++ survived it, not because the process was sound.
+&lt;/p&gt;
+
+&lt;p&gt;
+Today the rule is not merely stretched. It is objectively wrong, for two reasons that are usually run together and should be kept apart.
+&lt;/p&gt;
+&lt;div id="ox-nikola-outline-container-org5d883a8" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org5d883a8"&gt;No library can be brought in as-is&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5d883a8"&gt;
+&lt;p&gt;
+The ecosystem is too fragmented. There is no library that everyone uses, built the way everyone builds, with the error handling everyone wants, that could be dropped into &lt;code&gt;namespace std&lt;/code&gt; untouched. And even if there were, LEWG would not do it. The correctness bar applied to current proposals guarantees significant changes to any library that comes through. Lifetime, constexpr, exception safety, allocator awareness, freestanding, ABI. A library with real users has made choices on all of those that the committee will unmake.
+&lt;/p&gt;
+
+&lt;p&gt;
+That is not a complaint. It is a description of what the process is for. The library that gets standardized is a new thing with the proposal as its ancestor.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgd211a6e" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgd211a6e"&gt;Wide deployment experience is never coming back&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgd211a6e"&gt;
+&lt;p&gt;
+For a language feature, deployment experience is not going to happen again. No one is going to commit experimental language code to a production code base. The risk of being wrong, of having to strip syntax out of a million lines when the design changes, is too high for any engineering organization to accept. For a vendor library extension it is unlikely for the same reason, with the added problem that vendors have learned that shipping something under &lt;code&gt;std::experimental&lt;/code&gt; means supporting it forever.
+&lt;/p&gt;
+
+&lt;p&gt;
+This does not relieve a proposal of the obligation to implement. If anything it makes the implementation more important. But the purpose of the implementation has changed. It is there so that other people can gain intuition about the feature, and so that the implementer can confirm the lack of breakage. Those are the two things a reference implementation is for. Adoption numbers are not one of them.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgdae4dcf" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgdae4dcf"&gt;How are we doing?&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgdae4dcf"&gt;
+&lt;p&gt;
+The evidence for this is the last three standards.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;code&gt;fmt&lt;/code&gt; is the closest thing we have to the old model. Victor Zverovich had a library with wide deployment, a settled API, and years of bug reports. &lt;code&gt;std::format&lt;/code&gt; is still not &lt;code&gt;fmt&lt;/code&gt;. Compile-time format string checking went in late through a separate paper. &lt;code&gt;std::print&lt;/code&gt; waited for C++23. The escape and width rules for Unicode were rewritten in SG16. It is a success because the library kept living alongside the standard, absorbing the committee's changes and feeding back what broke. The deployment experience that mattered was the experience of tracking the delta.
+&lt;/p&gt;
+
+&lt;p&gt;
+Ranges is the same story with a larger delta. range-v3 was widely used. &lt;code&gt;std::ranges&lt;/code&gt; diverges from it on borrowed ranges, on dangling, on the view semantics, and on what got left out. C++20 shipped without &lt;code&gt;zip&lt;/code&gt;, &lt;code&gt;enumerate&lt;/code&gt;, &lt;code&gt;chunk&lt;/code&gt;, or &lt;code&gt;to&lt;/code&gt;. C++23 filled the holes. That is a success on a six-year timeline, and it worked because Casey Carter and Eric Niebler treated range-v3 as the experiment, not the product.
+&lt;/p&gt;
+
+&lt;p&gt;
+Senders and receivers look like a success, and it is the case that best fits the new rule. There was no existing practice. P0443 Executors was an attempt to standardize existing practice, three existing practices in fact, and it failed because they could not be reconciled. P2300 started over. libunifex and stdexec were implementations built to let people gain intuition and find breakage. The design changed enormously between R0 and adoption, and it changed because people wrote code against the implementation and reported what was wrong. Nobody deployed it to production in the meantime. That was not the point.
+&lt;/p&gt;
+
+&lt;p&gt;
+Coroutines, before S/R, were marginal. The language feature shipped in C++20 with a working MSVC implementation and no library, and &lt;code&gt;std::generator&lt;/code&gt; did not arrive until C++23. Everyone wrote their own task type and their own scheduler, which is what the design intended, and the result was that nobody's coroutine code interoperated with anyone else's. The feature only becomes useful now that S/R supplies the library half. The implementation existed. The intuition did not, because there was no shared thing to build intuition on.
+&lt;/p&gt;
+
+&lt;p&gt;
+Modules are not a success; they are the case that should have taught us. Two implementations existed, Microsoft's and Clang's, with different designs. The merged design that was voted into C++20 was implemented by nobody at the time of the vote. No build system understood it, and there was no way for anyone to gain intuition about how the merged thing behaved or to confirm it did not break existing code, because it did not exist. Six years later &lt;code&gt;import std;&lt;/code&gt; works on some toolchains, header units are a partial implementation almost everywhere, and the amount of production C++ that has moved to named modules is a rounding error. This was a paper design standardized on the strength of experience with two things that were not it.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgad528f3" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgad528f3"&gt;Contracts&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgad528f3"&gt;
+&lt;p&gt;
+Contracts are the current disaster. Pulled from C++20 in Cologne because the design was not settled, they came back as P2900, a minimal viable product, and were adopted into C++26. The final vote in Croydon was 114 to 12 with 3 abstaining, which by committee standards is a fight, and it is still not over. More than twenty national body comments came in against the design. A paper to defer to C++29 circulated three weeks before the vote. The opposition has not gone quiet since, and the DIS ballot is still open. Stroustrup's line is that it is not minimal and not viable.
+&lt;/p&gt;
+
+&lt;p&gt;
+The stated objection, when you strip the specifics about evaluation semantics and ignorability, is that there is not enough deployment experience. That is the impossible standard. We are never going to get deployment experience for a language feature that might change. There is a GCC implementation in trunk and a Clang branch. People have written code against them, found the sharp edges, and filed papers. The evaluation semantics debate happened because people could try the thing, which is the system working.
+&lt;/p&gt;
+
+&lt;p&gt;
+If Contracts derail C++26, or derail themselves into C++29, it will not be because the feature failed to meet a reasonable bar. It will be because the bar being demanded is one no language feature can meet, and one that Modules, with far less implementation behind it, was never held to.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orga95bd0b" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orga95bd0b"&gt;Profiles&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orga95bd0b"&gt;
+&lt;p&gt;
+And then there are Profiles, targeting C++29, from many of the same people who gave us Modules. The pitch is safety, and the claimed existing practice is the Core Guidelines checkers. Those checkers are not Profiles. Profiles as proposed are a language mechanism with enforcement semantics that no compiler implements and no code base has been compiled against. It is the Modules shape exactly: a design with adjacent experience being presented as the experience.
+&lt;/p&gt;
+
+&lt;p&gt;
+The lesson from the history is not "demand deployment." It is "demand an implementation that other people can use to find out whether the design is wrong, and then listen when they do." &lt;code&gt;fmt&lt;/code&gt; and ranges had that and survived heavy revision. S/R had that and was revised almost completely. Coroutines had half of it. Modules had none of it. Contracts have it and are being held to a standard they cannot meet, while Profiles are heading toward the standard Modules were held to, which was none.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</summary>
+    <content type="html">&lt;p&gt;
+"Standardize existing practice" was barely true of the first C++ standard, and it is the wrong rule now. It was already being stretched in 1998. The ARM was existing practice. Templates as specified in the ARM were not what got standardized; the STL had two years of use at HP and a handful of early adopters before it was voted in; namespaces, exceptions as shipped, and iostreams with locales were designed in committee and implemented afterward. The result was a standard that no compiler implemented for years. We call it a success because C++ survived it, not because the process was sound.
+&lt;/p&gt;
+
+&lt;p&gt;
+Today the rule is not merely stretched. It is objectively wrong, for two reasons that are usually run together and should be kept apart.
+&lt;/p&gt;
+&lt;div id="ox-nikola-outline-container-org5d883a8" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org5d883a8"&gt;No library can be brought in as-is&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5d883a8"&gt;
+&lt;p&gt;
+The ecosystem is too fragmented. There is no library that everyone uses, built the way everyone builds, with the error handling everyone wants, that could be dropped into &lt;code&gt;namespace std&lt;/code&gt; untouched. And even if there were, LEWG would not do it. The correctness bar applied to current proposals guarantees significant changes to any library that comes through. Lifetime, constexpr, exception safety, allocator awareness, freestanding, ABI. A library with real users has made choices on all of those that the committee will unmake.
+&lt;/p&gt;
+
+&lt;p&gt;
+That is not a complaint. It is a description of what the process is for. The library that gets standardized is a new thing with the proposal as its ancestor.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgd211a6e" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgd211a6e"&gt;Wide deployment experience is never coming back&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgd211a6e"&gt;
+&lt;p&gt;
+For a language feature, deployment experience is not going to happen again. No one is going to commit experimental language code to a production code base. The risk of being wrong, of having to strip syntax out of a million lines when the design changes, is too high for any engineering organization to accept. For a vendor library extension it is unlikely for the same reason, with the added problem that vendors have learned that shipping something under &lt;code&gt;std::experimental&lt;/code&gt; means supporting it forever.
+&lt;/p&gt;
+
+&lt;p&gt;
+This does not relieve a proposal of the obligation to implement. If anything it makes the implementation more important. But the purpose of the implementation has changed. It is there so that other people can gain intuition about the feature, and so that the implementer can confirm the lack of breakage. Those are the two things a reference implementation is for. Adoption numbers are not one of them.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgdae4dcf" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgdae4dcf"&gt;How are we doing?&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgdae4dcf"&gt;
+&lt;p&gt;
+The evidence for this is the last three standards.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;code&gt;fmt&lt;/code&gt; is the closest thing we have to the old model. Victor Zverovich had a library with wide deployment, a settled API, and years of bug reports. &lt;code&gt;std::format&lt;/code&gt; is still not &lt;code&gt;fmt&lt;/code&gt;. Compile-time format string checking went in late through a separate paper. &lt;code&gt;std::print&lt;/code&gt; waited for C++23. The escape and width rules for Unicode were rewritten in SG16. It is a success because the library kept living alongside the standard, absorbing the committee's changes and feeding back what broke. The deployment experience that mattered was the experience of tracking the delta.
+&lt;/p&gt;
+
+&lt;p&gt;
+Ranges is the same story with a larger delta. range-v3 was widely used. &lt;code&gt;std::ranges&lt;/code&gt; diverges from it on borrowed ranges, on dangling, on the view semantics, and on what got left out. C++20 shipped without &lt;code&gt;zip&lt;/code&gt;, &lt;code&gt;enumerate&lt;/code&gt;, &lt;code&gt;chunk&lt;/code&gt;, or &lt;code&gt;to&lt;/code&gt;. C++23 filled the holes. That is a success on a six-year timeline, and it worked because Casey Carter and Eric Niebler treated range-v3 as the experiment, not the product.
+&lt;/p&gt;
+
+&lt;p&gt;
+Senders and receivers look like a success, and it is the case that best fits the new rule. There was no existing practice. P0443 Executors was an attempt to standardize existing practice, three existing practices in fact, and it failed because they could not be reconciled. P2300 started over. libunifex and stdexec were implementations built to let people gain intuition and find breakage. The design changed enormously between R0 and adoption, and it changed because people wrote code against the implementation and reported what was wrong. Nobody deployed it to production in the meantime. That was not the point.
+&lt;/p&gt;
+
+&lt;p&gt;
+Coroutines, before S/R, were marginal. The language feature shipped in C++20 with a working MSVC implementation and no library, and &lt;code&gt;std::generator&lt;/code&gt; did not arrive until C++23. Everyone wrote their own task type and their own scheduler, which is what the design intended, and the result was that nobody's coroutine code interoperated with anyone else's. The feature only becomes useful now that S/R supplies the library half. The implementation existed. The intuition did not, because there was no shared thing to build intuition on.
+&lt;/p&gt;
+
+&lt;p&gt;
+Modules are not a success; they are the case that should have taught us. Two implementations existed, Microsoft's and Clang's, with different designs. The merged design that was voted into C++20 was implemented by nobody at the time of the vote. No build system understood it, and there was no way for anyone to gain intuition about how the merged thing behaved or to confirm it did not break existing code, because it did not exist. Six years later &lt;code&gt;import std;&lt;/code&gt; works on some toolchains, header units are a partial implementation almost everywhere, and the amount of production C++ that has moved to named modules is a rounding error. This was a paper design standardized on the strength of experience with two things that were not it.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orgad528f3" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orgad528f3"&gt;Contracts&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgad528f3"&gt;
+&lt;p&gt;
+Contracts are the current disaster. Pulled from C++20 in Cologne because the design was not settled, they came back as P2900, a minimal viable product, and were adopted into C++26. The final vote in Croydon was 114 to 12 with 3 abstaining, which by committee standards is a fight, and it is still not over. More than twenty national body comments came in against the design. A paper to defer to C++29 circulated three weeks before the vote. The opposition has not gone quiet since, and the DIS ballot is still open. Stroustrup's line is that it is not minimal and not viable.
+&lt;/p&gt;
+
+&lt;p&gt;
+The stated objection, when you strip the specifics about evaluation semantics and ignorability, is that there is not enough deployment experience. That is the impossible standard. We are never going to get deployment experience for a language feature that might change. There is a GCC implementation in trunk and a Clang branch. People have written code against them, found the sharp edges, and filed papers. The evaluation semantics debate happened because people could try the thing, which is the system working.
+&lt;/p&gt;
+
+&lt;p&gt;
+If Contracts derail C++26, or derail themselves into C++29, it will not be because the feature failed to meet a reasonable bar. It will be because the bar being demanded is one no language feature can meet, and one that Modules, with far less implementation behind it, was never held to.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="ox-nikola-outline-container-orga95bd0b" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="orga95bd0b"&gt;Profiles&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orga95bd0b"&gt;
+&lt;p&gt;
+And then there are Profiles, targeting C++29, from many of the same people who gave us Modules. The pitch is safety, and the claimed existing practice is the Core Guidelines checkers. Those checkers are not Profiles. Profiles as proposed are a language mechanism with enforcement semantics that no compiler implements and no code base has been compiled against. It is the Modules shape exactly: a design with adjacent experience being presented as the experience.
+&lt;/p&gt;
+
+&lt;p&gt;
+The lesson from the history is not "demand deployment." It is "demand an implementation that other people can use to find out whether the design is wrong, and then listen when they do." &lt;code&gt;fmt&lt;/code&gt; and ranges had that and survived heavy revision. S/R had that and was revised almost completely. Coroutines had half of it. Modules had none of it. Contracts have it and are being held to a standard they cannot meet, while Profiles are heading toward the standard Modules were held to, which was none.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
+  </entry>
   <entry>
     <title>Scrap Your static_assert</title>
     <id>https://sdowney.org/posts/scrap-your-static_assert/</id>
@@ -50,13 +234,13 @@ Converting the &lt;code&gt;expected&lt;/code&gt; tests off &lt;code&gt;static_as
 header-only components that fix these two problems. Neither is clever.
 (The title owes Lämmel and Peyton Jones; the debt stops at the title.)
 &lt;/p&gt;
-&lt;div id="ox-nikola-outline-container-org92dba2e" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org92dba2e"&gt;Type identity as a value&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org92dba2e"&gt;
+&lt;div id="ox-nikola-outline-container-org02a4213" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org02a4213"&gt;Type identity as a value&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org02a4213"&gt;
 &lt;p&gt;
 The fix for the second problem is to compare type &lt;i&gt;identities&lt;/i&gt; that carry their
 spelling for diagnostics, instead of comparing a bool. See
-&lt;a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/type_name.hpp"&gt;type_name.hpp&lt;/a&gt;. The
+&lt;a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/type_name.hpp"&gt;&lt;code&gt;type_name.hpp&lt;/code&gt;&lt;/a&gt;. The
 comparison is still &lt;code&gt;std::is_same_v&lt;/code&gt;, so the verdict is exact and a false pass
 isn't possible:
 &lt;/p&gt;
@@ -96,9 +280,9 @@ And the tests read like the trait they replaced:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org484d3e0" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org484d3e0"&gt;Reporting a compile-time value at runtime&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org484d3e0"&gt;
+&lt;div id="ox-nikola-outline-container-org5bd3caa" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org5bd3caa"&gt;Reporting a compile-time value at runtime&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5bd3caa"&gt;
 &lt;p&gt;
 The fix for the first problem is to split the two questions a constexpr test
 actually asks. "Can this be constant-evaluated at all?" is a property of the
@@ -108,7 +292,7 @@ value, and there's no reason a wrong value should stop the build.
 &lt;/p&gt;
 
 &lt;p&gt;
-&lt;a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/constant_eval.hpp"&gt;constant_eval.hpp&lt;/a&gt;
+&lt;a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/constant_eval.hpp"&gt;&lt;code&gt;constant_eval.hpp&lt;/code&gt;&lt;/a&gt;
 is &lt;code&gt;consteval&lt;/code&gt;, so a call to it is evaluated during translation. If the probe
 body isn't usable in a constant expression the program is ill-formed, and the
 first question is answered by the call itself, with no &lt;code&gt;static_assert&lt;/code&gt; needed.
@@ -159,9 +343,9 @@ Give the returned aggregate an &lt;code&gt;operator&amp;lt;&amp;lt;&lt;/code&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org2a17747" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org2a17747"&gt;What it buys&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org2a17747"&gt;
+&lt;div id="ox-nikola-outline-container-org0880f84" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org0880f84"&gt;What it buys&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org0880f84"&gt;
 &lt;p&gt;
 Two things. The reporting is better: a mismatch names both types, or prints both
 states, instead of expanding to &lt;code&gt;false&lt;/code&gt; or stopping at a diagnostic before it
@@ -208,13 +392,13 @@ Converting the &lt;code&gt;expected&lt;/code&gt; tests off &lt;code&gt;static_as
 header-only components that fix these two problems. Neither is clever.
 (The title owes Lämmel and Peyton Jones; the debt stops at the title.)
 &lt;/p&gt;
-&lt;div id="ox-nikola-outline-container-org92dba2e" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org92dba2e"&gt;Type identity as a value&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org92dba2e"&gt;
+&lt;div id="ox-nikola-outline-container-org02a4213" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org02a4213"&gt;Type identity as a value&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org02a4213"&gt;
 &lt;p&gt;
 The fix for the second problem is to compare type &lt;i&gt;identities&lt;/i&gt; that carry their
 spelling for diagnostics, instead of comparing a bool. See
-&lt;a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/type_name.hpp"&gt;type_name.hpp&lt;/a&gt;. The
+&lt;a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/type_name.hpp"&gt;&lt;code&gt;type_name.hpp&lt;/code&gt;&lt;/a&gt;. The
 comparison is still &lt;code&gt;std::is_same_v&lt;/code&gt;, so the verdict is exact and a false pass
 isn't possible:
 &lt;/p&gt;
@@ -254,9 +438,9 @@ And the tests read like the trait they replaced:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org484d3e0" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org484d3e0"&gt;Reporting a compile-time value at runtime&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org484d3e0"&gt;
+&lt;div id="ox-nikola-outline-container-org5bd3caa" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org5bd3caa"&gt;Reporting a compile-time value at runtime&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5bd3caa"&gt;
 &lt;p&gt;
 The fix for the first problem is to split the two questions a constexpr test
 actually asks. "Can this be constant-evaluated at all?" is a property of the
@@ -266,7 +450,7 @@ value, and there's no reason a wrong value should stop the build.
 &lt;/p&gt;
 
 &lt;p&gt;
-&lt;a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/constant_eval.hpp"&gt;constant_eval.hpp&lt;/a&gt;
+&lt;a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/constant_eval.hpp"&gt;&lt;code&gt;constant_eval.hpp&lt;/code&gt;&lt;/a&gt;
 is &lt;code&gt;consteval&lt;/code&gt;, so a call to it is evaluated during translation. If the probe
 body isn't usable in a constant expression the program is ill-formed, and the
 first question is answered by the call itself, with no &lt;code&gt;static_assert&lt;/code&gt; needed.
@@ -317,9 +501,9 @@ Give the returned aggregate an &lt;code&gt;operator&amp;lt;&amp;lt;&lt;/code&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org2a17747" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org2a17747"&gt;What it buys&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org2a17747"&gt;
+&lt;div id="ox-nikola-outline-container-org0880f84" class="ox-nikola-outline-2"&gt;
+&lt;h2 id="org0880f84"&gt;What it buys&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org0880f84"&gt;
 &lt;p&gt;
 Two things. The reporting is better: a mismatch names both types, or prints both
 states, instead of expanding to &lt;code&gt;false&lt;/code&gt; or stopping at a diagnostic before it
@@ -2345,284 +2529,6 @@ Setting VCPKG_CHAINLOAD_TOOLCHAIN_FILE in your project or on the &lt;code&gt;cma
 
 &lt;p&gt;
 You must set a custom &lt;code&gt;triple&lt;/code&gt; file that sets VCPKG_CHAINLOAD_TOOLCHAIN_FILE in order to use that CMake toolchain with &lt;code&gt;vcpkg&lt;/code&gt;.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;</content>
-  </entry>
-  <entry>
-    <title>Substitution is Sometimes a Failure</title>
-    <id>https://sdowney.org/posts/substitution-is-sometimes-a-failure/</id>
-    <updated>2025-11-28T12:06:58-05:00</updated>
-    <published>2025-11-28T12:06:58-05:00</published>
-    <author>
-      <name>Steve Downey</name>
-    </author>
-    <link rel="alternate" type="text/html" href="https://sdowney.org/posts/substitution-is-sometimes-a-failure/"/>
-    <summary type="html">&lt;div&gt;&lt;div class="abstract" id="org586a167"&gt;
-&lt;p&gt;
-Why are optional::transform and optional::and_then not constrained by &lt;code&gt;invocable&lt;/code&gt;?
-&lt;/p&gt;
-
-&lt;/div&gt;
-
-&lt;p&gt;&lt;a href="https://sdowney.org/posts/substitution-is-sometimes-a-failure/"&gt;Read more…&lt;/a&gt; (4 min remaining to read)&lt;/p&gt;&lt;/div&gt;</summary>
-    <content type="html">&lt;div class="abstract" id="org586a167"&gt;
-&lt;p&gt;
-Why are optional::transform and optional::and_then not constrained by &lt;code&gt;invocable&lt;/code&gt;?
-&lt;/p&gt;
-
-&lt;/div&gt;
-
-&lt;!-- TEASER_END --&gt;
-&lt;div id="ox-nikola-outline-container-org4e3f056" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org4e3f056"&gt;&lt;span class="section-number-2"&gt;1.&lt;/span&gt; Optional "Monadic" Interface&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
-&lt;p&gt;
-&lt;a href="http://wg21.link/P0798"&gt;Monadic operations for std::optional&lt;/a&gt;
-&lt;/p&gt;
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;&lt;code&gt;transform&lt;/code&gt; is the c++ spelling for &lt;code&gt;map&lt;/code&gt; or &lt;code&gt;fmap&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;and_then&lt;/code&gt; is monadic &lt;code&gt;bind&lt;/code&gt; for optional&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;or_else&lt;/code&gt; is dual to &lt;code&gt;and_then&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;
-&lt;code&gt;or_else&lt;/code&gt; also has:
-&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;
-Constraints: &lt;code&gt;F&lt;/code&gt; models &lt;code&gt;invocable&lt;/code&gt; and &lt;code&gt;T&lt;/code&gt; models &lt;code&gt;{move,copy}_constructible&lt;/code&gt;.
-&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;
-&lt;code&gt;transform&lt;/code&gt; and &lt;code&gt;and_then&lt;/code&gt; do not.
-&lt;/p&gt;
-
-&lt;p&gt;
-They don't work if you don't give them invocables, and rely on &lt;code&gt;invoke_result_t&lt;/code&gt; to compute the result. So why not constrain them?
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-orged6749e" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="orged6749e"&gt;&lt;span class="section-number-2"&gt;2.&lt;/span&gt; SFINAE is shallow&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-2"&gt;
-&lt;p&gt;
-The problem is if another template has to be instantiated in order to evaluate the template of interest, and that template has an error, you get an error, not a substitution failure. And, it turns out, lambdas are a common source of the problem and a common case in real use.
-&lt;/p&gt;
-
-&lt;p&gt;
-Consider the code:
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-type"&gt;void&lt;/span&gt; &lt;span class="org-function-name"&gt;f&lt;/span&gt;(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;);
-
-&lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-variable-name"&gt;l&lt;/span&gt; = [](&lt;span class="org-keyword"&gt;auto&lt;/span&gt;&amp;amp; &lt;span class="org-variable-name"&gt;y&lt;/span&gt;) {
-    f(y);
-    &lt;span class="org-keyword"&gt;return&lt;/span&gt; 42;
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
-The two important parts are the &lt;code&gt;auto&amp;amp;&lt;/code&gt; parameter and the implicit deduced return type.
-&lt;/p&gt;
-
-&lt;p&gt;
-We can rewrite it, to make things possibly more obvious:
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-type"&gt;Func&lt;/span&gt; {
-    &lt;span class="org-keyword"&gt;template&lt;/span&gt; &amp;lt;&lt;span class="org-keyword"&gt;typename&lt;/span&gt; &lt;span class="org-type"&gt;T&lt;/span&gt;&amp;gt;
-    &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-keyword"&gt;operator&lt;/span&gt;&lt;span class="org-function-name"&gt;()&lt;/span&gt;(&lt;span class="org-type"&gt;T&lt;/span&gt;&amp;amp; &lt;span class="org-variable-name"&gt;t&lt;/span&gt;) {
-        f(t);
-        &lt;span class="org-keyword"&gt;return&lt;/span&gt; 42;
-    }
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
-and to slightly spoil things, the problem code is effectively:
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invocable&lt;/span&gt;&amp;lt;Func, &lt;span class="org-type"&gt;int&lt;/span&gt; &lt;span class="org-keyword"&gt;const&lt;/span&gt;&amp;amp;&amp;gt;);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
-which produces:
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&amp;lt;source&amp;gt;: In instantiation of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-constant"&gt;Func&lt;/span&gt;::&lt;span class="org-keyword"&gt;operator&lt;/span&gt;()(&lt;span class="org-type"&gt;T&lt;/span&gt;&amp;amp;) [with T = &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;]&lt;span class="org-warning"&gt;'&lt;/span&gt;:
-type_traits:2565:26:   required by substitution of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Fn&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; ... &lt;span class="org-type"&gt;_Args&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;static&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__result_of_success&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;decltype&lt;/span&gt; (declval&amp;lt;&lt;span class="org-type"&gt;_Fn&lt;/span&gt;&amp;gt;()((&lt;span class="org-type"&gt;declval&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;_Args&lt;/span&gt;&amp;gt;)()...)), &lt;span class="org-constant"&gt;std&lt;/span&gt;::__invoke_other&amp;gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-constant"&gt;__result_of_other_impl&lt;/span&gt;::_S_test(&lt;span class="org-type"&gt;int&lt;/span&gt;) [with _Fn = Func; _Args = {&lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;}]&lt;span class="org-warning"&gt;'&lt;/span&gt;
-type_traits:2576:55:   required from &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__result_of_impl&lt;/span&gt;&amp;lt;&lt;span class="org-constant"&gt;false&lt;/span&gt;, &lt;span class="org-constant"&gt;false&lt;/span&gt;, Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;&lt;span class="org-warning"&gt;'&lt;/span&gt;
-type_traits:3038:12:   recursively required by substitution of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Result&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;_Ret&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__is_invocable_impl&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;_Result&lt;/span&gt;, &lt;span class="org-type"&gt;_Ret&lt;/span&gt;, &lt;span class="org-constant"&gt;true&lt;/span&gt;, &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__void_t&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;typename&lt;/span&gt; &lt;span class="org-constant"&gt;_CTp&lt;/span&gt;::&lt;span class="org-type"&gt;type&lt;/span&gt;&amp;gt; &amp;gt; [&lt;span class="org-constant"&gt;with&lt;/span&gt; _Result = &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;__invoke_result&lt;/span&gt;&amp;lt;Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;; _Ret = &lt;span class="org-type"&gt;void&lt;/span&gt;]&lt;span class="org-warning"&gt;'&lt;/span&gt;
-type_traits:3038:12:   required from &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;struct&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_invocable&lt;/span&gt;&amp;lt;Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;&lt;span class="org-warning"&gt;'&lt;/span&gt;
-type_traits:3286:71:   required from &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;bool&lt;/span&gt; &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_invocable_v&lt;/span&gt;&amp;lt;Func, &lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&amp;gt;&lt;span class="org-warning"&gt;'&lt;/span&gt;
-concepts:336:25:   required from &lt;span class="org-type"&gt;here&lt;/span&gt;
-&amp;lt;source&amp;gt;:12:10: error: binding reference of type &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;&lt;span class="org-warning"&gt;'&lt;/span&gt; to &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-keyword"&gt;const&lt;/span&gt; &lt;span class="org-type"&gt;int&lt;/span&gt;&lt;span class="org-warning"&gt;'&lt;/span&gt; discards qualifiers
-   12 |         f(t);
-      |         ~^~~
-&amp;lt;source&amp;gt;:2:12: note:   initializing argument 1 of &lt;span class="org-warning"&gt;'&lt;/span&gt;&lt;span class="org-type"&gt;void&lt;/span&gt; f(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;)&lt;span class="org-warning"&gt;'&lt;/span&gt;
-    2 |     &lt;span class="org-type"&gt;void&lt;/span&gt; f(&lt;span class="org-type"&gt;int&lt;/span&gt;&amp;amp;);
-      |            ^~~~
-Compiler returned: 1
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;
-&lt;a href="https://compiler-explorer.com/z/W1jT6bxrf"&gt;Compiler Explorer&lt;/a&gt;
-&lt;/p&gt;
-
-&lt;p&gt;
-as the compiler is unhappy about trying to call the function &lt;code&gt;f&lt;/code&gt; with a &lt;code&gt;const int&amp;amp;&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-If the lambda or &lt;code&gt;Func&lt;/code&gt; is changed to have a non-deduced return type, the instantiation errors from the check to &lt;code&gt;invocable&lt;/code&gt; go away, although you still get an error calling either with a &lt;code&gt;const int&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-So why do we run into this with &lt;code&gt;transform&lt;/code&gt; if we were to constrain it with &lt;code&gt;invocable&lt;/code&gt; ?
-&lt;/p&gt;
-
-&lt;p&gt;
-The compiler needs to figure out the overload set in order to resolve which one to use from the set. There are four of them two for the l- and r- value category and two for the const overloads.
-&lt;/p&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &amp;amp;;
-&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &lt;span class="org-keyword"&gt;const&lt;/span&gt; &amp;amp;;
-&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &amp;amp;&amp;amp;;
-&lt;span class="org-keyword"&gt;template&lt;/span&gt;&amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt; &lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-function-name"&gt;transform&lt;/span&gt;(&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;) &lt;span class="org-keyword"&gt;const&lt;/span&gt; &amp;amp;&amp;amp;;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;
-with differing computations of the resulting &lt;code&gt;optional&lt;/code&gt; being returned.
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;F, &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;​::​move(*val))&amp;gt;;
-&lt;span class="org-comment-delimiter"&gt;//&lt;/span&gt;&lt;span class="org-comment"&gt;or
-&lt;/span&gt;&lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-type"&gt;remove_cv_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;F, &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(*val)&amp;gt;&amp;gt;;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
-So, in order to work out what the templated &lt;code&gt;transform&lt;/code&gt;'s signature really is, it has to compute what the invocable returns, and since the invocable has deduced return type, it needs to instantiate it, and instantiating with &lt;code&gt;const int&lt;/code&gt; causes an error.
-&lt;/p&gt;
-
-&lt;p&gt;
-This is unfortunate.
-&lt;/p&gt;
-
-&lt;p&gt;
-If we constrain &lt;code&gt;transform&lt;/code&gt; we get the same errors as above. &lt;a href="https://compiler-explorer.com/z/r1qbjx4zG"&gt;See here,&lt;/a&gt; with just enough of an &lt;code&gt;optional&lt;/code&gt; to compile.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org389c0c8" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org389c0c8"&gt;&lt;span class="section-number-2"&gt;3.&lt;/span&gt; Constraints, what are they good for&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-3"&gt;
-&lt;p&gt;
-Not absolutely nothing.
-&lt;/p&gt;
-
-&lt;p&gt;
-Constraints in the library:
-&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;
-Constraints: the conditions for the function's participation in overload resolution ([over.match]).
-&lt;/p&gt;
-
-&lt;p&gt;
-[Note 1: Failure to meet such a condition results in the function's silent non-viability. — end note]
-&lt;/p&gt;
-
-&lt;p&gt;
-[Example 1: An implementation can express such a condition via a constraint-expression ([temp.constr.decl]). — end example]
-&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;
-&lt;a href="https://eel.is/c++draft/description#structure.specifications-3.1"&gt;[structure.specifications] 3.1&lt;/a&gt;
-&lt;/p&gt;
-
-&lt;p&gt;
-Constraints are for making an overload not exist if the constraint isn't met. It's not a way of signaling an error. Those are &lt;code&gt;Mandates&lt;/code&gt;:
-&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;
-Mandates: the conditions that, if not met, render the program ill-formed.
-&lt;/p&gt;
-
-&lt;p&gt;
-[Example 2: An implementation can express such a condition via the constant-expression in a static_assert-declaration ([dcl.pre]). If the diagnostic is to be emitted only after the function has been selected by overload resolution, an implementation can express such a condition via a constraint-expression ([temp.constr.decl]) and also define the function as deleted. — end example]
-&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;
-&lt;a href="https://eel.is/c++draft/description#structure.specifications-3.2"&gt;[structure.specifications] 3.2&lt;/a&gt;
-&lt;/p&gt;
-
-&lt;p&gt;
-Asking to run &lt;code&gt;and_then&lt;/code&gt; on a non-invocable probably ought not to say there is no such function, but instead tell you it can't be invoked. I'm now not convinced that &lt;code&gt;or_else&lt;/code&gt; should be constrained this way. It's not significantly better for &lt;code&gt;o.or_else(5)&lt;/code&gt; to fail to resolve, mentioning &lt;code&gt;invocable&lt;/code&gt;, than produce an error that &lt;code&gt;invoke_result_t&lt;/code&gt; doesn't work, or that &lt;code&gt;f&lt;/code&gt; can't be invoked. The kind of error is a minor detail.
-&lt;/p&gt;
-
-&lt;p&gt;
-Constraints that let you control the choice of alternatives are wonderful, and requires clauses are normal programmer accessible, unlike SFINAE, or even &lt;code&gt;enable_if&lt;/code&gt;. But without an overload set to constrain, there possibly should not be a constraint.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="ox-nikola-outline-container-org64ad57b" class="ox-nikola-outline-2"&gt;
-&lt;h2 id="org64ad57b"&gt;&lt;span class="section-number-2"&gt;4.&lt;/span&gt; Can we do better?&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-4"&gt;
-&lt;p&gt;
-There are some notes in &lt;a href="https://wg21.link/P0798"&gt;P0798&lt;/a&gt; that suggest that Deducing This might help, &lt;a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html"&gt;P0847&lt;/a&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-The idea would to be to NOT have all the value category overloads that need to be checked, but to just have a single one that deduces what &lt;code&gt;this&lt;/code&gt; is and provide it as a template parameter for further use. The contained parameter could be forwarded using &lt;code&gt;forward_like&amp;lt;Self&amp;gt;&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-P0847 has discussion about how deducing this might be applied to optional. There's also discussion of deducing this and the SFINAE-unfriendly auto at &lt;a href="https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/"&gt;C++23’s Deducing this: what it is, why it is, how to use it&lt;/a&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-With the tools we have today, it looks possible, but still slightly messy. I managed to get my implementation of optional to compile and pass its own tests with.
-&lt;/p&gt;
-&lt;div class="org-src-container"&gt;
-&lt;pre class="src src-c++"&gt;&lt;code&gt;&lt;span class="org-keyword"&gt;template&lt;/span&gt; &amp;lt;&lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;F&lt;/span&gt;, &lt;span class="org-keyword"&gt;class&lt;/span&gt; &lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;
-    &lt;span class="org-keyword"&gt;requires&lt;/span&gt;(
-        &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invocable&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;,
-                       &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::declval&amp;lt;T&amp;gt;()))&amp;gt;)
-&lt;span class="org-keyword"&gt;constexpr&lt;/span&gt; &lt;span class="org-keyword"&gt;auto&lt;/span&gt; &lt;span class="org-variable-name"&gt;transform&lt;/span&gt;(&lt;span class="org-keyword"&gt;this&lt;/span&gt; Self&amp;amp;&amp;amp; self, &lt;span class="org-type"&gt;F&lt;/span&gt;&amp;amp;&amp;amp; &lt;span class="org-variable-name"&gt;f&lt;/span&gt;)
-    -&amp;gt; &lt;span class="org-type"&gt;optional&lt;/span&gt;&amp;lt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;
-        &lt;span class="org-type"&gt;F&lt;/span&gt;,
-        &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::declval&amp;lt;T&amp;gt;()))&amp;gt;&amp;gt; {
-    &lt;span class="org-keyword"&gt;using&lt;/span&gt; &lt;span class="org-type"&gt;U&lt;/span&gt; = &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;invoke_result_t&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;,
-                                   &lt;span class="org-keyword"&gt;decltype&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(
-                                       &lt;span class="org-constant"&gt;std&lt;/span&gt;::declval&amp;lt;T&amp;gt;()))&amp;gt;;
-    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_array_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
-    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;in_place_t&lt;/span&gt;&amp;gt;);
-    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-negation-char"&gt;!&lt;/span&gt;&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_same_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;, &lt;span class="org-type"&gt;nullopt_t&lt;/span&gt;&amp;gt;);
-    &lt;span class="org-keyword"&gt;static_assert&lt;/span&gt;(&lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_object_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt; || &lt;span class="org-constant"&gt;std&lt;/span&gt;::&lt;span class="org-type"&gt;is_reference_v&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;);
-    &lt;span class="org-keyword"&gt;if&lt;/span&gt; (self.has_value()) {
-        &lt;span class="org-keyword"&gt;return&lt;/span&gt; &lt;span class="org-type"&gt;optional&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;{&lt;span class="org-constant"&gt;detail&lt;/span&gt;::from_function,
-                           &lt;span class="org-constant"&gt;std&lt;/span&gt;::forward&amp;lt;&lt;span class="org-type"&gt;F&lt;/span&gt;&amp;gt;(f),
-                           &lt;span class="org-constant"&gt;std&lt;/span&gt;::forward_like&amp;lt;&lt;span class="org-type"&gt;Self&lt;/span&gt;&amp;gt;(self.value_)};
-    }
-    &lt;span class="org-keyword"&gt;return&lt;/span&gt; &lt;span class="org-type"&gt;optional&lt;/span&gt;&amp;lt;&lt;span class="org-type"&gt;U&lt;/span&gt;&amp;gt;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
-If there were a &lt;code&gt;std::forward_like_t&lt;/code&gt;, it might be possible to reduce some of the noise in computing the value category used for the &lt;code&gt;T&lt;/code&gt;. I also have not thought extensively about if the requires clause is truly needed in light of the &lt;code&gt;invoke_result_&lt;/code&gt; that can now be used in the trailing return type.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;</content>

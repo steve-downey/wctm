@@ -48,7 +48,7 @@
 <link rel="alternate" type="application/atom+xml" title="Atom" hreflang="en" href="feed.atom">
 <link rel="canonical" href="https://sdowney.org/">
 <link rel="next" href="index-10.html" type="text/html">
-<link rel="prefetch" href="posts/scrap-your-static_assert/" type="text/html">
+<link rel="prefetch" href="posts/existing-practice/" type="text/html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
 </head>
 <body class="bg-white text-gray-900 font-sans dark:bg-gray-900 dark:text-gray-100">
@@ -122,6 +122,100 @@ document.getElementById('nav-toggle').addEventListener('click', function() {
     
 <div class="space-y-10">
     <article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
+            <a href="posts/existing-practice/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">✌Existing Practice✌</a>
+        </h3>
+        <p class="not-prose text-sm text-gray-500 mt-1">
+            <time class="published dt-published" datetime="2026-09-22T17:36:56-04:00" title="2026-09-22 17:36">2026-09-22 17:36</time></p>
+        <div class="mt-3">
+            <p>
+"Standardize existing practice" was barely true of the first C++ standard, and it is the wrong rule now. It was already being stretched in 1998. The ARM was existing practice. Templates as specified in the ARM were not what got standardized; the STL had two years of use at HP and a handful of early adopters before it was voted in; namespaces, exceptions as shipped, and iostreams with locales were designed in committee and implemented afterward. The result was a standard that no compiler implemented for years. We call it a success because C++ survived it, not because the process was sound.
+</p>
+
+<p>
+Today the rule is not merely stretched. It is objectively wrong, for two reasons that are usually run together and should be kept apart.
+</p>
+<div id="ox-nikola-outline-container-org5d883a8" class="ox-nikola-outline-2">
+<h2 id="org5d883a8">No library can be brought in as-is</h2>
+<div class="outline-text-2" id="text-org5d883a8">
+<p>
+The ecosystem is too fragmented. There is no library that everyone uses, built the way everyone builds, with the error handling everyone wants, that could be dropped into <code>namespace std</code> untouched. And even if there were, LEWG would not do it. The correctness bar applied to current proposals guarantees significant changes to any library that comes through. Lifetime, constexpr, exception safety, allocator awareness, freestanding, ABI. A library with real users has made choices on all of those that the committee will unmake.
+</p>
+
+<p>
+That is not a complaint. It is a description of what the process is for. The library that gets standardized is a new thing with the proposal as its ancestor.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-orgd211a6e" class="ox-nikola-outline-2">
+<h2 id="orgd211a6e">Wide deployment experience is never coming back</h2>
+<div class="outline-text-2" id="text-orgd211a6e">
+<p>
+For a language feature, deployment experience is not going to happen again. No one is going to commit experimental language code to a production code base. The risk of being wrong, of having to strip syntax out of a million lines when the design changes, is too high for any engineering organization to accept. For a vendor library extension it is unlikely for the same reason, with the added problem that vendors have learned that shipping something under <code>std::experimental</code> means supporting it forever.
+</p>
+
+<p>
+This does not relieve a proposal of the obligation to implement. If anything it makes the implementation more important. But the purpose of the implementation has changed. It is there so that other people can gain intuition about the feature, and so that the implementer can confirm the lack of breakage. Those are the two things a reference implementation is for. Adoption numbers are not one of them.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-orgdae4dcf" class="ox-nikola-outline-2">
+<h2 id="orgdae4dcf">How are we doing?</h2>
+<div class="outline-text-2" id="text-orgdae4dcf">
+<p>
+The evidence for this is the last three standards.
+</p>
+
+<p>
+<code>fmt</code> is the closest thing we have to the old model. Victor Zverovich had a library with wide deployment, a settled API, and years of bug reports. <code>std::format</code> is still not <code>fmt</code>. Compile-time format string checking went in late through a separate paper. <code>std::print</code> waited for C++23. The escape and width rules for Unicode were rewritten in SG16. It is a success because the library kept living alongside the standard, absorbing the committee's changes and feeding back what broke. The deployment experience that mattered was the experience of tracking the delta.
+</p>
+
+<p>
+Ranges is the same story with a larger delta. range-v3 was widely used. <code>std::ranges</code> diverges from it on borrowed ranges, on dangling, on the view semantics, and on what got left out. C++20 shipped without <code>zip</code>, <code>enumerate</code>, <code>chunk</code>, or <code>to</code>. C++23 filled the holes. That is a success on a six-year timeline, and it worked because Casey Carter and Eric Niebler treated range-v3 as the experiment, not the product.
+</p>
+
+<p>
+Senders and receivers look like a success, and it is the case that best fits the new rule. There was no existing practice. P0443 Executors was an attempt to standardize existing practice, three existing practices in fact, and it failed because they could not be reconciled. P2300 started over. libunifex and stdexec were implementations built to let people gain intuition and find breakage. The design changed enormously between R0 and adoption, and it changed because people wrote code against the implementation and reported what was wrong. Nobody deployed it to production in the meantime. That was not the point.
+</p>
+
+<p>
+Coroutines, before S/R, were marginal. The language feature shipped in C++20 with a working MSVC implementation and no library, and <code>std::generator</code> did not arrive until C++23. Everyone wrote their own task type and their own scheduler, which is what the design intended, and the result was that nobody's coroutine code interoperated with anyone else's. The feature only becomes useful now that S/R supplies the library half. The implementation existed. The intuition did not, because there was no shared thing to build intuition on.
+</p>
+
+<p>
+Modules are not a success; they are the case that should have taught us. Two implementations existed, Microsoft's and Clang's, with different designs. The merged design that was voted into C++20 was implemented by nobody at the time of the vote. No build system understood it, and there was no way for anyone to gain intuition about how the merged thing behaved or to confirm it did not break existing code, because it did not exist. Six years later <code>import std;</code> works on some toolchains, header units are a partial implementation almost everywhere, and the amount of production C++ that has moved to named modules is a rounding error. This was a paper design standardized on the strength of experience with two things that were not it.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-orgad528f3" class="ox-nikola-outline-2">
+<h2 id="orgad528f3">Contracts</h2>
+<div class="outline-text-2" id="text-orgad528f3">
+<p>
+Contracts are the current disaster. Pulled from C++20 in Cologne because the design was not settled, they came back as P2900, a minimal viable product, and were adopted into C++26. The final vote in Croydon was 114 to 12 with 3 abstaining, which by committee standards is a fight, and it is still not over. More than twenty national body comments came in against the design. A paper to defer to C++29 circulated three weeks before the vote. The opposition has not gone quiet since, and the DIS ballot is still open. Stroustrup's line is that it is not minimal and not viable.
+</p>
+
+<p>
+The stated objection, when you strip the specifics about evaluation semantics and ignorability, is that there is not enough deployment experience. That is the impossible standard. We are never going to get deployment experience for a language feature that might change. There is a GCC implementation in trunk and a Clang branch. People have written code against them, found the sharp edges, and filed papers. The evaluation semantics debate happened because people could try the thing, which is the system working.
+</p>
+
+<p>
+If Contracts derail C++26, or derail themselves into C++29, it will not be because the feature failed to meet a reasonable bar. It will be because the bar being demanded is one no language feature can meet, and one that Modules, with far less implementation behind it, was never held to.
+</p>
+</div>
+</div>
+<div id="ox-nikola-outline-container-orga95bd0b" class="ox-nikola-outline-2">
+<h2 id="orga95bd0b">Profiles</h2>
+<div class="outline-text-2" id="text-orga95bd0b">
+<p>
+And then there are Profiles, targeting C++29, from many of the same people who gave us Modules. The pitch is safety, and the claimed existing practice is the Core Guidelines checkers. Those checkers are not Profiles. Profiles as proposed are a language mechanism with enforcement semantics that no compiler implements and no code base has been compiled against. It is the Modules shape exactly: a design with adjacent experience being presented as the experience.
+</p>
+
+<p>
+The lesson from the history is not "demand deployment." It is "demand an implementation that other people can use to find out whether the design is wrong, and then listen when they do." <code>fmt</code> and ranges had that and survived heavy revision. S/R had that and was revised almost completely. Coroutines had half of it. Modules had none of it. Contracts have it and are being held to a standard they cannot meet, while Profiles are heading toward the standard Modules were held to, which was none.
+</p>
+</div>
+</div>
+        </div>
+    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
             <a href="posts/scrap-your-static_assert/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Scrap Your static_assert</a>
         </h3>
         <p class="not-prose text-sm text-gray-500 mt-1">
@@ -158,13 +252,13 @@ Converting the <code>expected</code> tests off <code>static_assert</code> came d
 header-only components that fix these two problems. Neither is clever.
 (The title owes Lämmel and Peyton Jones; the debt stops at the title.)
 </p>
-<div id="ox-nikola-outline-container-org92dba2e" class="ox-nikola-outline-2">
-<h2 id="org92dba2e">Type identity as a value</h2>
-<div class="outline-text-2" id="text-org92dba2e">
+<div id="ox-nikola-outline-container-org02a4213" class="ox-nikola-outline-2">
+<h2 id="org02a4213">Type identity as a value</h2>
+<div class="outline-text-2" id="text-org02a4213">
 <p>
 The fix for the second problem is to compare type <i>identities</i> that carry their
 spelling for diagnostics, instead of comparing a bool. See
-<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/type_name.hpp">type_name.hpp</a>. The
+<a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/type_name.hpp"><code>type_name.hpp</code></a>. The
 comparison is still <code>std::is_same_v</code>, so the verdict is exact and a false pass
 isn't possible:
 </p>
@@ -204,9 +298,9 @@ And the tests read like the trait they replaced:
 </div>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org484d3e0" class="ox-nikola-outline-2">
-<h2 id="org484d3e0">Reporting a compile-time value at runtime</h2>
-<div class="outline-text-2" id="text-org484d3e0">
+<div id="ox-nikola-outline-container-org5bd3caa" class="ox-nikola-outline-2">
+<h2 id="org5bd3caa">Reporting a compile-time value at runtime</h2>
+<div class="outline-text-2" id="text-org5bd3caa">
 <p>
 The fix for the first problem is to split the two questions a constexpr test
 actually asks. "Can this be constant-evaluated at all?" is a property of the
@@ -216,7 +310,7 @@ value, and there's no reason a wrong value should stop the build.
 </p>
 
 <p>
-<a href="https://github.com/steve-downey/expected/blob/b3b2cdf9ca3c65f19d94d0de1c86a0b64432f4c6/tests/beman/expected/testing/constant_eval.hpp">constant_eval.hpp</a>
+<a href="https://github.com/steve-downey/expected/blob/blog/scrap-static-assert/tests/beman/expected/testing/constant_eval.hpp"><code>constant_eval.hpp</code></a>
 is <code>consteval</code>, so a call to it is evaluated during translation. If the probe
 body isn't usable in a constant expression the program is ill-formed, and the
 first question is answered by the call itself, with no <code>static_assert</code> needed.
@@ -267,9 +361,9 @@ Give the returned aggregate an <code>operator&lt;&lt;</code>. Without one, Catch
 </p>
 </div>
 </div>
-<div id="ox-nikola-outline-container-org2a17747" class="ox-nikola-outline-2">
-<h2 id="org2a17747">What it buys</h2>
-<div class="outline-text-2" id="text-org2a17747">
+<div id="ox-nikola-outline-container-org0880f84" class="ox-nikola-outline-2">
+<h2 id="org0880f84">What it buys</h2>
+<div class="outline-text-2" id="text-org0880f84">
 <p>
 Two things. The reporting is better: a mismatch names both types, or prints both
 states, instead of expanding to <code>false</code> or stopping at a diagnostic before it
@@ -447,23 +541,6 @@ Making sure vcpkg delivers packages built with your toolchain is not hard, but m
 <p class="more"><a href="posts/building-vcpkg-dependencies-with-project-toolchain/">Read more…</a></p>
 </div>
         </div>
-    </article><article class="blog-post"><h3 class="not-prose text-2xl font-semibold">
-            <a href="posts/substitution-is-sometimes-a-failure/" class="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Substitution is Sometimes a Failure</a>
-        </h3>
-        <p class="not-prose text-sm text-gray-500 mt-1">
-            <time class="published dt-published" datetime="2025-11-28T12:06:58-05:00" title="2025-11-28 12:06">2025-11-28 12:06</time></p>
-        <div class="mt-3">
-            <div>
-<div class="abstract" id="org586a167">
-<p>
-Why are optional::transform and optional::and_then not constrained by <code>invocable</code>?
-</p>
-
-</div>
-
-<p class="more"><a href="posts/substitution-is-sometimes-a-failure/">Read more…</a></p>
-</div>
-        </div>
     </article>
 </div>
 
@@ -496,6 +573,10 @@ delimiters: [
     </section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Recent Posts</h2>
         <ul class="space-y-3">
 <li>
+                <a href="posts/existing-practice/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">✌Existing Practice✌</a>
+                <time class="text-xs text-gray-400" datetime="2026-09-22T17:36:56-04:00">2026-09-22 17:36</time>
+</li>
+            <li>
                 <a href="posts/scrap-your-static_assert/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Scrap Your static_assert</a>
                 <time class="text-xs text-gray-400" datetime="2026-08-10T18:12:21-04:00">2026-08-10 18:12</time>
 </li>
@@ -530,10 +611,6 @@ delimiters: [
             <li>
                 <a href="posts/building-vcpkg-dependencies-with-project-toolchain/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Building vcpkg dependencies with project toolchain</a>
                 <time class="text-xs text-gray-400" datetime="2025-12-27T12:03:15-05:00">2025-12-27 12:03</time>
-</li>
-            <li>
-                <a href="posts/substitution-is-sometimes-a-failure/" class="text-sm text-gray-700 hover:text-indigo-600 transition-colors leading-snug block">Substitution is Sometimes a Failure</a>
-                <time class="text-xs text-gray-400" datetime="2025-11-28T12:06:58-05:00">2025-11-28 12:06</time>
 </li>
         </ul></section><section><h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Archives</h2>
         <a href="archive.html" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">All posts →</a>
